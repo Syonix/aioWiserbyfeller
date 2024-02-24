@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.1] - 2024-01-10
+## [1.0.0] - 2024-01-10
 
 ### Added
 
 - Initial release
 
-[unreleased]: https://github.com/syonix/aiowiserbyfeller/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/syonix/aiowiserbyfeller/releases/tag/v0.0.1
+[unreleased]: https://github.com/syonix/aiowiserbyfeller/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/syonix/aiowiserbyfeller/releases/tag/v1.0.0
