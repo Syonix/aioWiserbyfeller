@@ -1,5 +1,9 @@
 """The aiowiserbyfeller library."""
 from setuptools import setup, find_packages
+from pathlib import Path
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="aiowiserbyfeller",
@@ -7,8 +11,8 @@ setup(
     author="Michael Burri",
     author_email="<michael.burri@syonix.ch>",
     description="Wiser by Feller µGateway API",
-    long_description="This library provides an interface to Wiser by Feller µGateway device."
-    "See https://wiser.feller.ch for more information",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     packages=find_packages(),
     license="MIT",
     install_requires=["aiohttp", "websockets"],
