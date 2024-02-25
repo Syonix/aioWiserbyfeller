@@ -17,7 +17,13 @@ def validate_str(value, valid, **kwargs):
 def parse_wiser_device_ref_c(value: str) -> dict:
     """Parse a Feller Wiser control front (Bedienaufsatz) product
     reference"""
-    result = {"type": None, "wlan": ".W" in value, "scene": 0, "loads": 0}
+    result = {
+        "type": None,
+        "wlan": ".W" in value,
+        "scene": 0,
+        "loads": 0,
+        "generation": None,
+    }
 
     if "VS" in value:
         result["scene"] = 2
@@ -40,13 +46,18 @@ def parse_wiser_device_ref_c(value: str) -> dict:
     elif "3402" in value or "3405" in value or "3407" in value:
         result["loads"] = 2
 
+    if ".A." in value or value.endswith(".A"):
+        result["generation"] = "A"
+    elif ".B." in value or value.endswith(".B"):
+        result["generation"] = "B"
+
     return result
 
 
 def parse_wiser_device_ref_a(value: str) -> dict:
     """Parse a Feller Wiser base module (Funktionseinsatz) product
     reference"""
-    result = {"loads": 0}
+    result = {"loads": 0, "generation": None}
 
     if "3400" in value:
         result["type"] = "noop"
@@ -63,5 +74,10 @@ def parse_wiser_device_ref_a(value: str) -> dict:
         result["loads"] = 1
     elif "3402" in value or "3405" in value or "3407" in value:
         result["loads"] = 2
+
+    if ".A." in value:
+        result["generation"] = "A"
+    elif ".B." in value:
+        result["generation"] = "B"
 
     return result
