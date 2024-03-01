@@ -99,8 +99,8 @@ class Websocket:
             extra_headers={"Authorization": f"Bearer {self._token}"},
         ):
             try:
-                message = await ws.recv()
-                await self.on_message(message)
+                async for message in ws:
+                    await self.on_message(message)
             except websockets.ConnectionClosed:
                 self._errcount += 1
                 if self._errcount > 10:
