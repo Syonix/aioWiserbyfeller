@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="aiowiserbyfeller",
-    version="1.0.0b2",
+    version="1.0.0b3",
     author="Michael Burri",
     author_email="<michael.burri@syonix.ch>",
     description="Wiser by Feller µGateway API",
@@ -18,9 +18,8 @@ setup(
     install_requires=["aiohttp", "websockets"],
     tests_require=["pylint", "pytest", "pytest-aiohttp", "aioresponses"],
     classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Intended Audience :: Education",
-        "Programming Language :: Python :: 2",
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: End Users/Desktop",
         "Programming Language :: Python :: 3",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
