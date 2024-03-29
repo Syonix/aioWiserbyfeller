@@ -77,6 +77,7 @@ class Websocket:
         self._token = token
         self._ws = None
         self._subscribers = []
+        self._async_subscribers = []
         self._watchdog = WebsocketWatchdog(logger, self.on_watchdog_timeout)
         self._logger = logger
         self._errcount = 0
@@ -84,6 +85,10 @@ class Websocket:
 
     def subscribe(self, callback):
         """Add callback to be called when new data arrives."""
+        self._subscribers.append(callback)
+
+    def async_subscribe(self, callback):
+        """Add async callback to be called when new data arrives."""
         self._subscribers.append(callback)
 
     def init(self):
@@ -127,6 +132,8 @@ class Websocket:
         await self._watchdog.trigger()
         for fn in self._subscribers:
             fn(data)
+        for fn in self._async_subscribers:
+            await fn(data)
 
     def on_error(self, exception: Exception):
         """Process error."""
