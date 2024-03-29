@@ -1,7 +1,16 @@
 """aiowiserbyfeller Api class loads tests"""
 import pytest
 from .conftest import prepare_test_authenticated, BASE_URL
-from aiowiserbyfeller import InvalidArgument, Dim, DaliTw, DaliRgbw, OnOff, Motor
+from aiowiserbyfeller import (
+    InvalidArgument,
+    Dim,
+    DaliTw,
+    DaliRgbw,
+    OnOff,
+    Motor,
+    KIND_VENETIAN_BLINDS,
+    KIND_LIGHT,
+)
 
 
 @pytest.mark.asyncio
@@ -376,7 +385,7 @@ async def test_load_async_refresh(client_api_auth, mock_aioresponse):
     assert load.device == "000004d7"
     assert load.channel == 0
     assert load.unused is False
-    assert load.kind == 0
+    assert load.kind == KIND_LIGHT
 
     assert load.state is True
 
@@ -466,6 +475,7 @@ async def test_motor_async_control_tilt(client_api_auth, mock_aioresponse):
         request_json,
     )
 
+    assert load.kind is None
     assert load.state["tilt"] == 0
     await load.async_control_tilt(9)
     assert load.state["tilt"] == 9
@@ -481,9 +491,13 @@ async def test_motor_async_stop(client_api_auth, mock_aioresponse):
     request_json = {"moving": "stop"}
 
     load = Motor(
-        {"id": 2},
+        {"id": 2, "kind": 1},
         client_api_auth.auth,
-        raw_state={"level": 10000, "moving": "down", "tilt": 0},
+        raw_state={
+            "level": 10000,
+            "moving": "down",
+            "tilt": 0,
+        },
     )
 
     await prepare_test_authenticated(
@@ -494,6 +508,7 @@ async def test_motor_async_stop(client_api_auth, mock_aioresponse):
         request_json,
     )
 
+    assert load.kind == KIND_VENETIAN_BLINDS
     assert load.state["moving"] == "down"
     await load.async_control_stop()
     assert load.state["moving"] == "stop"

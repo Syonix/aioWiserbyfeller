@@ -59,11 +59,14 @@ class Load:
         return self.raw_data["room"]
 
     @property
-    def kind(self) -> int:
+    def kind(self) -> int | None:
         """Property to store a value that corresponds to the icon
         Possible values for lights: Light:0, Switch:1
         Possible values for covers: Motor:0, Venetian blinds:1,
         Roller shutters:2, Awnings:3"""
+        if self.raw_data is None or "kind" not in self.raw_data:
+            return None
+
         return self.raw_data["kind"]
 
     @property

@@ -231,17 +231,17 @@ async def test_scene_async_refresh(client_api_auth, mock_aioresponse):
         ],
     }
 
-    timer = Scene(raw_data, client_api_auth.auth)
+    scene = Scene(raw_data, client_api_auth.auth)
 
     await prepare_test_authenticated(
         mock_aioresponse, f"{BASE_URL}/scenes/15", "get", response_json
     )
 
-    await timer.async_refresh()
+    await scene.async_refresh()
 
-    assert timer.id == 15
-    assert timer.job == 12
-    assert timer.type == 0
-    assert timer.name == "Abwesend Neu"
-    assert timer.kind == 1
-    assert timer.scene_buttons[0]["title"] == "Szenentaste 2"
+    assert scene.id == 15
+    assert scene.job == 12
+    assert scene.type == 0
+    assert scene.name == "Abwesend Neu"
+    assert scene.kind == 1
+    assert scene.scene_buttons[0]["title"] == "Szenentaste 2"
