@@ -16,6 +16,14 @@ class Motor(Load):
 
         return self.raw_state
 
-    async def async_control_level(self, level: int, tilt: int) -> dict:
-        """Level: 0..10000, Tilt: 0..9"""
-        return await super().async_set_target_state({"level": level, "tilt": tilt})
+    async def async_control_level(self, level: int) -> dict:
+        """Control the target level of the cover (0..10000)"""
+        return await super().async_set_target_state({"level": level})
+
+    async def async_control_tilt(self, tilt: int) -> dict:
+        """Control the target tilt of the cover (0..9)"""
+        return await super().async_set_target_state({"tilt": tilt})
+
+    async def async_control_stop(self) -> dict:
+        """Stop the cover movement."""
+        return await super().async_set_target_state({"moving": "stop"})

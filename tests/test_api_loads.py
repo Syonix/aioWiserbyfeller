@@ -427,7 +427,7 @@ async def test_motor_async_control_level(client_api_auth, mock_aioresponse):
         "status": "success",
         "data": {"id": 2, "target_state": {"level": 10000, "tilt": 0}},
     }
-    request_json = {"level": 10000, "tilt": 0}
+    request_json = {"level": 10000}
 
     load = Motor({"id": 2}, client_api_auth.auth)
     assert load.state is None
@@ -443,8 +443,60 @@ async def test_motor_async_control_level(client_api_auth, mock_aioresponse):
     )
 
     assert load.state["level"] == 0
-    await load.async_control_level(10000, 0)
+    await load.async_control_level(10000)
     assert load.state["level"] == 10000
+
+
+@pytest.mark.asyncio
+async def test_motor_async_control_tilt(client_api_auth, mock_aioresponse):
+    """Test Motor.async_control_tilt."""
+    response_json = {
+        "status": "success",
+        "data": {"id": 2, "target_state": {"level": 10000, "tilt": 9}},
+    }
+    request_json = {"tilt": 9}
+
+    load = Motor({"id": 2}, client_api_auth.auth, raw_state={"level": 10000, "tilt": 0})
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/loads/2/target_state",
+        "put",
+        response_json,
+        request_json,
+    )
+
+    assert load.state["tilt"] == 0
+    await load.async_control_tilt(9)
+    assert load.state["tilt"] == 9
+
+
+@pytest.mark.asyncio
+async def test_motor_async_stop(client_api_auth, mock_aioresponse):
+    """Test Motor.async_control_stop."""
+    response_json = {
+        "status": "success",
+        "data": {"id": 2, "target_state": {"moving": "stop"}},
+    }
+    request_json = {"moving": "stop"}
+
+    load = Motor(
+        {"id": 2},
+        client_api_auth.auth,
+        raw_state={"level": 10000, "moving": "down", "tilt": 0},
+    )
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/loads/2/target_state",
+        "put",
+        response_json,
+        request_json,
+    )
+
+    assert load.state["moving"] == "down"
+    await load.async_control_stop()
+    assert load.state["moving"] == "stop"
 
 
 @pytest.mark.asyncio
