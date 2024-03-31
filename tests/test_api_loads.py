@@ -488,7 +488,7 @@ async def test_motor_async_stop(client_api_auth, mock_aioresponse):
         "status": "success",
         "data": {"id": 2, "target_state": {"moving": "stop"}},
     }
-    request_json = {"moving": "stop"}
+    request_json = {"button": "stop", "event": "click"}
 
     load = Motor(
         {"id": 2, "kind": 1},
@@ -502,10 +502,29 @@ async def test_motor_async_stop(client_api_auth, mock_aioresponse):
 
     await prepare_test_authenticated(
         mock_aioresponse,
-        f"{BASE_URL}/loads/2/target_state",
+        f"{BASE_URL}/loads/2/ctrl",
         "put",
         response_json,
         request_json,
+    )
+
+    response_json = {
+        "status": "success",
+        "data": {
+            "id": 2,
+            "state": {
+                "level": 10000,
+                "moving": "stop",
+                "tilt": 0,
+            },
+        },
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/loads/2/state",
+        "get",
+        response_json,
     )
 
     assert load.kind == KIND_VENETIAN_BLINDS

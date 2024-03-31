@@ -24,6 +24,7 @@ class Motor(Load):
         """Control the target tilt of the cover (0..9)"""
         return await super().async_set_target_state({"tilt": tilt})
 
-    async def async_control_stop(self) -> dict:
+    async def async_control_stop(self):
         """Stop the cover movement."""
-        return await super().async_set_target_state({"moving": "stop"})
+        await super().async_ctrl("stop", "click")
+        await self.async_refresh_state()
