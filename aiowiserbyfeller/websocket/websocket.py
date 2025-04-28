@@ -139,6 +139,7 @@ class Websocket:
         """Process error."""
         self._logger.error("Websocket error: %s", exception)
         self._watchdog.cancel()
+        raise exception
 
     async def on_watchdog_timeout(self):
         """Default watchdog callback"""
