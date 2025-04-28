@@ -1,6 +1,6 @@
 """Wrapper for authenticated API calls."""
 from aiohttp import ClientSession
-from .errors import AuthorizationFailed, TokenMissing, UnsuccessfulRequest
+from .errors import AuthorizationFailed, TokenMissing, UnauthorizedUser, UnsuccessfulRequest
 
 
 class Auth:
@@ -82,6 +82,9 @@ class Auth:
 
         if json["status"] == "error" and "api is locked" in json["message"]:
             raise TokenMissing()
+
+        if json["status"] == "error" and json["message"] == "unauthorized user":
+            raise UnauthorizedUser()
 
         if json["status"] != "success":
             raise UnsuccessfulRequest(json["message"])

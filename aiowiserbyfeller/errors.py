@@ -5,7 +5,7 @@ class AiowiserbyfellerException(Exception):
     """Base exception for aiowiserbyfeller."""
 
 
-class Unauthorized(AiowiserbyfellerException):
+class UnauthorizedUser(AiowiserbyfellerException):
     """Username is not authorized."""
 
 
@@ -26,4 +26,8 @@ class InvalidArgument(AiowiserbyfellerException):
 
 
 class UnsuccessfulRequest(AiowiserbyfellerException):
+    """Request returned non-success error"""
+
+
+class WebsocketError(AiowiserbyfellerException):
     """Request returned non-success error"""
