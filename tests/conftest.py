@@ -1,4 +1,5 @@
 """Prepare for unit tests"""
+
 import pytest
 import pytest_asyncio
 import aiohttp

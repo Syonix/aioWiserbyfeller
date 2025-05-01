@@ -1,4 +1,5 @@
 """aiowiserbyfeller Api class network tests"""
+
 import pytest
 from .conftest import prepare_test_authenticated, BASE_URL
 from aiowiserbyfeller import InvalidArgument

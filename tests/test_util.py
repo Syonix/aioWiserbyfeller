@@ -1,4 +1,5 @@
 """aiowiserbyfeller util tests"""
+
 import pytest
 from aiowiserbyfeller.util import (
     parse_wiser_device_ref_c,

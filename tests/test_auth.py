@@ -1,4 +1,5 @@
 """aiowiserbyfeller Auth class tests"""
+
 import pytest
 from aiowiserbyfeller.errors import (
     AuthorizationFailed,

@@ -1,4 +1,5 @@
 """aiowiserbyfeller Api class rooms tests"""
+
 import pytest
 from .conftest import prepare_test_authenticated, BASE_URL
 
