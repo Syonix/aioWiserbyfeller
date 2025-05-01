@@ -42,3 +42,7 @@ jobs:
       with:
         name: coverage-report-${{ matrix.python-version }}
         path: htmlcov
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
