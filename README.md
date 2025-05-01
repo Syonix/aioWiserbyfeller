@@ -25,8 +25,8 @@ Each front features a configurable RGB LED edge for their buttons. Normally you 
 - As of right now, the µGateway API only supports Rest and Websockets. MQTT is implemented, [but only for the proprietary app](https://github.com/Feller-AG/wiser-tutorial/issues/5).
 - Note: device names are in German because manufacturer does not have an English online presence.
 
-## Links
-* Checkout the [Home Assistant integration]() using this library.
+## Related
+* Checkout the [Home Assistant integration](https://github.com/Syonix/ha-wiser-by-feller) using this library.
 
 ## Contribute
 1. Create a [venv](https://docs.python.org/3/library/venv.html) for the project
