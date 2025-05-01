@@ -18,7 +18,8 @@ Devices are connected with each other by a proprietary [K+ bus system](https://w
 ### Status LEDs
 Each front features a configurable RGB LED edge for their buttons. Normally you would configure those in the [Wiser Home app](https://www.feller.ch/de/feller-apps). They can be configured in color and brightness. For buttons controlling a load, there can be two different brightnesses: One for if the load is on and one for if it is off. For others (e.g. scene buttons) there can only be one brightness, as there is no logical "on" state. 
 
-**Note:** Due to the implementation on the devices, the status light is not suited for fast updating, as multiple slow API calls are necessary.
+> [!IMPORTANT]
+> Due to the implementation on the devices, the status light is not suited for fast updating, as multiple slow API calls are necessary.
 
 ## Known issues
 - As of right now, the µGateway API only supports Rest and Websockets. MQTT is implemented, [but only for the proprietary app](https://github.com/Feller-AG/wiser-tutorial/issues/5).
