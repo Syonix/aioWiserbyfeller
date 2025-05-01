@@ -3,6 +3,7 @@
 import pytest
 from .conftest import prepare_test_authenticated, BASE_URL
 from aiowiserbyfeller import Device
+from typing import Optional
 
 
 @pytest.mark.asyncio
@@ -607,9 +608,16 @@ async def test_async_calibrate_motor_devices(client_api_auth, mock_aioresponse):
     assert actual == response_json["data"]
 
 
-@pytest.mark.parametrize("foreground_param,foreground_expected", [(None, 100), (50, 50)])
+@pytest.mark.parametrize(
+    "foreground_param,foreground_expected", [(None, 100), (50, 50)]
+)
 @pytest.mark.asyncio
-async def test_async_status(client_api_auth, mock_aioresponse, foreground_param: int | None, foreground_expected: int):
+async def test_async_status(
+    client_api_auth,
+    mock_aioresponse,
+    foreground_param: Optional[int],
+    foreground_expected: int,
+):
     """Test async_status."""
 
     raw_data = {
@@ -640,7 +648,7 @@ async def test_async_status(client_api_auth, mock_aioresponse, foreground_param:
                     "type": "toggle",
                     "color": "#10f220",
                     "background_bri": 10,
-                    "foreground_bri": 8
+                    "foreground_bri": 8,
                 }
             ],
             "outputs": [
@@ -649,14 +657,11 @@ async def test_async_status(client_api_auth, mock_aioresponse, foreground_param:
                     "type": "onoff",
                     "sub_type": "",
                     "delayed_off": False,
-                    "delay_ms": 200
+                    "delay_ms": 200,
                 }
             ],
-            "design": {
-                "color": 0,
-                "name": "edizio_due"
-            }
-        }
+            "design": {"color": 0, "name": "edizio_due"},
+        },
     }
 
     await prepare_test_authenticated(
@@ -669,7 +674,7 @@ async def test_async_status(client_api_auth, mock_aioresponse, foreground_param:
     update_request = {
         "color": "#552030",
         "background_bri": 100,
-        "foreground_bri": foreground_expected
+        "foreground_bri": foreground_expected,
     }
 
     update_response = {
@@ -678,8 +683,8 @@ async def test_async_status(client_api_auth, mock_aioresponse, foreground_param:
             "type": "toggle",
             "color": "#552030",
             "background_bri": 100,
-            "foreground_bri": foreground_expected
-        }
+            "foreground_bri": foreground_expected,
+        },
     }
 
     await prepare_test_authenticated(
@@ -687,7 +692,7 @@ async def test_async_status(client_api_auth, mock_aioresponse, foreground_param:
         f"{BASE_URL}/devices/config/4294976294/inputs/0",
         "put",
         update_response,
-        update_request
+        update_request,
     )
 
     apply_response = config_response
@@ -696,10 +701,7 @@ async def test_async_status(client_api_auth, mock_aioresponse, foreground_param:
     apply_response["data"]["inputs"][0]["foreground_bri"] = foreground_expected
 
     await prepare_test_authenticated(
-        mock_aioresponse,
-        f"{BASE_URL}/devices/config/4294976294",
-        "put",
-        apply_response
+        mock_aioresponse, f"{BASE_URL}/devices/config/4294976294", "put", apply_response
     )
 
     device = Device(raw_data, client_api_auth.auth)
