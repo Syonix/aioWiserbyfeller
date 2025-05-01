@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from .load import Load
 from typing import Dict
+from ..util import validate_str
 
 
 class Hvac(Load):
@@ -16,6 +17,13 @@ class Hvac(Load):
             return None
         return self.flag("state")
 
+    @property
+    def controller(self) -> str | None:
+        """Current name of hvac controller."""
+        if self.raw_state is None:
+            return None
+        return self.raw_state["controller"]
+    
     @property
     def heating_cooling_level(self) -> int | None:
         """Current heating/cooling level of the heating channel (valve).
@@ -33,7 +41,7 @@ class Hvac(Load):
 
     @property
     def boost_temperature(self) -> int | None:
-        """Current boost temperature value of the heeating channel (valve).
+        """Current boost temperature value of the heating channel (valve).
         Possible values: On: 0, Off: -99
         """
         if self.raw_state is None:
@@ -59,13 +67,7 @@ class Hvac(Load):
         self,
     ) -> Dict[str, bool]:
         """Current flags of the heating channel (valve).
-        Possible values:
-        remote_controlled: 0,1,
-        sensor_error: 0,1,
-        valve_error: 0,1,
-        noise,
-        output_on: 0,1,
-        cooling: 0,1
+        Available flags: remote_controlled, sensor_error, valve_error, noise, output_on, cooling
         """
         if self.raw_state is None or "flags" not in self.raw_state:
             return {}
@@ -74,4 +76,6 @@ class Hvac(Load):
 
     def flag(self, identifier: str) -> bool | None:
         """Get the value of a specific flag."""
+
+        validate_str(identifier, ["remote_controlled", "sensor_error", "valve_error", "noise", "output_on", "cooling"])  
         return self.flags[identifier] if identifier in self.flags else None
