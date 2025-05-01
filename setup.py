@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="aiowiserbyfeller",
-    version="1.0.0b7",
+    version="1.0.0b8",
     author="Michael Burri",
     author_email="<michael.burri@syonix.ch>",
     description="Wiser by Feller µGateway API",
