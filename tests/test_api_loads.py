@@ -9,6 +9,7 @@ from aiowiserbyfeller import (
     DaliRgbw,
     OnOff,
     Motor,
+    Hvac,
     KIND_VENETIAN_BLINDS,
     KIND_LIGHT,
 )
@@ -52,6 +53,17 @@ async def test_async_get_loads(client_api_auth, mock_aioresponse):
                 "channel": 0,
                 "unused": False,
                 "kind": 0,
+            },
+            {
+                "id": 4,
+                "name": "Heizungskanal  2",
+                "controller": "Heizungskontroller 1",
+                "room": 789,
+                "type": "hvac",
+                "sub_type": "",
+                "device": "00000679",
+                "channel": 1,
+                "unused": False,
             },
         ],
     }
@@ -97,6 +109,17 @@ async def test_async_get_used_loads(client_api_auth, mock_aioresponse):
                 "unused": True,
                 "kind": 0,
             },
+            {
+                "id": 3,
+                "name": "Heizungskanal  3",
+                "controller": "Heizungskontroller 1",
+                "room": -1,
+                "type": "hvac",
+                "sub_type": "",
+                "device": "00000679",
+                "channel": 1,
+                "unused": True,
+            },
         ],
     }
 
@@ -138,6 +161,17 @@ async def test_async_get_unused_loads(client_api_auth, mock_aioresponse):
                 "channel": 1,
                 "unused": True,
                 "kind": 0,
+            },
+            {
+                "id": 3,
+                "name": "Heizungskanal  3",
+                "controller": "Heizungskontroller 1",
+                "room": -1,
+                "type": "hvac",
+                "sub_type": "",
+                "device": "00000679",
+                "channel": 1,
+                "unused": True,
             },
         ],
     }

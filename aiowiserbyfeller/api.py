@@ -8,7 +8,7 @@ from .auth import Auth
 from .device import Device
 from .errors import InvalidLoadType
 from .job import Job
-from .load import Dali, DaliRgbw, DaliTw, Dim, Load, Motor, OnOff
+from .load import Dali, DaliRgbw, DaliTw, Dim, Load, Motor, OnOff, Hvac
 from .scene import Scene
 from .smart_button import SmartButton
 from .system import SystemFlag, SystemCondition
@@ -906,5 +906,7 @@ class WiserByFellerAPI:
             return DaliRgbw(data, self.auth)
         if data["type"] == "motor":
             return Motor(data, self.auth)
+        if data["type"] == "hvac":
+            return Hvac(data, self.auth)
 
         raise InvalidLoadType("Invalid load type: " + data["type"])
