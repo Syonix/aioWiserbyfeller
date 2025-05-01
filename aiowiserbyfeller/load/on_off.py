@@ -1,4 +1,5 @@
 """Support for On/Off switch devices."""
+
 from __future__ import annotations
 
 from .load import Load

@@ -1,4 +1,5 @@
 """Wiser by Feller load submodule"""
+
 from .load import Load
 from .on_off import OnOff
 from .dim import Dim

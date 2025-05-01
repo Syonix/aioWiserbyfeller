@@ -1,4 +1,5 @@
 """Support for DALI RGB light switch devices."""
+
 from .load import Load
 
 

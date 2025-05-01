@@ -1,4 +1,5 @@
 """Support for DALI light switch devices."""
+
 from .dim import Dim
 
 

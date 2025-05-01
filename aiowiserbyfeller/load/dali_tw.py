@@ -1,4 +1,5 @@
 """Support for DALI tunable white light switch devices."""
+
 from .load import Load
 
 

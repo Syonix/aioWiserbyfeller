@@ -1,4 +1,5 @@
 """Base class for all loads."""
+
 from __future__ import annotations
 
 from ..auth import Auth

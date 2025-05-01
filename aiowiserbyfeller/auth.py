@@ -1,4 +1,5 @@
 """Wrapper for authenticated API calls."""
+
 from aiohttp import ClientSession
 from .errors import (
     AuthorizationFailed,

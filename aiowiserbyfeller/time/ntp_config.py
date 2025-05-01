@@ -1,4 +1,5 @@
 """Support for ntp time configuration."""
+
 from ..auth import Auth
 
 

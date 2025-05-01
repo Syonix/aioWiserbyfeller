@@ -1,4 +1,5 @@
 """Support for scenes"""
+
 from __future__ import annotations
 
 from ..auth import Auth

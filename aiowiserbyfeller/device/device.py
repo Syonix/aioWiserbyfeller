@@ -1,4 +1,5 @@
 """Representation of a device in the Feller Wiser µGateway API"""
+
 from __future__ import annotations
 
 from ..auth import Auth

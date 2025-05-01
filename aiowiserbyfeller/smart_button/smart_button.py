@@ -1,4 +1,5 @@
 """Support for smart button configuration."""
+
 from __future__ import annotations
 
 from ..auth import Auth

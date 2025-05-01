@@ -1,4 +1,5 @@
 """Support for motor switch devices."""
+
 from __future__ import annotations
 
 from .load import Load

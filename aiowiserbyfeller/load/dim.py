@@ -1,4 +1,5 @@
 """Support for dimmable light switch devices."""
+
 from __future__ import annotations
 
 from .load import Load

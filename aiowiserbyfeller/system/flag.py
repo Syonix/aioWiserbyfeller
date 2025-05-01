@@ -1,4 +1,5 @@
 """Support for system flags."""
+
 from ..auth import Auth
 
 
