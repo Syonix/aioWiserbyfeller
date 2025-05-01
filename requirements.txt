@@ -1,6 +1,6 @@
-aiohttp==3.9.3
+aiohttp==3.10.11
 aioresponses==0.7.6
-black==23.12.1
+black==24.3.0
 pylint==3.0.3
 pytest==7.4.4
 pytest-aiohttp==1.0.5
