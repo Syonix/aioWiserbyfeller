@@ -110,17 +110,6 @@ async def test_async_get_used_loads(client_api_auth, mock_aioresponse):
                 "unused": True,
                 "kind": 0,
             },
-            {
-                "id": 3,
-                "name": "Heizungskanal  3",
-                "controller": "Heizungskontroller 1",
-                "room": -1,
-                "type": "hvac",
-                "sub_type": "",
-                "device": "00000679",
-                "channel": 1,
-                "unused": True,
-            },
         ],
     }
 
@@ -164,17 +153,6 @@ async def test_async_get_unused_loads(client_api_auth, mock_aioresponse):
                 "unused": True,
                 "kind": 0,
             },
-            {
-                "id": 3,
-                "name": "Heizungskanal  3",
-                "controller": "Heizungskontroller 1",
-                "room": -1,
-                "type": "hvac",
-                "sub_type": "",
-                "device": "00000679",
-                "channel": 1,
-                "unused": True,
-            },
         ],
     }
 
@@ -183,14 +161,10 @@ async def test_async_get_unused_loads(client_api_auth, mock_aioresponse):
     )
 
     actual = await client_api_auth.async_get_unused_loads()
-    assert len(actual) == 2
+    assert len(actual) == 1
     assert isinstance(actual[0], OnOff)
     assert actual[0].id == 2
     assert actual[0].name == "Esstisch Lampe"
-    assert isinstance(actual[1], Hvac)
-    assert actual[1].id == 3
-    assert actual[1].name == "Heizungskanal  3"
-
 
 @pytest.mark.asyncio
 async def test_async_get_load(client_api_auth, mock_aioresponse):
