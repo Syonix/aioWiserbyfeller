@@ -9,6 +9,7 @@ from aiowiserbyfeller import (
     DaliRgbw,
     OnOff,
     Motor,
+    Hvac,
     KIND_VENETIAN_BLINDS,
     KIND_LIGHT,
 )
@@ -53,6 +54,17 @@ async def test_async_get_loads(client_api_auth, mock_aioresponse):
                 "unused": False,
                 "kind": 0,
             },
+            {
+                "id": 4,
+                "name": "Heizungskanal  2",
+                "controller": "Heizungskontroller 1",
+                "room": 789,
+                "type": "hvac",
+                "sub_type": "",
+                "device": "00000679",
+                "channel": 1,
+                "unused": False,
+            },
         ],
     }
 
@@ -61,10 +73,11 @@ async def test_async_get_loads(client_api_auth, mock_aioresponse):
     )
 
     actual = await client_api_auth.async_get_loads()
-    assert len(actual) == 3
+    assert len(actual) == 4
     assert isinstance(actual[0], Dim)
     assert isinstance(actual[1], OnOff)
     assert isinstance(actual[2], Motor)
+    assert isinstance(actual[3], Hvac)
     assert actual[0].id == 1
     assert actual[0].name == "Deckenspots"
 
