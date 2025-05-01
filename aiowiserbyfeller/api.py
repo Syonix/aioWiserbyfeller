@@ -252,6 +252,27 @@ class WiserByFellerAPI:
         data = await self.auth.request("get", "loads")
         return [self.resolve_class(light_data) for light_data in data]
 
+    async def async_get_used_loads(self) -> List[Load]:
+        """Get all used loads with all their properties.
+
+        Note that the heating controller can have loads that are not connected and thus are marked as unused.
+        """
+        data = await self.auth.request("get", "loads")
+        return [
+            self.resolve_class(light_data)
+            for light_data in data
+            if not light_data["unused"]
+        ]
+
+    async def async_get_unused_loads(self) -> List[Load]:
+        """Get all unused loads with all their properties."""
+        data = await self.auth.request("get", "loads")
+        return [
+            self.resolve_class(light_data)
+            for light_data in data
+            if light_data["unused"]
+        ]
+
     async def async_get_load(self, load_id: int) -> Load:
         """Get one load with all its properties."""
         raw_data = await self.auth.request("get", f"loads/{load_id}")
