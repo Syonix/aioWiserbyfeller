@@ -34,6 +34,7 @@ jobs:
     - name: Check with black
       run: |
         black --check ./aiowiserbyfeller
+        black --check ./tests
     - name: Test with pytest
       run: |
         pytest --doctest-modules --junitxml=junit.xml --cov=aiowiserbyfeller --cov-report term-missing:skip-covered --cov-report=xml --cov-report=html
