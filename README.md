@@ -3,7 +3,8 @@
 
 Use your Wiser by Feller smart light switches, cover controls and scene buttons in your python project.
 
-**Beware:** This integration implements [Wiser by Feller](https://wiser.feller.ch) and not [Wiser by Schneider Electric](https://www.se.com/de/de/product-range/65635-wiser/), which is a competing Smart Home platform (and is not compatible). It es even more confusing, as Feller (the company) is a local subsidiary of Schneider Electric, catering only to the Swiss market.
+> [!WARNING]
+> This integration implements [Wiser by Feller](https://wiser.feller.ch) and not [Wiser by Schneider Electric](https://www.se.com/de/de/product-range/65635-wiser/), which is a competing Smart Home platform (and is not compatible). It es even more confusing, as Feller (the company) is a local subsidiary of Schneider Electric, catering only to the Swiss market.
 
 ## Functionality
 ### Devices
@@ -21,3 +22,14 @@ Each front features a configurable RGB LED edge for their buttons. Normally you 
 ## Known issues
 - As of right now, the µGateway API only supports Rest and Websockets. MQTT is implemented, [but only for the proprietary app](https://github.com/Feller-AG/wiser-tutorial/issues/5).
 - Note: device names are in German because manufacturer does not have an English online presence.
+
+## Links
+* Checkout the [Home Assistant integration]() using this library.
+
+## Contribute
+1. Create a [venv](https://docs.python.org/3/library/venv.html) for the project
+2. Install dependencies based on `requirements.txt`
+3. Write your code
+4. Write tests for your code.
+5. Run tests (run `pytest` in the project root)
+6. Open a Pull Request once you are happy :)
