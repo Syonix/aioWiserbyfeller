@@ -1,4 +1,5 @@
 """aiowiserbyfeller Api system tests"""
+
 import pytest
 from .conftest import prepare_test_authenticated, BASE_URL
 from aiowiserbyfeller import SystemFlag, SystemCondition

@@ -1,4 +1,5 @@
 """aiowiserbyfeller Api class loads tests"""
+
 import pytest
 from .conftest import prepare_test_authenticated, BASE_URL
 from aiowiserbyfeller import (
@@ -66,6 +67,90 @@ async def test_async_get_loads(client_api_auth, mock_aioresponse):
     assert isinstance(actual[2], Motor)
     assert actual[0].id == 1
     assert actual[0].name == "Deckenspots"
+
+
+@pytest.mark.asyncio
+async def test_async_get_used_loads(client_api_auth, mock_aioresponse):
+    """Test async_get_used_loads."""
+    response_json = {
+        "status": "success",
+        "data": [
+            {
+                "id": 1,
+                "name": "Deckenspots",
+                "room": 123,
+                "type": "dim",
+                "sub_type": "",
+                "device": "000004d7",
+                "channel": 0,
+                "unused": False,
+                "kind": 0,
+            },
+            {
+                "id": 2,
+                "name": "Esstisch Lampe",
+                "room": 456,
+                "type": "onoff",
+                "sub_type": "",
+                "device": "000004d7",
+                "channel": 1,
+                "unused": True,
+                "kind": 0,
+            },
+        ],
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/loads", "get", response_json
+    )
+
+    actual = await client_api_auth.async_get_used_loads()
+    assert len(actual) == 1
+    assert isinstance(actual[0], Dim)
+    assert actual[0].id == 1
+    assert actual[0].name == "Deckenspots"
+
+
+@pytest.mark.asyncio
+async def test_async_get_unused_loads(client_api_auth, mock_aioresponse):
+    """Test async_get_unused_loads."""
+    response_json = {
+        "status": "success",
+        "data": [
+            {
+                "id": 1,
+                "name": "Deckenspots",
+                "room": 123,
+                "type": "dim",
+                "sub_type": "",
+                "device": "000004d7",
+                "channel": 0,
+                "unused": False,
+                "kind": 0,
+            },
+            {
+                "id": 2,
+                "name": "Esstisch Lampe",
+                "room": 456,
+                "type": "onoff",
+                "sub_type": "",
+                "device": "000004d7",
+                "channel": 1,
+                "unused": True,
+                "kind": 0,
+            },
+        ],
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/loads", "get", response_json
+    )
+
+    actual = await client_api_auth.async_get_unused_loads()
+    assert len(actual) == 1
+    assert isinstance(actual[0], OnOff)
+    assert actual[0].id == 2
+    assert actual[0].name == "Esstisch Lampe"
 
 
 @pytest.mark.asyncio

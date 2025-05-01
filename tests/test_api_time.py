@@ -1,4 +1,5 @@
 """aiowiserbyfeller Api class time tests"""
+
 import pytest
 from .conftest import prepare_test_authenticated, BASE_URL
 from aiowiserbyfeller import NtpConfig
