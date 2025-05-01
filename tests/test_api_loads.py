@@ -73,10 +73,11 @@ async def test_async_get_loads(client_api_auth, mock_aioresponse):
     )
 
     actual = await client_api_auth.async_get_loads()
-    assert len(actual) == 3
+    assert len(actual) == 4
     assert isinstance(actual[0], Dim)
     assert isinstance(actual[1], OnOff)
     assert isinstance(actual[2], Motor)
+    assert isinstance(actual[3], Hvac)
     assert actual[0].id == 1
     assert actual[0].name == "Deckenspots"
 
@@ -134,6 +135,7 @@ async def test_async_get_used_loads(client_api_auth, mock_aioresponse):
     assert actual[0].name == "Deckenspots"
 
 
+
 @pytest.mark.asyncio
 async def test_async_get_unused_loads(client_api_auth, mock_aioresponse):
     """Test async_get_unused_loads."""
@@ -181,10 +183,13 @@ async def test_async_get_unused_loads(client_api_auth, mock_aioresponse):
     )
 
     actual = await client_api_auth.async_get_unused_loads()
-    assert len(actual) == 1
+    assert len(actual) == 2
     assert isinstance(actual[0], OnOff)
     assert actual[0].id == 2
     assert actual[0].name == "Esstisch Lampe"
+    assert isinstance(actual[1], Hvac)
+    assert actual[1].id == 3
+    assert actual[1].name == "Heizungskanal  3"
 
 
 @pytest.mark.asyncio
