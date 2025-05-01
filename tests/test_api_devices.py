@@ -110,7 +110,10 @@ async def test_async_get_devices_detail(client_api_auth, mock_aioresponse):
     assert actual[0].a == response_json["data"][0]["a"]
     assert actual[0].inputs == response_json["data"][0]["inputs"]
     assert actual[0].outputs == response_json["data"][0]["outputs"]
-    assert actual[0].combined_serial_number == f"{response_json["data"][0]["c"]["serial_nr"]} / {response_json["data"][0]["a"]["serial_nr"]}"
+
+    c_sn = response_json["data"][0]["c"]["serial_nr"]
+    a_sn = response_json["data"][0]["a"]["serial_nr"]
+    assert actual[0].combined_serial_number == f"{c_sn} / {a_sn}"
 
 
 @pytest.mark.asyncio
