@@ -42,14 +42,14 @@ async def client_api_auth():
 
 
 async def prepare_test(mock, url, method, response, request=None):
-    def mock_callback(url, **kwargs):
+    def mock_callback(callback_url, **kwargs):
         assert kwargs.get("json") == request
 
     mock.add(url, method, payload=response, callback=mock_callback)
 
 
 async def prepare_test_authenticated(mock, url, method, response, request=None):
-    def mock_callback(url, **kwargs):
+    def mock_callback(callback_url, **kwargs):
         assert kwargs.get("json") == request
         auth_header = kwargs.get("headers")["authorization"]
         assert auth_header == f"Bearer: {TEST_API_TOKEN}"

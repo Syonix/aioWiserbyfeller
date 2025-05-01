@@ -108,7 +108,9 @@ async def test_async_get_devices_detail(client_api_auth, mock_aioresponse):
     assert actual[0].id == "000006d7"
     assert actual[0].last_seen == 39
     assert actual[0].a == response_json["data"][0]["a"]
+    assert actual[0].inputs == response_json["data"][0]["inputs"]
     assert actual[0].outputs == response_json["data"][0]["outputs"]
+    assert actual[0].combined_serial_number == f"{response_json["data"][0]["c"]["serial_nr"]} / {response_json["data"][0]["a"]["serial_nr"]}"
 
 
 @pytest.mark.asyncio
@@ -602,4 +604,100 @@ async def test_async_calibrate_motor_devices(client_api_auth, mock_aioresponse):
     assert actual == response_json["data"]
 
 
-# TODO: Device.async_status()
+@pytest.mark.parametrize("foreground_param,foreground_expected", [(None, 100), (50, 50)])
+@pytest.mark.asyncio
+async def test_async_status(client_api_auth, mock_aioresponse, foreground_param: int | None, foreground_expected: int):
+    """Test async_status."""
+
+    raw_data = {
+        "id": "00000679",
+        "last_seen": 25,
+        "a": {
+            "fw_id": "0x0200",
+            "hw_id": "0x1202",
+            "fw_version": "0x00500a28",
+            "address": "0x00004103",
+            "comm_ref": "3406.A",
+        },
+        "c": {
+            "fw_id": "0x8402",
+            "hw_id": "0x8443",
+            "fw_version": "0x00500a28",
+            "cmd_matrix": "0x0002",
+            "comm_ref": "926-3406-4.S4.A.F",
+        },
+    }
+
+    config_response = {
+        "status": "success",
+        "data": {
+            "id": 4294976294,
+            "inputs": [
+                {
+                    "type": "toggle",
+                    "color": "#10f220",
+                    "background_bri": 10,
+                    "foreground_bri": 8
+                }
+            ],
+            "outputs": [
+                {
+                    "load": 301,
+                    "type": "onoff",
+                    "sub_type": "",
+                    "delayed_off": False,
+                    "delay_ms": 200
+                }
+            ],
+            "design": {
+                "color": 0,
+                "name": "edizio_due"
+            }
+        }
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/devices/00000679/config",
+        "get",
+        config_response,
+    )
+
+    update_request = {
+        "color": "#552030",
+        "background_bri": 100,
+        "foreground_bri": foreground_expected
+    }
+
+    update_response = {
+        "status": "success",
+        "data": {
+            "type": "toggle",
+            "color": "#552030",
+            "background_bri": 100,
+            "foreground_bri": foreground_expected
+        }
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/devices/config/4294976294/inputs/0",
+        "put",
+        update_response,
+        update_request
+    )
+
+    apply_response = config_response
+    apply_response["data"]["inputs"][0]["color"] = "#552030"
+    apply_response["data"]["inputs"][0]["background_bri"] = 100
+    apply_response["data"]["inputs"][0]["foreground_bri"] = foreground_expected
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/devices/config/4294976294",
+        "put",
+        apply_response
+    )
+
+    device = Device(raw_data, client_api_auth.auth)
+    await device.async_status(0, "#552030", 100, foreground_param)

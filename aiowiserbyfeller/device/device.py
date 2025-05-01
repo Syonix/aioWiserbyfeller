@@ -58,7 +58,7 @@ class Device:
 
     async def async_status(
         self, channel: int, color: str, background_bri: int, foreground_bri: int | None
-    ):
+    ) -> None:
         """Set status light of load."""
 
         if foreground_bri is None:
