@@ -1,5 +1,6 @@
 # Wiser by Feller API Async Python Library
 [![aioWiserbyfeller](https://github.com/Syonix/aioWiserbyfeller/actions/workflows/python-app.yml/badge.svg)](https://github.com/Syonix/aioWiserbyfeller/actions/workflows/python-app.yml)
+[![codecov](https://codecov.io/gh/Syonix/aioWiserbyfeller/graph/badge.svg?token=VU0MZKEMPM)](https://codecov.io/gh/Syonix/aioWiserbyfeller)
 
 Use your Wiser by Feller smart light switches, cover controls and scene buttons in your python project.
 
