@@ -124,7 +124,6 @@ async def test_async_get_used_loads(client_api_auth, mock_aioresponse):
     assert actual[0].name == "Deckenspots"
 
 
-
 @pytest.mark.asyncio
 async def test_async_get_unused_loads(client_api_auth, mock_aioresponse):
     """Test async_get_unused_loads."""
@@ -165,6 +164,7 @@ async def test_async_get_unused_loads(client_api_auth, mock_aioresponse):
     assert isinstance(actual[0], OnOff)
     assert actual[0].id == 2
     assert actual[0].name == "Esstisch Lampe"
+
 
 @pytest.mark.asyncio
 async def test_async_get_load(client_api_auth, mock_aioresponse):

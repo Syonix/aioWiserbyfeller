@@ -76,16 +76,4 @@ class Hvac(Load):
 
     def flag(self, identifier: str) -> bool | None:
         """Get the value of a specific flag."""
-
-        validate_str(
-            identifier,
-            [
-                "remote_controlled",
-                "sensor_error",
-                "valve_error",
-                "noise",
-                "output_on",
-                "cooling",
-            ],
-        )
         return self.flags[identifier] if identifier in self.flags else None
