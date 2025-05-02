@@ -6,7 +6,7 @@
 
 A modern async Python library to control and integrate **Wiser by Feller** smart light switches, cover controls, and scene buttons, hvac controls and weather stations into your Python applications.
 
-> [!WARNING]
+> [!IMPORTANT]
 > This integration implements [Wiser by Feller](https://wiser.feller.ch) and not [Wiser by Schneider Electric](https://www.se.com/de/de/product-range/65635-wiser/), which is a competing Smart Home platform (and is not compatible). It is even more confusing, as Feller (the company) is a local subsidiary of Schneider Electric, catering only to the Swiss market.
 
 ## 📦 Installation
