@@ -21,7 +21,7 @@ class WebsocketWatchdog:
         logger: logging.Logger,
         action: Callable[..., Awaitable],
         *,
-        timeout_seconds: int = DEFAULT_WATCHDOG_TIMEOUT,
+        timeout_seconds: float = DEFAULT_WATCHDOG_TIMEOUT,
     ):
         """Initialize.
 
@@ -90,7 +90,7 @@ class Websocket:
 
     def async_subscribe(self, callback):
         """Add async callback to be called when new data arrives."""
-        self._subscribers.append(callback)
+        self._async_subscribers.append(callback)
 
     def init(self):
         """Connect to µGateway"""
