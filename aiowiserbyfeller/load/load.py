@@ -11,7 +11,7 @@ class Load:
     µGateway API."""
 
     def __init__(self, raw_data: dict, auth: Auth, **kwargs):
-        """"""
+        """Initialize load instance."""
         self.raw_data = raw_data
         self.raw_state = kwargs.get("raw_state", None)
         self.auth = auth
