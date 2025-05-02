@@ -341,9 +341,6 @@ class WiserByFellerAPI:
         the new user. The secret token of the existing user must be sent
         in the Authorization header!"""
 
-        # TODO: Documentation is unclear whether these are the only values
-        validate_str(user, ["installer", "admin", "enduser"])
-
         login = kwargs.get("login", None)
         company = kwargs.get("company", None)
         name = kwargs.get("name", None)
