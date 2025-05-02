@@ -12,6 +12,10 @@ from aiowiserbyfeller import (
     Hvac,
     KIND_VENETIAN_BLINDS,
     KIND_LIGHT,
+    STATE_COOLING,
+    STATE_HEATING,
+    STATE_IDLE,
+    STATE_OFF,
 )
 
 
@@ -737,9 +741,29 @@ async def test_hvac(client_api_auth, mock_aioresponse):
         "ambient_temperature": 25.1,
         "unit": "C",
     }
-    load = Hvac({"id": 2, "controller": "Heating controller 1"}, client_api_auth.auth, raw_state=state)
 
-    assert load.controller == 'Heating controller 1'
+    # Empty data
+    load = Hvac({}, client_api_auth.auth)
+    load.raw_data = None
+    assert load.controller is None
+    assert load.heating_cooling_level is None
+    assert load.target_temperature is None
+    assert load.boost_temperature is None
+    assert load.ambient_temperature is None
+    assert load.unit is None
+    assert load.flags == {}
+    assert load.state is None
+    assert load.state_heating is None
+    assert load.state_cooling is None
+
+    # Real data
+    load = Hvac(
+        {"id": 2, "controller": "Heating controller 1"},
+        client_api_auth.auth,
+        raw_state=state,
+    )
+
+    assert load.controller == "Heating controller 1"
     assert load.heating_cooling_level == 0
     assert load.target_temperature == 21.0
     assert load.boost_temperature == 0
@@ -754,3 +778,24 @@ async def test_hvac(client_api_auth, mock_aioresponse):
         "cooling": False,
     }
     assert load.flag("output_on") == True
+    assert load.flag("this_flag_does_not_exist") is None
+
+    assert load.state_heating == True
+    assert load.state_cooling == False
+    assert load.state == STATE_HEATING
+
+    load.raw_state["flags"]["cooling"] = True
+    assert load.state_heating == False
+    assert load.state_cooling == True
+    assert load.state == STATE_COOLING
+
+    load.raw_state["flags"]["output_on"] = False
+    load.raw_state["flags"]["cooling"] = False
+    assert load.state_heating == False
+    assert load.state_cooling == False
+    assert load.state == STATE_IDLE
+
+    load.raw_state["boost_temperature"] = -99
+    assert load.state_heating == False
+    assert load.state_cooling == False
+    assert load.state == STATE_OFF

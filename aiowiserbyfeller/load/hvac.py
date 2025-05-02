@@ -4,18 +4,45 @@ from __future__ import annotations
 
 from .load import Load
 from typing import Dict
-from ..util import validate_str
+from ..const import STATE_COOLING, STATE_HEATING, STATE_IDLE, STATE_OFF
 
 
 class Hvac(Load):
     """Representation of a heating channel (valve) in the Feller Wiser µGateway API."""
 
     @property
-    def state(self) -> int | None:
-        """Current state of the heating channel (valve)."""
+    def state(self) -> str | None:
+        """Current state of the heating channel (valve).
+
+        Returns one of STATE_HEATING, STATE_COOLING, STATE_IDLE, STATE_OFF.
+        """
         if self.raw_state is None:
             return None
-        return self.flag("state")
+
+        if self.state_cooling:
+            return STATE_COOLING
+
+        if self.state_heating:
+            return STATE_HEATING
+
+        if self.boost_temperature == -99:
+            return STATE_OFF
+
+        return STATE_IDLE
+
+    @property
+    def state_heating(self) -> bool | None:
+        """Current heating state of the heating channel (valve)."""
+        if self.raw_state is None:
+            return None
+        return self.flag("output_on") == True and self.flag("cooling") == False
+
+    @property
+    def state_cooling(self) -> bool | None:
+        """Current cooling state of the heating channel (valve)."""
+        if self.raw_state is None:
+            return None
+        return self.flag("output_on") == True and self.flag("cooling") == True
 
     @property
     def controller(self) -> str | None:
