@@ -62,16 +62,11 @@ class Auth:
 
     async def request(self, method: str, path: str, **kwargs):
         """Send a request to the API."""
-        headers = kwargs.get("headers")
+        headers = kwargs.pop("headers", {})
         require_token = kwargs.pop("require_token", True)
 
         if require_token and self.access_token is None:
             raise TokenMissing
-
-        if headers is None:
-            headers = {}
-        else:
-            headers = dict(headers)
 
         if self.access_token is not None:
             headers["authorization"] = "Bearer: " + self.access_token
