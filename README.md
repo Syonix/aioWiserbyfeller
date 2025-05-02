@@ -4,7 +4,7 @@
 ![PyPI - Version](https://img.shields.io/pypi/v/aioWiserbyfeller)
 ![GitHub License](https://img.shields.io/github/license/Syonix/aioWiserByFeller)
 
-A modern async Python library to control and integrate **Wiser by Feller** smart light switches, cover controls, and scene buttons into your Python applications.
+A modern async Python library to control and integrate **Wiser by Feller** smart light switches, cover controls, and scene buttons, hvac controls and weather stations into your Python applications.
 
 > [!WARNING]
 > This integration implements [Wiser by Feller](https://wiser.feller.ch) and not [Wiser by Schneider Electric](https://www.se.com/de/de/product-range/65635-wiser/), which is a competing Smart Home platform (and is not compatible). It is even more confusing, as Feller (the company) is a local subsidiary of Schneider Electric, catering only to the Swiss market.
@@ -31,7 +31,7 @@ asyncio.run(main())
 ```
 
 ## 🧰 Basic Functionality
-Wiser by Feller devices always consist of two parts: The control front and the base module. There are switching base modules (for light switches and cover controllers) and non-switching base modules (for scene buttons and secondary controls).
+Wiser by Feller devices (except hvac controllers and weather stations) consist of two parts: The control front and the base module. There are switching base modules (for light switches and cover controllers) and non-switching base modules (for scene buttons and secondary controls).
 
 Because the functionality changes when the same base module is used with a different front, the combination of the two is considered an unique device.
 
@@ -42,20 +42,22 @@ Learn more about Wiser devices on the [official website](https://wiser.feller.ch
 ## 🚀 Features
 Here's what this library offers:
 
-### 🤖 Simple API abstraction
-The library abstracts abstraction, that allows for easy authentication, interaction with the endpoints and data validation.
-
 ### ✨ Easy to use framework
-The framework implements model abstraction classes allowing for strongly typed implementations. Helper methods and properties abstract as much complexity of the API as possible, while retaining full flexibility.
+The library abstracts API functionality and allows for easy authentication, interaction with devices and data validation. Work with device classes, allowing for strongly typed implementations. Helper methods and properties abstract as much complexity of the API as possible, while retaining full flexibility.
 
 ### 🚨 Status LEDs
-Each front features a configurable RGB LED edge for their buttons. Normally you would configure those in the [Wiser Home app](https://www.feller.ch/de/feller-apps). They can be configured in color and brightness. For buttons controlling a load, there can be two different brightnesses: One for if the load is on and one for if it is off. For others (e.g. scene buttons) there can only be one brightness, as there is no logical "on" state.
+Each front features a configurable RGB LED edge for their buttons, that you would normally configure in the [Wiser Home app](https://www.feller.ch/de/feller-apps). They can be configured in color and brightness. For buttons controlling a load, there can be two different brightnesses: One for if the load is on and one for if it is off. For others (e.g. scene buttons) there can only be one brightness, as there is no logical "on" state.
 
-### 🧪 **Robust test suite**
-Extensive unit test coverage ensures high stability and confidence even if new functionality is added.
+The library offers an intuitive way to update status LEDs without the need for complex back and forth with the API, allowing you to use them to represent other information than just the device state (e.g. completion of the washing machine program or motion in another room).
 
 > [!IMPORTANT]
 > Due to the implementation on the devices, the status light is not suited for fast updating, as multiple slow API calls are necessary.
+
+### 🔌 WebSockets
+The µGateway offers a Websocket connection, allowing for instant updates about state changes. This library offers a convenient way to establish a connection and tap into the update notifications.
+
+### 🧪 **Robust test suite**
+Extensive unit test coverage ensures high stability and confidence even if new functionality is added.
 
 ## ⚠️ Known Limitations
 - The µGateway supports **REST and WebSockets only**. MQTT exists but is [not publicly accessible](https://github.com/Feller-AG/wiser-tutorial/issues/5).
