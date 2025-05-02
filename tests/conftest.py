@@ -3,11 +3,22 @@
 import pytest
 import pytest_asyncio
 import aiohttp
+import logging
 from aioresponses import aioresponses
 from aiowiserbyfeller import Auth, WiserByFellerAPI
 
 BASE_URL = "http://192.168.0.1/api"
 TEST_API_TOKEN = "TEST-API-TOKEN"
+
+
+@pytest.fixture
+def test_logger():
+    """Create a test logger"""
+    logger = logging.getLogger("test_logger")
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(logging.NullHandler())
+
+    return logger
 
 
 @pytest.fixture
