@@ -44,7 +44,10 @@ class WebsocketWatchdog:
 
     async def on_expire(self) -> None:
         """Log and act when the watchdog expires."""
-        self._logger.debug("Watchdog expired - calling %s", self._action.__name__)
+        self._logger.debug(
+            "Watchdog expired - calling %s",
+            getattr(self._action, "__name__", repr(self._action)),
+        )
         await self._action()
 
     async def trigger(self) -> None:
