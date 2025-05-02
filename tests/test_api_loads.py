@@ -717,3 +717,39 @@ async def test_dali_rgbw_async_control_bri(client_api_auth, mock_aioresponse):
     await load.async_control_bri(10000, 255, 0, 0, 0)
     assert load.state["red"] == 255
     assert load.state["white"] == 0
+
+
+@pytest.mark.asyncio
+async def test_hvac(client_api_auth, mock_aioresponse):
+    """Test heating channel properties."""
+    state = {
+        "heating_cooling_level": 0,
+        "flags": {
+            "remote_controlled": 0,
+            "sensor_error": 0,
+            "valve_error": 0,
+            "noise": 0,
+            "output_on": 1,
+            "cooling": 0,
+        },
+        "target_temperature": 21,
+        "boost_temperature": 0,
+        "ambient_temperature": 25.1,
+        "unit": "C",
+    }
+    load = Hvac({"id": 2}, client_api_auth.auth, raw_state=state)
+
+    assert load.heating_cooling_level == 0
+    assert load.target_temperature == 21.0
+    assert load.boost_temperature == 0
+    assert load.ambient_temperature == 25.1
+    assert load.unit == "C"
+    assert load.flags == {
+        "remote_controlled": False,
+        "sensor_error": False,
+        "valve_error": False,
+        "noise": False,
+        "output_on": True,
+        "cooling": False,
+    }
+    assert load.flag("output_on") == True
