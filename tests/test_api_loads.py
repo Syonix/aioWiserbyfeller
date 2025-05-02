@@ -737,8 +737,9 @@ async def test_hvac(client_api_auth, mock_aioresponse):
         "ambient_temperature": 25.1,
         "unit": "C",
     }
-    load = Hvac({"id": 2}, client_api_auth.auth, raw_state=state)
+    load = Hvac({"id": 2, "controller": "Heating controller 1"}, client_api_auth.auth, raw_state=state)
 
+    assert load.controller == 'Heating controller 1'
     assert load.heating_cooling_level == 0
     assert load.target_temperature == 21.0
     assert load.boost_temperature == 0

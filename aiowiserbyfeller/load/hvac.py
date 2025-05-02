@@ -20,9 +20,9 @@ class Hvac(Load):
     @property
     def controller(self) -> str | None:
         """Current name of hvac controller."""
-        if self.raw_state is None:
+        if self.raw_data is None:
             return None
-        return self.raw_state["controller"]
+        return self.raw_data["controller"]
 
     @property
     def heating_cooling_level(self) -> int | None:
