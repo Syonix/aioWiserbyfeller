@@ -21,7 +21,7 @@ class WebsocketWatchdog:
         logger: logging.Logger,
         action: Callable[..., Awaitable],
         *,
-        timeout_seconds: int = DEFAULT_WATCHDOG_TIMEOUT,
+        timeout_seconds: float = DEFAULT_WATCHDOG_TIMEOUT,
     ):
         """Initialize.
 
@@ -44,7 +44,10 @@ class WebsocketWatchdog:
 
     async def on_expire(self) -> None:
         """Log and act when the watchdog expires."""
-        self._logger.debug("Watchdog expired - calling %s", self._action.__name__)
+        self._logger.debug(
+            "Watchdog expired - calling %s",
+            getattr(self._action, "__name__", repr(self._action)),
+        )
         await self._action()
 
     async def trigger(self) -> None:
@@ -90,7 +93,7 @@ class Websocket:
 
     def async_subscribe(self, callback):
         """Add async callback to be called when new data arrives."""
-        self._subscribers.append(callback)
+        self._async_subscribers.append(callback)
 
     def init(self):
         """Connect to µGateway"""
@@ -100,32 +103,38 @@ class Websocket:
         """Initiate connection and start message processing loop."""
         self._idle = False
         await self._watchdog.trigger()
-        async for ws in websockets.client.connect(
-            f"ws://{self._host}/api",
-            extra_headers={"Authorization": f"Bearer {self._token}"},
-        ):
+
+        while True:
             try:
-                async for message in ws:
-                    await self.on_message(message)
-            except websockets.ConnectionClosed:
-                self._errcount += 1
-                if self._errcount > 10:
-                    self._logger.error(
-                        "µGateway websocket connection closed "
-                        "10 times. Exiting connection..."
-                    )
-                    break
+                async for ws in websockets.client.connect(
+                    f"ws://{self._host}/api",
+                    extra_headers={"Authorization": f"Bearer {self._token}"},
+                ):
+                    try:
+                        async for message in ws:
+                            await self.on_message(message)
+                    except websockets.ConnectionClosed:
+                        self._errcount += 1
+                        if self._errcount > 10:
+                            self._logger.error(
+                                "µGateway websocket connection closed "
+                                "10 times. Exiting connection..."
+                            )
+                            break
 
-                self._logger.warning(
-                    "µGateway websocket connection closed. Reconnecting..."
-                )
-                continue
-            except websockets.WebSocketException as e:
-                self.on_error(e)
-            except ValueError as e:
-                self.on_error(e)
+                        self._logger.warning(
+                            "µGateway websocket connection closed. Reconnecting..."
+                        )
+                        continue
+                    except (websockets.WebSocketException, ValueError) as e:
+                        self.on_error(e)
 
-        self._idle = True
+                self._idle = True
+                break
+
+            except (websockets.WebSocketException, ValueError) as e:
+                self.on_error(e)
+                break
 
     async def on_message(self, message):
         """Process new message."""
