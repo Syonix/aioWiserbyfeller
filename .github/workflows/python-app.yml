@@ -31,10 +31,19 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest pytest-aiohttp pytest-asyncio pytest-cov pylint black
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Check with black
-      run: |
-        black --check ./aiowiserbyfeller
-        black --check ./tests
+    - name: Lint with ruff
+      uses: astral-sh/ruff-action@v3
+      with:
+        src: >-
+          aiowiserbyfeller
+          tests
+    - name: Lint formatting with ruff
+      uses: astral-sh/ruff-action@v3
+      with:
+        src: >-
+          aiowiserbyfeller
+          tests
+        args: "format --check --diff"
     - name: Test with pytest
       run: |
         pytest --doctest-modules --junitxml=junit.xml --cov=aiowiserbyfeller --cov-report term-missing:skip-covered --cov-report=xml --cov-report=html
