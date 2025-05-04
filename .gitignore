@@ -1,4 +1,6 @@
 .coverage
+__pycache__
+aiowiserbyfeller/aiowiserbyfeller.egg-info
+build
 coverage.xml
 junit.xml
-__pycache__

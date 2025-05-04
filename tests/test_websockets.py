@@ -63,7 +63,7 @@ def test_on_error_cancels_watchdog():
     ws._watchdog.cancel.assert_called_once()
 
 
-@patch("aiowiserbyfeller.websocket.websockets.client.connect")
+@patch("aiowiserbyfeller.websocket.websocket.websockets.client.connect")
 @pytest.mark.asyncio
 async def test_connect_receives_message(mock_connect):
     # Simulate a single websocket yielding a single message
@@ -101,7 +101,7 @@ async def test_watchdog_trigger_cancels_previous(test_logger):
     assert first_timer is not second_timer
 
 
-@patch("aiowiserbyfeller.websocket.websockets.client.connect")
+@patch("aiowiserbyfeller.websocket.websocket.websockets.client.connect")
 @pytest.mark.asyncio
 async def test_connect_handles_connection_closed(mock_connect, test_logger):
     from websockets.exceptions import ConnectionClosedOK
@@ -118,7 +118,7 @@ async def test_connect_handles_connection_closed(mock_connect, test_logger):
         assert mock_logger.warning.called
 
 
-@patch("aiowiserbyfeller.websocket.websockets.client.connect")
+@patch("aiowiserbyfeller.websocket.websocket.websockets.client.connect")
 @pytest.mark.asyncio
 async def test_connect_handles_websocket_exception(mock_connect, test_logger):
     from websockets.exceptions import WebSocketException
@@ -145,14 +145,14 @@ async def test_on_watchdog_timeout_logs(test_logger):
         assert "Watchdog timeout" in mock_warn.call_args[0][0]
 
 
-@patch("aiowiserbyfeller.websocket.asyncio.create_task")
+@patch("aiowiserbyfeller.websocket.websocket.asyncio.create_task")
 def test_websocket_init_starts_connection(mock_create_task, test_logger):
     ws = Websocket("host", "token", logger=test_logger)
     ws.init()
     mock_create_task.assert_called_once()
 
 
-@patch("aiowiserbyfeller.websocket.websockets.client.connect")
+@patch("aiowiserbyfeller.websocket.websocket.websockets.client.connect")
 @pytest.mark.asyncio
 async def test_websocket_stops_after_10_failures(mock_connect, test_logger):
     # Create a mock websocket that simulates 11 reconnects, each with a message
@@ -178,7 +178,7 @@ async def test_websocket_stops_after_10_failures(mock_connect, test_logger):
         assert ws._errcount == 11
 
 
-@patch("aiowiserbyfeller.websocket.websockets.client.connect")
+@patch("aiowiserbyfeller.websocket.websocket.websockets.client.connect")
 @pytest.mark.asyncio
 async def test_websocket_exception_triggers_on_error(mock_connect, test_logger):
     from websockets.exceptions import WebSocketException
