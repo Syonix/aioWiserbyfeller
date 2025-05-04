@@ -56,7 +56,7 @@ async def test_request_token_missing(client_auth, mock_aioresponse):
     mock_aioresponse.get(f"{BASE_URL}/time/now", payload=response_json)
 
     with pytest.raises(TokenMissing):
-        await client_auth.request("get", f"time/now", require_token=False)
+        await client_auth.request("get", "time/now", require_token=False)
 
     with pytest.raises(TokenMissing):
         await client_auth.request("get", "some/path", require_token=True)
@@ -72,7 +72,7 @@ async def test_request_unauthorized_user(client_auth, mock_aioresponse):
     mock_aioresponse.get(f"{BASE_URL}/time/now", payload=response_json)
 
     with pytest.raises(UnauthorizedUser):
-        await client_auth.request("get", f"time/now", require_token=False)
+        await client_auth.request("get", "time/now", require_token=False)
 
 
 @pytest.mark.asyncio
@@ -82,7 +82,7 @@ async def test_request_unsuccessful(client_auth, mock_aioresponse):
     mock_aioresponse.get(f"{BASE_URL}/time/now", payload=response_json)
 
     with pytest.raises(UnsuccessfulRequest, match="Specific error message"):
-        await client_auth.request("get", f"time/now", require_token=False)
+        await client_auth.request("get", "time/now", require_token=False)
 
 
 @pytest.mark.asyncio

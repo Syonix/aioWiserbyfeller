@@ -12,7 +12,7 @@ setup(
     author_email="<michael.burri@syonix.ch>",
     description="Wiser by Feller µGateway API",
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     packages=find_packages(),
     license="Apache-2.0",
     install_requires=["aiohttp", "websockets"],

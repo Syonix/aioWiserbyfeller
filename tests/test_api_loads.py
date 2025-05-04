@@ -777,25 +777,25 @@ async def test_hvac(client_api_auth, mock_aioresponse):
         "output_on": True,
         "cooling": False,
     }
-    assert load.flag("output_on") == True
+    assert load.flag("output_on") is True
     assert load.flag("this_flag_does_not_exist") is None
 
-    assert load.state_heating == True
-    assert load.state_cooling == False
+    assert load.state_heating is True
+    assert load.state_cooling is False
     assert load.state == STATE_HEATING
 
     load.raw_state["flags"]["cooling"] = True
-    assert load.state_heating == False
-    assert load.state_cooling == True
+    assert load.state_heating is False
+    assert load.state_cooling is True
     assert load.state == STATE_COOLING
 
     load.raw_state["flags"]["output_on"] = False
     load.raw_state["flags"]["cooling"] = False
-    assert load.state_heating == False
-    assert load.state_cooling == False
+    assert load.state_heating is False
+    assert load.state_cooling is False
     assert load.state == STATE_IDLE
 
     load.raw_state["boost_temperature"] = -99
-    assert load.state_heating == False
-    assert load.state_cooling == False
+    assert load.state_heating is False
+    assert load.state_cooling is False
     assert load.state == STATE_OFF

@@ -617,7 +617,7 @@ class WiserByFellerAPI:
             validate_str(owner, ["all", "user"])
             json["owner"] = owner
 
-        return await self.auth.request("post", f"smartbuttons/program", json=json)
+        return await self.auth.request("post", "smartbuttons/program", json=json)
 
     async def async_notify_smart_buttons(self) -> int:
         """Start blinking all SmartButtons and wait until one is
@@ -626,7 +626,7 @@ class WiserByFellerAPI:
         with a response. If no SmartButton is pressed, an error response
         is sent."""
 
-        result = await self.auth.request("get", f"smartbuttons/notify")
+        result = await self.auth.request("get", "smartbuttons/notify")
 
         return result["button"]
 
@@ -678,9 +678,7 @@ class WiserByFellerAPI:
         loads from all jobs and remove their associated bindings. A
         successful response contains the list of ids of the deleted
         loads."""
-        return await self.auth.request(
-            "delete", f"jobs/loads", json={"loads": load_ids}
-        )
+        return await self.auth.request("delete", "jobs/loads", json={"loads": load_ids})
 
     async def async_job_trigger_states(self, job_id: int):
         """Send all target states to their corresponding Loads. The flag

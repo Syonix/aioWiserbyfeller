@@ -35,14 +35,14 @@ class Hvac(Load):
         """Current heating state of the heating channel (valve)."""
         if self.raw_state is None:
             return None
-        return self.flag("output_on") == True and self.flag("cooling") == False
+        return self.flag("output_on") is True and self.flag("cooling") is False
 
     @property
     def state_cooling(self) -> bool | None:
         """Current cooling state of the heating channel (valve)."""
         if self.raw_state is None:
             return None
-        return self.flag("output_on") == True and self.flag("cooling") == True
+        return self.flag("output_on") is True and self.flag("cooling") is True
 
     @property
     def controller(self) -> str | None:
