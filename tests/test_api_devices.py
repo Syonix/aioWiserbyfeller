@@ -463,8 +463,8 @@ async def test_async_apply_device_config(client_api_auth, mock_aioresponse):
 
 
 @pytest.mark.asyncio
-async def test_async_apply_device_config(client_api_auth, mock_aioresponse):
-    """Test async_apply_device_config."""
+async def test_async_discard_device_config(client_api_auth, mock_aioresponse):
+    """Test async_discard_device_config."""
     response_json = {
         "status": "success",
         "data": {
