@@ -9,7 +9,7 @@ stages:
 analyze:pylint:
   stage: analyze
   script:
-    - pip install -r requirements.txt
+    - pip install [.test]
     - pylint ./aiowiserbyfeller
   interruptible: true
   allow_failure: true
@@ -17,7 +17,7 @@ analyze:pylint:
 analyze:black:
   stage: analyze
   script:
-    - pip install -r requirements.txt
+    - pip install [.test]
     - black ./aiowiserbyfeller --check
   interruptible: true
 
@@ -26,7 +26,7 @@ analyze:black:
 test:pytest:
   stage: test
   script:
-    - pip install -r requirements.txt
+    - pip install [.test]
     - pytest --cov=aiowiserbyfeller --cov-report term --cov-report xml:coverage.xml --junitxml=junit.xml tests
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:

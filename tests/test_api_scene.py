@@ -2,7 +2,7 @@
 
 import pytest
 from .conftest import prepare_test_authenticated, BASE_URL
-from aiowiserbyfeller import Scene, InvalidArgument
+from aiowiserbyfeller import Scene
 
 
 @pytest.mark.asyncio
@@ -144,72 +144,6 @@ async def test_scene_async_refresh(client_api_auth, mock_aioresponse):
     response_json = {
         "status": "success",
         "data": {
-            "job": 14,
-            "type": 0,
-            "name": "Abwesend Neu",
-            "kind": 1,
-            "id": 15,
-            "sceneButtons": [
-                {"id": 13, "title": "Szenentaste 1", "description": "ID • 13"}
-            ],
-        },
-    }
-
-    raw_data = {
-        "job": 14,
-        "type": 0,
-        "name": "Abwesend",
-        "kind": 1,
-        "id": 15,
-        "sceneButtons": [
-            {"id": 13, "title": "Szenentaste 1", "description": "ID • 13"}
-        ],
-    }
-
-    await prepare_test_authenticated(
-        mock_aioresponse, f"{BASE_URL}/scenes/15", "get", response_json
-    )
-    scene = Scene(raw_data, client_api_auth.auth)
-
-    await scene.async_refresh()
-
-    assert scene.id == 15
-    assert scene.name == "Abwesend Neu"
-
-
-@pytest.mark.asyncio
-async def test_async_delete_scene(client_api_auth, mock_aioresponse):
-    """Test async_delete_scene."""
-    response_json = {
-        "status": "success",
-        "data": {
-            "job": 14,
-            "type": 0,
-            "name": "Abwesend",
-            "kind": 1,
-            "id": 15,
-            "sceneButtons": [
-                {"id": 13, "title": "Szenentaste 1", "description": "ID • 13"}
-            ],
-        },
-    }
-
-    await prepare_test_authenticated(
-        mock_aioresponse, f"{BASE_URL}/scenes/15", "delete", response_json
-    )
-
-    actual = await client_api_auth.async_delete_scene(15)
-
-    assert isinstance(actual, Scene)
-    assert actual.id == 15
-
-
-@pytest.mark.asyncio
-async def test_scene_async_refresh(client_api_auth, mock_aioresponse):
-    """Test Scene.async_refresh."""
-    response_json = {
-        "status": "success",
-        "data": {
             "job": 12,
             "type": 0,
             "name": "Abwesend Neu",
@@ -246,3 +180,30 @@ async def test_scene_async_refresh(client_api_auth, mock_aioresponse):
     assert scene.name == "Abwesend Neu"
     assert scene.kind == 1
     assert scene.scene_buttons[0]["title"] == "Szenentaste 2"
+
+
+@pytest.mark.asyncio
+async def test_async_delete_scene(client_api_auth, mock_aioresponse):
+    """Test async_delete_scene."""
+    response_json = {
+        "status": "success",
+        "data": {
+            "job": 14,
+            "type": 0,
+            "name": "Abwesend",
+            "kind": 1,
+            "id": 15,
+            "sceneButtons": [
+                {"id": 13, "title": "Szenentaste 1", "description": "ID • 13"}
+            ],
+        },
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/scenes/15", "delete", response_json
+    )
+
+    actual = await client_api_auth.async_delete_scene(15)
+
+    assert isinstance(actual, Scene)
+    assert actual.id == 15

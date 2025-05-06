@@ -263,8 +263,8 @@ async def test_job_async_trigger(client_api_auth, mock_aioresponse):
 
 
 @pytest.mark.asyncio
-async def test_job_async_trigger(client_api_auth, mock_aioresponse):
-    """Test job::async_trigger_*."""
+async def test_job_async_trigger_button(client_api_auth, mock_aioresponse):
+    """Test job::async_trigger_button."""
     response_json = {
         "status": "success",
         "data": {

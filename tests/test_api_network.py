@@ -119,7 +119,7 @@ async def test_async_get_net_wlans(client_api_auth, mock_aioresponse):
 
 
 @pytest.mark.asyncio
-async def test_async_get_net_wlans(client_api_auth, mock_aioresponse):
+async def test_async_get_create_wlan_config(client_api_auth, mock_aioresponse):
     """Test async_get_create_wlan_config."""
     response_json = {
         "status": "success",
@@ -146,7 +146,7 @@ async def test_async_get_net_wlans(client_api_auth, mock_aioresponse):
 
 
 @pytest.mark.asyncio
-async def test_async_get_net_wlans(client_api_auth, mock_aioresponse):
+async def test_async_delete_wlan_configs(client_api_auth, mock_aioresponse):
     """Test async_delete_wlan_configs."""
     response_json = {"status": "success", "data": None}
 

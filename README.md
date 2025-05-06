@@ -71,7 +71,7 @@ Extensive unit test coverage ensures high stability and confidence even if new f
 We welcome contributions! To get started:
 
 1. Create a virtual environment: `python -m venv .venv`
-2. Install dependencies: `pip install -r requirements.txt`
+2. Install dependencies: `pip install ".[test]"`
 3. Make your changes.
 4. Write or update unit tests.
 5. Run tests with `pytest`

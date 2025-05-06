@@ -1,3 +1,5 @@
-"""aiowiserbyfeller websocket module."""
+"""Wiser by Feller websocket module."""
 
-from .websocket import *
+from .websocket import Websocket, WebsocketWatchdog
+
+__all__ = ["Websocket", "WebsocketWatchdog"]
