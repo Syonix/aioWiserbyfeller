@@ -1,11 +1,13 @@
 """aiowiserbyfeller Auth class tests"""
 
 import pytest
+
 from aiowiserbyfeller.errors import (
     AuthorizationFailed,
     TokenMissing,
     UnauthorizedUser,
     UnsuccessfulRequest,
+    InvalidJson,
 )
 from .conftest import prepare_test, BASE_URL
 
@@ -44,6 +46,43 @@ async def test_claim_error(client_auth, mock_aioresponse):
 
     with pytest.raises(AuthorizationFailed, match="Precise error message here"):
         await client_auth.claim("installer")
+
+
+@pytest.mark.asyncio
+async def test_claim_invalid_json(client_auth, mock_aioresponse):
+    """Test if handling of invalid JSON works correctly for claiming."""
+    response_html = (
+        '<!doctype html><html lang="en"><body><h1>Hello, world!</h1></body></html>'
+    )
+    mock_aioresponse.post(
+        f"{BASE_URL}/account/claim", body=response_html, content_type="text/html"
+    )
+
+    with pytest.raises(InvalidJson):
+        await client_auth.claim("installer")
+
+    mock_aioresponse.post(f"{BASE_URL}/account/claim", body=response_html)
+
+    with pytest.raises(InvalidJson):
+        await client_auth.claim("installer")
+
+
+@pytest.mark.asyncio
+async def test_request_invalid_json(client_auth, mock_aioresponse):
+    """Test if handling of invalid JSON works correctly for requests."""
+    response_html = (
+        '<!doctype html><html lang="en"><body><h1>Hello, world!</h1></body></html>'
+    )
+    mock_aioresponse.get(
+        f"{BASE_URL}/info", body=response_html, content_type="text/html"
+    )
+
+    with pytest.raises(InvalidJson):
+        await client_auth.request("get", "info", require_token=False)
+    mock_aioresponse.get(f"{BASE_URL}/info", body=response_html)
+
+    with pytest.raises(InvalidJson):
+        await client_auth.request("get", "info", require_token=False)
 
 
 @pytest.mark.asyncio
