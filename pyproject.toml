@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aiowiserbyfeller"
-version = "1.0.0b11"
+version = "1.0.0b12"
 description = "Wiser by Feller µGateway API"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -43,8 +43,15 @@ test = [
     "ruff",
 ]
 
+[tool.setuptools]
+include-package-data = true
+platforms = ["any"]
+
+[tool.setuptools.package-data]
+aiowiserbyfeller = ["py.typed"]
+
 [tool.setuptools.packages.find]
-where = ["./aiowiserbyfeller"]
+include = ["aiowiserbyfeller*"]
 
 [tool.ruff.lint.flake8-pytest-style]
 fixture-parentheses = false
