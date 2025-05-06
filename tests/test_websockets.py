@@ -2,7 +2,6 @@
 
 import asyncio
 import pytest
-import websockets
 from unittest.mock import AsyncMock, Mock, patch
 
 from aiowiserbyfeller import Websocket, WebsocketWatchdog
@@ -104,10 +103,11 @@ async def test_watchdog_trigger_cancels_previous(test_logger):
 @patch("aiowiserbyfeller.websocket.websocket.websockets.client.connect")
 @pytest.mark.asyncio
 async def test_connect_handles_connection_closed(mock_connect, test_logger):
+    from websockets.frames import Close
     from websockets.exceptions import ConnectionClosedOK
 
     mock_ws = AsyncMock()
-    mock_ws.__aiter__.side_effect = ConnectionClosedOK(1000, "closed")
+    mock_ws.__aiter__.side_effect = ConnectionClosedOK(Close(1000, "closed"), None)
     mock_connect.return_value.__aiter__.return_value = iter([mock_ws])
 
     ws = Websocket("host", "token", logger=test_logger)
@@ -155,6 +155,9 @@ def test_websocket_init_starts_connection(mock_create_task, test_logger):
 @patch("aiowiserbyfeller.websocket.websocket.websockets.client.connect")
 @pytest.mark.asyncio
 async def test_websocket_stops_after_10_failures(mock_connect, test_logger):
+    from websockets.frames import Close
+    from websockets.exceptions import ConnectionClosed
+
     # Create a mock websocket that simulates 11 reconnects, each with a message
     class FakeWebSocket:
         def __init__(self):
@@ -164,7 +167,7 @@ async def test_websocket_stops_after_10_failures(mock_connect, test_logger):
             return self
 
         async def __anext__(self):
-            raise websockets.ConnectionClosed(1000, "closed")
+            raise ConnectionClosed(Close(1000, "closed"), None)
 
     # Simulate 11 websocket instances (each closes immediately)
     mock_connect.return_value.__aiter__.return_value = [FakeWebSocket()] * 11
