@@ -23,7 +23,7 @@ class Auth:
             user: Username to be used for claiming token
         """
         self.http = http
-        self.base_url = "http://" + host + "/api"
+        self.base_url = f"http://{host}/api"
         self.host = host
         self.access_token = kwargs.get("token", None)
 
