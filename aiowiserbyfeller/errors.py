@@ -26,7 +26,18 @@ class InvalidArgument(AiowiserbyfellerException):
 
 
 class UnsuccessfulRequest(AiowiserbyfellerException):
-    """Request returned non-success error"""
+    """Request returned non-success response"""
+
+
+class InvalidJson(UnsuccessfulRequest):
+    """Request returned invalid JSON"""
+
+    def __init__(
+        self,
+        msg="Response is not valid JSON. Are you sure, you're connecting to a Wiser µGateway?",
+        *args,
+    ):
+        super().__init__(msg, *args)
 
 
 class WebsocketError(AiowiserbyfellerException):

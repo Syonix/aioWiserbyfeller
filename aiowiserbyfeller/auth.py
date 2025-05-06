@@ -1,12 +1,14 @@
 """Wrapper for authenticated API calls."""
 
-from aiohttp import ClientSession
+from aiohttp import ClientSession, ContentTypeError
 from .errors import (
     AuthorizationFailed,
     TokenMissing,
     UnauthorizedUser,
     UnsuccessfulRequest,
+    InvalidJson,
 )
+import json
 
 
 class Auth:
@@ -51,12 +53,16 @@ class Auth:
         resp = await self.http.request(
             "post", f"{self.base_url}/account/claim", **kwargs, json=data
         )
-        json = await resp.json()
 
-        if json["status"] != "success":
-            raise AuthorizationFailed(json["message"])
+        try:
+            parsed = await resp.json()
+        except (json.JSONDecodeError, ContentTypeError):
+            raise InvalidJson()
 
-        self.access_token = json["data"]["secret"]
+        if parsed["status"] != "success":
+            raise AuthorizationFailed(parsed["message"])
+
+        self.access_token = parsed["data"]["secret"]
 
         return self.access_token
 
@@ -79,18 +85,22 @@ class Auth:
         )
 
         resp.raise_for_status()
-        json = await resp.json()
 
-        if json["status"] == "error" and "api is locked" in json["message"]:
+        try:
+            parsed = await resp.json()
+        except (json.JSONDecodeError, ContentTypeError):
+            raise InvalidJson()
+
+        if parsed["status"] == "error" and "api is locked" in parsed["message"]:
             raise TokenMissing()
 
-        if json["status"] == "error" and json["message"] == "unauthorized user":
+        if parsed["status"] == "error" and parsed["message"] == "unauthorized user":
             raise UnauthorizedUser()
 
-        if json["status"] != "success":
-            raise UnsuccessfulRequest(json["message"])
+        if parsed["status"] != "success":
+            raise UnsuccessfulRequest(parsed["message"])
 
-        return json["data"]
+        return parsed["data"]
 
     async def is_valid_login(self) -> bool:
         """Check if current token is valid."""
