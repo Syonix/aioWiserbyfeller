@@ -4,6 +4,17 @@ from __future__ import annotations
 
 from ..auth import Auth
 from ..util import validate_str
+from ..const import (
+    BUTTON_ON,
+    BUTTON_OFF,
+    BUTTON_UP,
+    BUTTON_DOWN,
+    BUTTON_TOGGLE,
+    BUTTON_STOP,
+    EVENT_PRESS,
+    EVENT_CLICK,
+    EVENT_RELEASE,
+)
 
 
 class Load:
@@ -121,15 +132,15 @@ class Load:
         """Invoke a button-event (ctrl) for one load."""
         validate_str(
             button,
-            ["on", "off", "up", "down", "toggle", "stop"],
+            [BUTTON_ON, BUTTON_OFF, BUTTON_UP, BUTTON_DOWN, BUTTON_TOGGLE, BUTTON_STOP],
             error_message="Invalid button value",
         )
         validate_str(
             event,
             [
-                "click",  # if the button was pressed shorter than 500ms
-                "press",  # if the button was pressed 500ms or longer
-                "release",  # must follow after a press event
+                EVENT_CLICK,  # if the button was pressed shorter than 500ms
+                EVENT_PRESS,  # if the button was pressed 500ms or longer
+                EVENT_RELEASE,  # must follow after a press event
             ],
             error_message="Invalid button event value",
         )

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .load import Load
+from ..const import BUTTON_STOP, EVENT_CLICK
 
 
 class Motor(Load):
@@ -27,5 +28,5 @@ class Motor(Load):
 
     async def async_control_stop(self):
         """Stop the cover movement."""
-        await super().async_ctrl("stop", "click")
+        await super().async_ctrl(BUTTON_STOP, EVENT_CLICK)
         await self.async_refresh_state()

@@ -15,3 +15,16 @@ STATE_HEATING = "heating"
 STATE_COOLING = "cooling"
 STATE_IDLE = "idle"
 STATE_OFF = "off"
+
+# Buttons
+BUTTON_ON = "on"
+BUTTON_OFF = "off"
+BUTTON_UP = "up"
+BUTTON_DOWN = "down"
+BUTTON_TOGGLE = "toggle"
+BUTTON_STOP = "stop"
+
+# Events
+EVENT_CLICK = "click"
+EVENT_PRESS = "press"
+EVENT_RELEASE = "release"
