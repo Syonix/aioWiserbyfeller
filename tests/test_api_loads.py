@@ -497,20 +497,20 @@ async def test_on_off_async_control(client_api_auth, mock_aioresponse):
     """Test OnOff.async_control."""
     response_json_on = {
         "status": "success",
-        "data": {"id": 2, "target_state": {"bri": 10000}},
+        "data": {"id": 2, "ctrl": {"button": "on", "event": "click"}},
     }
     response_json_off = {
         "status": "success",
-        "data": {"id": 2, "target_state": {"bri": 0}},
+        "data": {"id": 2, "ctrl": {"button": "on", "event": "click"}},
     }
-    request_json_on = {"bri": 10000}
-    request_json_off = {"bri": 0}
+    request_json_on = {"button": "on", "event": "click"}
+    request_json_off = {"button": "off", "event": "click"}
 
     load = OnOff({"id": 2}, client_api_auth.auth, raw_state={"bri": 0})
 
     await prepare_test_authenticated(
         mock_aioresponse,
-        f"{BASE_URL}/loads/2/target_state",
+        f"{BASE_URL}/loads/2/ctrl",
         "put",
         response_json_on,
         request_json_on,
@@ -518,18 +518,15 @@ async def test_on_off_async_control(client_api_auth, mock_aioresponse):
 
     await prepare_test_authenticated(
         mock_aioresponse,
-        f"{BASE_URL}/loads/2/target_state",
+        f"{BASE_URL}/loads/2/ctrl",
         "put",
         response_json_off,
         request_json_off,
     )
 
-    assert load.state is False
     await load.async_control_on()
-    assert load.state is True
     await load.async_control_off()
-    assert load.state is False
-
+    # Note: When using ctrl endpoint, no new target state is returned.
 
 @pytest.mark.asyncio
 async def test_motor_async_control_level(client_api_auth, mock_aioresponse):
@@ -645,7 +642,7 @@ async def test_dim_async_control_bri(client_api_auth, mock_aioresponse):
     request_json = {"bri": 10000}
 
     load = Dim({"id": 2}, client_api_auth.auth)
-    assert load.state is None
+    assert load.state_bri is None
 
     load = Dim({"id": 2}, client_api_auth.auth, raw_state={"bri": 0})
 
@@ -657,9 +654,9 @@ async def test_dim_async_control_bri(client_api_auth, mock_aioresponse):
         request_json,
     )
 
-    assert load.state == 0
-    await load.async_control_bri(10000)
-    assert load.state == 10000
+    assert load.state_bri == 0
+    await load.async_set_bri(10000)
+    assert load.state_bri == 10000
 
 
 @pytest.mark.asyncio
@@ -685,7 +682,7 @@ async def test_dali_tw_async_control_bri(client_api_auth, mock_aioresponse):
     )
 
     assert load.state["ct"] == 1000
-    await load.async_control_bri(10000, 20000)
+    await load.async_set_bri_ct(10000, 20000)
     assert load.state["ct"] == 20000
 
 
@@ -718,7 +715,7 @@ async def test_dali_rgbw_async_control_bri(client_api_auth, mock_aioresponse):
         request_json,
     )
 
-    await load.async_control_bri(10000, 255, 0, 0, 0)
+    await load.async_set_bri_rgbw(10000, 255, 0, 0, 0)
     assert load.state["red"] == 255
     assert load.state["white"] == 0
 

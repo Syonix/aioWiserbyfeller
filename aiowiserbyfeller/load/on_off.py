@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from aiowiserbyfeller.const import BUTTON_OFF, BUTTON_ON, EVENT_CLICK
+
 from .load import Load
 
 
@@ -18,13 +20,15 @@ class OnOff(Load):
 
     async def async_control_onoff(self, state: bool) -> dict:
         """Set new target state of the light switch."""
-        bri = 10000 if state else 0
-        return await super().async_set_target_state({"bri": bri})
+        if state:
+            return await self.async_control_on()
+        else:
+            return await self.async_control_off()
 
     async def async_control_on(self) -> dict:
         """Set new target state of the switch to on."""
-        return await self.async_control_onoff(True)
+        return await self.async_ctrl(BUTTON_ON, EVENT_CLICK)
 
     async def async_control_off(self) -> dict:
-        """Set new target state of the switch to of."""
-        return await self.async_control_onoff(False)
+        """Set new target state of the switch to off."""
+        return await self.async_ctrl(BUTTON_OFF, EVENT_CLICK)
