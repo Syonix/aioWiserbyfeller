@@ -1,35 +1,38 @@
 """Wrapper for authenticated API calls."""
 
+import json
+
 from aiohttp import ClientSession, ContentTypeError
+
 from .errors import (
     AuthorizationFailed,
+    InvalidJson,
     TokenMissing,
     UnauthorizedUser,
     UnsuccessfulRequest,
-    InvalidJson,
 )
-import json
 
 
 class Auth:
     """Class to make authenticated requests."""
 
     def __init__(self, http: ClientSession, host: str, **kwargs):
-        """Initialize.
+        """Initialize an auth object.
 
         Args:
             http: ClientSession instance to be used
             host: Hostname or IP of µGateway
             user: Username to be used for claiming token
+            kwargs: Can contain the token if applicable
+
         """
         self.http = http
         self.base_url = f"http://{host}/api"
         self.host = host
-        self.access_token = kwargs.get("token", None)
+        self.access_token = kwargs.get("token")
 
     async def claim(self, user: str, source="installer", **kwargs) -> str:
-        """
-        Get authentication token.
+        """Get authentication token.
 
         As soon you start the request the physical buttons of the Wiser
         µGateway will start flashing purple and pink for 30 seconds. For
@@ -43,6 +46,8 @@ class Auth:
         Args:
             user: User type like "installer", "admin" or "enduser"
             source: Source user type where this account will be copied from
+            kwargs: Are forwarded to http.request call.
+
         """
 
         data = {"user": user}
@@ -56,8 +61,8 @@ class Auth:
 
         try:
             parsed = await resp.json()
-        except (json.JSONDecodeError, ContentTypeError):
-            raise InvalidJson()
+        except (json.JSONDecodeError, ContentTypeError) as e:
+            raise InvalidJson from e
 
         if parsed["status"] != "success":
             raise AuthorizationFailed(parsed["message"])
@@ -88,14 +93,14 @@ class Auth:
 
         try:
             parsed = await resp.json()
-        except (json.JSONDecodeError, ContentTypeError):
-            raise InvalidJson()
+        except (json.JSONDecodeError, ContentTypeError) as e:
+            raise InvalidJson from e
 
         if parsed["status"] == "error" and "api is locked" in parsed["message"]:
-            raise TokenMissing()
+            raise TokenMissing
 
         if parsed["status"] == "error" and parsed["message"] == "unauthorized user":
-            raise UnauthorizedUser()
+            raise UnauthorizedUser
 
         if parsed["status"] != "success":
             raise UnsuccessfulRequest(parsed["message"])
@@ -106,6 +111,6 @@ class Auth:
         """Check if current token is valid."""
         try:
             data = await self.request("get", "account")
-            return "user" in data
+            return "user" in data  # noqa: TRY300
         except UnsuccessfulRequest:
             return False

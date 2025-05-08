@@ -1,22 +1,24 @@
-"""aiowiserbyfeller Api class loads tests"""
+"""aiowiserbyfeller Api class loads tests."""
 
 import pytest
-from .conftest import prepare_test_authenticated, BASE_URL
+
 from aiowiserbyfeller import (
-    InvalidArgument,
-    Dim,
-    DaliTw,
-    DaliRgbw,
-    OnOff,
-    Motor,
-    Hvac,
-    KIND_VENETIAN_BLINDS,
     KIND_LIGHT,
+    KIND_VENETIAN_BLINDS,
     STATE_COOLING,
     STATE_HEATING,
     STATE_IDLE,
     STATE_OFF,
+    DaliRgbw,
+    DaliTw,
+    Dim,
+    Hvac,
+    InvalidArgument,
+    Motor,
+    OnOff,
 )
+
+from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
 
 @pytest.mark.asyncio
@@ -527,6 +529,7 @@ async def test_on_off_async_control(client_api_auth, mock_aioresponse):
     await load.async_control_on()
     await load.async_control_off()
     # Note: When using ctrl endpoint, no new target state is returned.
+
 
 @pytest.mark.asyncio
 async def test_motor_async_control_level(client_api_auth, mock_aioresponse):

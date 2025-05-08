@@ -1,9 +1,12 @@
-"""aiowiserbyfeller Api class device tests"""
+"""aiowiserbyfeller Api class device tests."""
+
+from typing import Optional
 
 import pytest
-from .conftest import prepare_test_authenticated, BASE_URL
+
 from aiowiserbyfeller import Device
-from typing import Optional
+
+from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
 
 @pytest.mark.asyncio
@@ -609,7 +612,7 @@ async def test_async_calibrate_motor_devices(client_api_auth, mock_aioresponse):
 
 
 @pytest.mark.parametrize(
-    "foreground_param,foreground_expected", [(None, 100), (50, 50)]
+    ("foreground_param", "foreground_expected"), [(None, 100), (50, 50)]
 )
 @pytest.mark.asyncio
 async def test_async_status(

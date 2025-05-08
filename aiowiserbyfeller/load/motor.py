@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
+from aiowiserbyfeller.const import BUTTON_STOP, EVENT_CLICK
+
 from .load import Load
-from ..const import BUTTON_STOP, EVENT_CLICK
 
 
 class Motor(Load):
-    """Representation of a motor (cover, venetian blinds, roller
-    shutters, awning) switch in the Feller Wiser µGateway API."""
+    """Representation of a motor (cover, venetian blinds, roller shutters, awning) switch in the Feller Wiser µGateway API."""
 
     @property
     def state(self) -> dict | None:
@@ -19,11 +19,11 @@ class Motor(Load):
         return self.raw_state
 
     async def async_control_level(self, level: int) -> dict:
-        """Control the target level of the cover (0..10000)"""
+        """Control the target level of the cover (0..10000)."""
         return await super().async_set_target_state({"level": level})
 
     async def async_control_tilt(self, tilt: int) -> dict:
-        """Control the target tilt of the cover (0..9)"""
+        """Control the target tilt of the cover (0..9)."""
         return await super().async_set_target_state({"tilt": tilt})
 
     async def async_control_stop(self):

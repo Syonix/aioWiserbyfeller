@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from aiowiserbyfeller.const import STATE_COOLING, STATE_HEATING, STATE_IDLE, STATE_OFF
+
 from .load import Load
-from typing import Dict
-from ..const import STATE_COOLING, STATE_HEATING, STATE_IDLE, STATE_OFF
 
 
 class Hvac(Load):
@@ -54,7 +54,9 @@ class Hvac(Load):
     @property
     def heating_cooling_level(self) -> int | None:
         """Current heating/cooling level of the heating channel (valve).
-        Ranges from 0 to 10000"""
+
+        Ranges from 0 to 10000
+        """
         if self.raw_state is None:
             return None
         return self.raw_state["heating_cooling_level"]
@@ -69,6 +71,7 @@ class Hvac(Load):
     @property
     def boost_temperature(self) -> int | None:
         """Current boost temperature value of the heating channel (valve).
+
         Possible values: On: 0, Off: -99
         """
         if self.raw_state is None:
@@ -92,8 +95,9 @@ class Hvac(Load):
     @property
     def flags(
         self,
-    ) -> Dict[str, bool]:
+    ) -> dict[str, bool]:
         """Current flags of the heating channel (valve).
+
         Available flags: remote_controlled, sensor_error, valve_error, noise, output_on, cooling
         """
         if self.raw_state is None or "flags" not in self.raw_state:
@@ -103,4 +107,4 @@ class Hvac(Load):
 
     def flag(self, identifier: str) -> bool | None:
         """Get the value of a specific flag."""
-        return self.flags[identifier] if identifier in self.flags else None
+        return self.flags.get(identifier, None)

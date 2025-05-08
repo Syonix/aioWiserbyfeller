@@ -1,9 +1,9 @@
-"""Support for jobs"""
+"""Support for jobs."""
 
 from __future__ import annotations
 
-from ..auth import Auth
-from ..util import validate_str
+from aiowiserbyfeller.auth import Auth
+from aiowiserbyfeller.util import validate_str
 
 
 class Job:
@@ -17,7 +17,7 @@ class Job:
     @property
     def id(self) -> int | None:
         """The id of the job."""
-        return self.raw_data["id"] if "id" in self.raw_data else None
+        return self.raw_data.get("id", None)
 
     @property
     def target_states(self) -> list[dict]:
@@ -45,22 +45,20 @@ class Job:
 
     @property
     def scripts(self) -> list[str]:
-        """List of script filenames relative to /flash/scripts/"""
+        """List of script filenames relative to /flash/scripts/."""
         try:
             return self.raw_data["scripts"]
         except KeyError:
             return []
 
     @property
-    def blocked_by(self) -> int:
-        """[optional] id of a System Flag or Condition that may block
-        this job"""
+    def blocked_by(self) -> int | None:
+        """Id of a system flag or condition that may block this job."""
         return self.raw_data["blocked_by"]
 
     @property
     def triggers(self) -> list[int]:
-        """[app-only] list of ids of scenes, groupctrls and schedulers
-        using this job"""
+        """List of ids of scenes, groupctrls and schedulers using this job."""
         try:
             return self.raw_data["triggers"]
         except KeyError:
@@ -72,50 +70,60 @@ class Job:
         self.raw_data = data
 
     async def async_trigger_states(self):
-        """Send all target states to their corresponding Loads. The flag
-        values, button control and scripts are ignored by this method! A
-        successful response contains the Job."""
+        """Send all target states to their corresponding Loads.
+
+        The flag values, button control and scripts are ignored by this method!
+        A successful response contains the Job.
+        """
         data = await self.auth.request("get", f"jobs/{self.id}/run")
         self.raw_data = data
 
     async def async_trigger_flags(self):
-        """Assign all flag values to their corresponding System Flags. The
-        target states, button control and scripts are ignored by this
-        method!"""
+        """Assign all flag values to their corresponding System Flags.
+
+        The target states, button control and scripts are ignored by this method!
+        """
         data = await self.auth.request("get", f"jobs/{self.id}/setflags")
         self.raw_data = data
 
     async def async_trigger_ctrl(self):
-        """Send the stored button control to all its Loads. The flag values,
-        target states and scripts are ignored by this method! A successful
-        response contains the Job."""
+        """Send the stored button control to all its Loads.
+
+        The flag values, target states and scripts are ignored by this method!
+        A successful response contains the Job.
+        """
         data = await self.auth.request("get", f"jobs/{self.id}/ctrl")
         self.raw_data = data
 
     # Note: Running specific ctrl endpoint omitted.
 
     async def async_trigger_scripts(self):
-        """Execute all scripts of a job. Scripts must be uploaded before
-        execution by the scripts service. The flag values, target states
-        and the button control are ignored by this method! A successful
-        response contains the Job. In case of an exception the error
-        response contains the last line of the Traceback."""
+        """Execute all scripts of a job.
+
+        Scripts must be uploaded before execution by the scripts service.
+        The flag values, target states and the button control are ignored by this method!
+        A successful response contains the Job.
+        In case of an exception the error response contains the last line of the Traceback.
+        """
         data = await self.auth.request("get", f"jobs/{self.id}/execute")
         self.raw_data = data
 
     async def async_trigger_all(self):
-        """Trigger the whole job. Execute all target states, button
-        controls, scripts and system flags. A successful response
-        contains the Job. In case of an exception the error response
-        contains the last line of the Traceback."""
+        """Trigger the whole job.
+
+        Execute all target states, button controls, scripts and system flags.
+        A successful response contains the Job.
+        In case of an exception the error response contains the last line of the Traceback.
+        """
         data = await self.auth.request("get", f"jobs/{self.id}/trigger")
         self.raw_data = data
 
     async def async_trigger_button(self, event_type: str, button_type: str):
         """Send the button control from the URL path to all stored loads.
-        Send the button control from the URL path to all stored Loads.
-        The flag values, target states and scripts are ignored by this
-        method! A successful response contains the Job."""
+
+        The flag values, target states and scripts are ignored by this method!
+        A successful response contains the Job.
+        """
 
         validate_str(event_type, ["click", "press", "on"])
         validate_str(button_type, ["on", "off", "up", "down", "toggle", "stop"])

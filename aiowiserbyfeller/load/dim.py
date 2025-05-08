@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from aiowiserbyfeller.const import BUTTON_OFF, BUTTON_ON, EVENT_CLICK
-from load import Load
+
+from .load import Load
+
 
 class Dim(Load):
     """Representation of a dimmable light switch in the Feller Wiser µGateway API."""

@@ -22,8 +22,7 @@ class OnOff(Load):
         """Set new target state of the light switch."""
         if state:
             return await self.async_control_on()
-        else:
-            return await self.async_control_off()
+        return await self.async_control_off()
 
     async def async_control_on(self) -> dict:
         """Set new target state of the switch to on."""

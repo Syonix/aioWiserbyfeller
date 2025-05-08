@@ -1,4 +1,4 @@
-"""Wiser by Feller scene submodule"""
+"""Wiser by Feller scene submodule."""
 
 from .scene import Scene
 

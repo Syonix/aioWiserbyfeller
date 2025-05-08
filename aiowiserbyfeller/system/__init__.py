@@ -1,6 +1,6 @@
-"""Wiser by Feller system submodule"""
+"""Wiser by Feller system submodule."""
 
-from .flag import SystemFlag
 from .condition import SystemCondition
+from .flag import SystemFlag
 
 __all__ = ["SystemCondition", "SystemFlag"]

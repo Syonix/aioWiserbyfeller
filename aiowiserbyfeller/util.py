@@ -6,7 +6,7 @@ from .errors import InvalidArgument
 
 
 def validate_str(value, valid, **kwargs):
-    """Validate a string by checking it against list ofr valid values"""
+    """Validate a string by checking it against list ofr valid values."""
     error = kwargs.get("error_message", "Invalid value")
 
     if value not in valid:
@@ -16,8 +16,7 @@ def validate_str(value, valid, **kwargs):
 
 
 def parse_wiser_device_ref_c(value: str) -> dict:
-    """Parse a Feller Wiser control front (Bedienaufsatz) product
-    reference"""
+    """Parse a Feller Wiser control (Bedienaufsatz) product reference."""
     result = {
         "type": None,
         "wlan": ".W" in value,
@@ -56,8 +55,7 @@ def parse_wiser_device_ref_c(value: str) -> dict:
 
 
 def parse_wiser_device_ref_a(value: str) -> dict:
-    """Parse a Feller Wiser base module (Funktionseinsatz) product
-    reference"""
+    """Parse a Feller Wiser actuator (Funktionseinsatz) product reference."""
     result = {"loads": 0, "generation": None}
 
     if "3400" in value:

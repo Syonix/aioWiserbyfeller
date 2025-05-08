@@ -14,31 +14,32 @@ class TokenMissing(AiowiserbyfellerException):
 
 
 class AuthorizationFailed(AiowiserbyfellerException):
-    """Claim returned non-success error"""
+    """Claim returned non-success error."""
 
 
 class InvalidLoadType(AiowiserbyfellerException):
-    """InvalidLoadType"""
+    """InvalidLoadType."""
 
 
 class InvalidArgument(AiowiserbyfellerException):
-    """InvalidArgument"""
+    """InvalidArgument."""
 
 
 class UnsuccessfulRequest(AiowiserbyfellerException):
-    """Request returned non-success response"""
+    """Request returned non-success response."""
 
 
 class InvalidJson(UnsuccessfulRequest):
-    """Request returned invalid JSON"""
+    """Request returned invalid JSON."""
 
     def __init__(
         self,
         msg="Response is not valid JSON. Are you sure, you're connecting to a Wiser µGateway?",
         *args,
     ):
+        """Initialize an invalid JSON exception."""
         super().__init__(msg, *args)
 
 
 class WebsocketError(AiowiserbyfellerException):
-    """Request returned non-success error"""
+    """Request returned non-success error."""

@@ -1,14 +1,15 @@
-"""Representation of a device in the Feller Wiser µGateway API"""
+"""Representation of a device in the Feller Wiser µGateway API."""
 
 from __future__ import annotations
 
-from ..auth import Auth
+from aiowiserbyfeller.auth import Auth
 
 
 class Device:
-    """Class that represents a physical Feller Wiser device"""
+    """Class that represents a physical Feller Wiser device."""
 
     def __init__(self, raw_data: dict, auth: Auth):
+        """Initialize a device object."""
         self.raw_data = raw_data
         self.auth = auth
 
@@ -56,7 +57,8 @@ class Device:
 
         As wiser devices always consist of two components, offer a combined
         serial number. This should be used as serial number, as changing out
-        one of the component might change the feature set of the whole device."""
+        one of the component might change the feature set of the whole device.
+        """
         return f"{self.c['serial_nr']} / {self.a['serial_nr']}"
 
     async def async_ping(self) -> bool:

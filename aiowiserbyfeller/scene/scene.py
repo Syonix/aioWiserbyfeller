@@ -1,8 +1,8 @@
-"""Support for scenes"""
+"""Support for scenes."""
 
 from __future__ import annotations
 
-from ..auth import Auth
+from aiowiserbyfeller.auth import Auth
 
 
 class Scene:
@@ -16,7 +16,7 @@ class Scene:
     @property
     def id(self) -> int | None:
         """The id of the scene."""
-        return self.raw_data["id"] if "id" in self.raw_data else None
+        return self.raw_data.get("id", None)
 
     @property
     def type(self) -> int:
