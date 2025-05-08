@@ -1,7 +1,5 @@
 """aiowiserbyfeller Api class device tests."""
 
-from typing import Optional
-
 import pytest
 
 from aiowiserbyfeller import Device
@@ -618,7 +616,7 @@ async def test_async_calibrate_motor_devices(client_api_auth, mock_aioresponse):
 async def test_async_status(
     client_api_auth,
     mock_aioresponse,
-    foreground_param: Optional[int],
+    foreground_param: int | None,
     foreground_expected: int,
 ):
     """Test async_status."""
