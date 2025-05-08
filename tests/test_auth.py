@@ -1,20 +1,21 @@
-"""aiowiserbyfeller Auth class tests"""
+"""aiowiserbyfeller Auth class tests."""
 
 import pytest
 
 from aiowiserbyfeller.errors import (
     AuthorizationFailed,
+    InvalidJson,
     TokenMissing,
     UnauthorizedUser,
     UnsuccessfulRequest,
-    InvalidJson,
 )
-from .conftest import prepare_test, BASE_URL
+
+from .conftest import BASE_URL, prepare_test  # noqa: TID251
 
 
 @pytest.mark.asyncio
 async def test_claim(client_auth, mock_aioresponse):
-    """Test initial claiming request"""
+    """Test initial claiming request."""
     response_json = {
         "status": "success",
         "data": {

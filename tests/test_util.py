@@ -1,21 +1,22 @@
-"""aiowiserbyfeller util tests"""
+"""aiowiserbyfeller util tests."""
 
 import pytest
+
+from aiowiserbyfeller import InvalidArgument
 from aiowiserbyfeller.util import (
-    parse_wiser_device_ref_c,
     parse_wiser_device_ref_a,
+    parse_wiser_device_ref_c,
     validate_str,
 )
-from aiowiserbyfeller import InvalidArgument
 
 
 def validate_str_data_valid() -> list[str]:
-    """Data provider for test_validate_str_valid"""
+    """Provide data for test_validate_str_valid."""
     return ["valid", "ok", "good"]
 
 
 def ref_c_data() -> list[list]:
-    """Data provider for test_parse_wiser_device_ref_c"""
+    """Provide data for test_parse_wiser_device_ref_c."""
     return [
         # -- Bedienaufsätze ohne WLAN ----------------------------------
         [
@@ -227,7 +228,7 @@ def ref_c_data() -> list[list]:
 
 
 def ref_a_data() -> list[list]:
-    """Data provider for test_parse_wiser_device_ref_a"""
+    """Provide data for test_parse_wiser_device_ref_a."""
     return [
         # -- EDIZIOdue --------------------------------------------------------
         ["3400.A.BSE", {"loads": 0, "type": "noop", "generation": "A"}],
@@ -246,14 +247,14 @@ def ref_a_data() -> list[list]:
 
 @pytest.mark.parametrize("check_val", validate_str_data_valid())
 def test_validate_str_valid(check_val: list):
-    """Test validate_str with valid values"""
+    """Test validate_str with valid values."""
     valid = ["valid", "ok", "good"]
     validate_str(check_val, valid)
     assert True
 
 
 def test_validate_str_invalid():
-    """Test validate_str with invalid values"""
+    """Test validate_str with invalid values."""
 
     with pytest.raises(InvalidArgument) as ex:
         validate_str("invalid", ["valid", "ok", "good"])
@@ -270,13 +271,13 @@ def test_validate_str_invalid():
 
 @pytest.mark.parametrize("data", ref_c_data())
 def test_parse_wiser_device_ref_c(data: list):
-    """Test parse_wiser_device_ref_c"""
+    """Test parse_wiser_device_ref_c."""
     actual = parse_wiser_device_ref_c(data[0])
     assert actual == data[1]
 
 
 @pytest.mark.parametrize("data", ref_a_data())
 def test_parse_wiser_device_ref_a(data: list):
-    """Test parse_wiser_device_ref_a"""
+    """Test parse_wiser_device_ref_a."""
     actual = parse_wiser_device_ref_a(data[0])
     assert actual == data[1]

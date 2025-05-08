@@ -1,6 +1,6 @@
 """Support for system flags."""
 
-from ..auth import Auth
+from aiowiserbyfeller.auth import Auth
 
 
 class SystemFlag:
@@ -8,9 +8,12 @@ class SystemFlag:
 
     def __init__(self, raw_data: dict, auth: Auth):
         """Initialize.
+
         Args:
             raw_data: Dict representing the raw API data
-            auth: Instance of Auth"""
+            auth: Instance of Auth
+
+        """
         self.raw_data = raw_data
         self.auth = auth
 
@@ -21,17 +24,17 @@ class SystemFlag:
 
     @property
     def symbol(self) -> str:
-        """Symbol of the flag containing only A-Z, a-z, 0-9 and _"""
+        """Symbol of the flag containing only A-Z, a-z, 0-9 and _."""
         return self.raw_data["symbol"]
 
     @property
     def value(self) -> bool:
-        """Current flag value"""
+        """Current flag value."""
         return self.raw_data["value"]
 
     @property
     def name(self) -> str:
-        """Human-readable name for the Flag"""
+        """Human-readable name for the flag."""
         return self.raw_data["name"]
 
     async def async_refresh(self):

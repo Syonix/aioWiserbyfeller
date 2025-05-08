@@ -1,1 +1,1 @@
-"""Test for aioWiserByFeller"""
+"""Test for aioWiserByFeller."""

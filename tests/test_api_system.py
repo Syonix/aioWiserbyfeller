@@ -1,8 +1,10 @@
-"""aiowiserbyfeller Api system tests"""
+"""aiowiserbyfeller Api system tests."""
 
 import pytest
-from .conftest import prepare_test_authenticated, BASE_URL
-from aiowiserbyfeller import SystemFlag, SystemCondition
+
+from aiowiserbyfeller import SystemCondition, SystemFlag
+
+from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
 
 @pytest.mark.asyncio

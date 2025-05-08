@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Callable, Awaitable
-
-import json
 import asyncio
+from collections.abc import Awaitable, Callable
+import json
 import logging
+
 import websockets.client
 
 DEFAULT_WATCHDOG_TIMEOUT = 900
@@ -29,6 +29,7 @@ class WebsocketWatchdog:
             logger: The logger to use.
             action: The coroutine function to call when the watchdog expires.
             timeout_seconds: The number of seconds before the watchdog times out.
+
         """
         self._action = action
         self._logger = logger
@@ -76,6 +77,7 @@ class Websocket:
             host: Hostname or IP of µGateway
             token: Secret token for connetion (see Auth.claim())
             logger: The logger to use.
+
         """
         self._host = host
         self._token = token
@@ -96,8 +98,8 @@ class Websocket:
         self._async_subscribers.append(callback)
 
     def init(self):
-        """Connect to µGateway"""
-        asyncio.create_task(self.connect())
+        """Connect to µGateway."""
+        asyncio.create_task(self.connect())  # noqa: RUF006
 
     async def connect(self):
         """Initiate connection and start message processing loop."""
@@ -152,7 +154,10 @@ class Websocket:
         raise exception
 
     async def on_watchdog_timeout(self):
-        """Default watchdog callback"""
+        """Warn about watchdog timeout.
+
+        Can be used as a default watchdog callback.
+        """
         self._logger.warning(
             "Watchdog timeout. Doing nothing for now... Idle: %s", self._idle
         )

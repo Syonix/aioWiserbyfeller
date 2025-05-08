@@ -1,13 +1,13 @@
 """Support for ntp time configuration."""
 
-from ..auth import Auth
+from aiowiserbyfeller.auth import Auth
 
 
 class NtpConfig:
-    """Representation of an NTP time configuration in the Feller Wiser
-    µGateway API."""
+    """Representation of an NTP time configuration in the Feller Wiser µGateway API."""
 
     def __init__(self, raw_data: dict, auth: Auth):
+        """Initialize n NTP config object."""
         self.raw_data = raw_data
         self.auth = auth
 
@@ -18,8 +18,7 @@ class NtpConfig:
 
     @property
     def urls(self) -> list:
-        """List of URL or IP strings that defines which NTP servers to
-        try in what order (without duplicates). May be empty."""
+        """List of URL or IP strings that defines which NTP servers to try in what order (without duplicates). May be empty."""
         return self.raw_data["urls"]
 
     async def async_refresh(self):

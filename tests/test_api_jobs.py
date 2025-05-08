@@ -1,8 +1,10 @@
-"""aiowiserbyfeller Api class jobs tests"""
+"""aiowiserbyfeller Api class jobs tests."""
 
 import pytest
-from .conftest import prepare_test_authenticated, BASE_URL
-from aiowiserbyfeller import Job, InvalidArgument
+
+from aiowiserbyfeller import InvalidArgument, Job
+
+from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
 
 @pytest.mark.asyncio
@@ -308,6 +310,7 @@ async def test_job_async_trigger_button(client_api_auth, mock_aioresponse):
 
 @pytest.mark.asyncio
 async def test_job_empty(client_api_auth, mock_aioresponse):
+    """Test creating an empty job."""
     job = Job({}, client_api_auth.auth)
     assert job.id is None
     assert job.target_states == []

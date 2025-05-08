@@ -1,8 +1,10 @@
-"""aiowiserbyfeller Api class scene tests"""
+"""aiowiserbyfeller Api class scene tests."""
 
 import pytest
-from .conftest import prepare_test_authenticated, BASE_URL
+
 from aiowiserbyfeller import Scene
+
+from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
 
 @pytest.mark.asyncio

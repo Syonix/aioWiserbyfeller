@@ -1,7 +1,8 @@
-"""aiowiserbyfeller Api class device info tests"""
+"""aiowiserbyfeller Api class device info tests."""
 
 import pytest
-from .conftest import BASE_URL
+
+from .conftest import BASE_URL  # noqa: TID251
 
 
 @pytest.mark.asyncio

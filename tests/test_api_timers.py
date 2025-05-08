@@ -1,8 +1,10 @@
-"""aiowiserbyfeller Api class timers tests"""
+"""aiowiserbyfeller Api class timers tests."""
 
 import pytest
-from .conftest import prepare_test_authenticated, BASE_URL
+
 from aiowiserbyfeller import Timer
+
+from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
 
 @pytest.mark.asyncio

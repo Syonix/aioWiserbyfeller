@@ -2,18 +2,28 @@
 
 from __future__ import annotations
 
-from ..auth import Auth
-from ..util import validate_str
+from aiowiserbyfeller.auth import Auth
+from aiowiserbyfeller.const import (
+    BUTTON_DOWN,
+    BUTTON_OFF,
+    BUTTON_ON,
+    BUTTON_STOP,
+    BUTTON_TOGGLE,
+    BUTTON_UP,
+    EVENT_CLICK,
+    EVENT_PRESS,
+    EVENT_RELEASE,
+)
+from aiowiserbyfeller.util import validate_str
 
 
 class Load:
-    """Base class that represents a load object in the Feller Wiser
-    µGateway API."""
+    """Base class that represents a load object in the Feller Wiser µGateway API."""
 
     def __init__(self, raw_data: dict, auth: Auth, **kwargs):
         """Initialize load instance."""
         self.raw_data = raw_data
-        self.raw_state = kwargs.get("raw_state", None)
+        self.raw_state = kwargs.get("raw_state")
         self.auth = auth
 
     @property
@@ -23,35 +33,38 @@ class Load:
 
     @property
     def name(self) -> str:
-        """UTF-8 string for the name of a load (e.g. ceiling spots,
-        chandeliers, window west, stand lamp) defined by the user"""
+        """UTF-8 string for the name of a load defined by the user.
+
+        (e.g. ceiling spots, chandeliers, window west, stand lamp)
+        """
         return self.raw_data["name"]
 
     @property
     def unused(self) -> bool:
-        """Flag to indicate that the underlying load is currently not
-        used (no load is physically connected to that channel)"""
+        """Flag to indicate that the underlying load is currently not used (no load is physically connected to that channel)."""
         return self.raw_data["unused"]
 
     @property
     def type(self) -> str:
-        """A string describing the main-type of the channel the load is
-        connected to. Possible values: onoff, dim, motor or dali"""
+        """A string describing the main-type of the channel the load is connected to.
+
+        Possible values: onoff, dim, motor or dali
+        """
         return self.raw_data["type"]
 
     @property
     def sub_type(self) -> str:
-        """The channel subtype. Possible values:"""
+        """The channel subtype."""
         return self.raw_data["sub_type"]
 
     @property
     def device(self) -> str:
-        """Reference id to the physical device"""
+        """Reference id to the physical device."""
         return self.raw_data["device"]
 
     @property
     def channel(self) -> int:
-        """Reference id to the physical device"""
+        """Channel of the load."""
         return self.raw_data["channel"]
 
     @property
@@ -61,10 +74,12 @@ class Load:
 
     @property
     def kind(self) -> int | None:
-        """Property to store a value that corresponds to the icon
+        """Property to store a value that corresponds to the icon.
+
         Possible values for lights: Light:0, Switch:1
         Possible values for covers: Motor:0, Venetian blinds:1,
-        Roller shutters:2, Awnings:3"""
+        Roller shutters:2, Awnings:3
+        """
         if self.raw_data is None or "kind" not in self.raw_data:
             return None
 
@@ -79,8 +94,9 @@ class Load:
         return self.raw_state
 
     async def async_set_target_state(self, data: dict) -> dict:
-        """Save new target state to µGateway. Note: A successful response
-        assumes target_state as real state.
+        """Save new target state to µGateway.
+
+        Note: A successful response assumes target_state as real state.
 
         Possible target-state depending on load-type:
             Main-Type  Sub-Type  Attr.
@@ -99,7 +115,8 @@ class Load:
             red:   0..255
             green: 0..255
             blue:  0..255
-            white: 0..255"""
+            white: 0..255
+        """
         data = await self.auth.request(
             "put", f"loads/{self.id}/target_state", json=data
         )
@@ -121,15 +138,15 @@ class Load:
         """Invoke a button-event (ctrl) for one load."""
         validate_str(
             button,
-            ["on", "off", "up", "down", "toggle", "stop"],
+            [BUTTON_ON, BUTTON_OFF, BUTTON_UP, BUTTON_DOWN, BUTTON_TOGGLE, BUTTON_STOP],
             error_message="Invalid button value",
         )
         validate_str(
             event,
             [
-                "click",  # if the button was pressed shorter than 500ms
-                "press",  # if the button was pressed 500ms or longer
-                "release",  # must follow after a press event
+                EVENT_CLICK,  # if the button was pressed shorter than 500ms
+                EVENT_PRESS,  # if the button was pressed 500ms or longer
+                EVENT_RELEASE,  # must follow after a press event
             ],
             error_message="Invalid button event value",
         )
