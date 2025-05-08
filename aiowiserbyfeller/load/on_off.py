@@ -18,16 +18,16 @@ class OnOff(Load):
 
         return self.raw_state["bri"] > 0
 
-    async def async_control_onoff(self, state: bool) -> dict:
+    async def async_switch(self, state: bool) -> dict:
         """Set new target state of the light switch."""
         if state:
-            return await self.async_control_on()
-        return await self.async_control_off()
+            return await self.async_switch_on()
+        return await self.async_switch_off()
 
-    async def async_control_on(self) -> dict:
-        """Set new target state of the switch to on."""
+    async def async_switch_on(self) -> dict:
+        """Switch on the load."""
         return await self.async_ctrl(BUTTON_ON, EVENT_CLICK)
 
-    async def async_control_off(self) -> dict:
-        """Set new target state of the switch to off."""
+    async def async_switch_off(self) -> dict:
+        """Switch off the load."""
         return await self.async_ctrl(BUTTON_OFF, EVENT_CLICK)
