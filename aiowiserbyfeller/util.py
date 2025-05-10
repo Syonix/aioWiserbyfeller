@@ -155,6 +155,7 @@ def parse_wiser_device_hwid_a(value: str) -> str:
                 best_match = entry["name"]  # Temporarily set, but continue searching
     return best_match + (f" {channels}K" if channel_type != 0x0 else "")
 
+
 def parse_wiser_device_fwid(value: str) -> str:
     """Parse a Feller Wiser device firmware id."""
     if value in (None, ""):

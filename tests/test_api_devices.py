@@ -56,15 +56,15 @@ async def test_async_get_devices(client_api_auth, mock_aioresponse):
                     "hw_id": "",
                     "fw_version": "0x20606000",
                     "fw_id": "",
-                    "address": "0x00023698"
+                    "address": "0x00023698",
                 },
                 "c": {
                     "hw_id": "",
                     "fw_version": "0x20606000",
                     "fw_id": "",
-                    "cmd_matrix": "0x0001"
-                }
-            }
+                    "cmd_matrix": "0x0001",
+                },
+            },
         ],
     }
 
