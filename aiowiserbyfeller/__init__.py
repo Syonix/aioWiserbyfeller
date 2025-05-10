@@ -2,27 +2,6 @@
 
 from .api import WiserByFellerAPI
 from .auth import Auth
-from .const import (
-    BUTTON_DOWN,
-    BUTTON_OFF,
-    BUTTON_ON,
-    BUTTON_STOP,
-    BUTTON_TOGGLE,
-    BUTTON_UP,
-    EVENT_CLICK,
-    EVENT_PRESS,
-    EVENT_RELEASE,
-    KIND_AWNING,
-    KIND_LIGHT,
-    KIND_MOTOR,
-    KIND_ROLLER_SHUTTER,
-    KIND_SWITCH,
-    KIND_VENETIAN_BLINDS,
-    STATE_COOLING,
-    STATE_HEATING,
-    STATE_IDLE,
-    STATE_OFF,
-)
 from .device import Device
 from .errors import (
     AiowiserbyfellerException,
@@ -44,25 +23,6 @@ from .timer import Timer
 from .websocket import Websocket, WebsocketWatchdog
 
 __all__ = [
-    "BUTTON_DOWN",
-    "BUTTON_OFF",
-    "BUTTON_ON",
-    "BUTTON_STOP",
-    "BUTTON_TOGGLE",
-    "BUTTON_UP",
-    "EVENT_CLICK",
-    "EVENT_PRESS",
-    "EVENT_RELEASE",
-    "KIND_AWNING",
-    "KIND_LIGHT",
-    "KIND_MOTOR",
-    "KIND_ROLLER_SHUTTER",
-    "KIND_SWITCH",
-    "KIND_VENETIAN_BLINDS",
-    "STATE_COOLING",
-    "STATE_HEATING",
-    "STATE_IDLE",
-    "STATE_OFF",
     "AiowiserbyfellerException",
     "Auth",
     "AuthorizationFailed",
