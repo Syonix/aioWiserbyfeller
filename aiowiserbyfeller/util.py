@@ -153,7 +153,7 @@ def parse_wiser_device_hwid_a(value: str) -> str:
                 break  # Exact match
             if entry["feature"] is None:
                 best_match = entry["name"]  # Temporarily set, but continue searching
-    return best_match + (f" {channels}K" if channel_type != 0x0 else "")
+    return best_match + (f" {channels}K" if channels != 0x0 else "")
 
 
 def parse_wiser_device_fwid(value: str) -> str:
