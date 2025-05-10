@@ -3,6 +3,16 @@
 from __future__ import annotations
 
 from .auth import Auth
+from .const import (
+    LOAD_SUBTYPE_DALI_RGB,
+    LOAD_SUBTYPE_DALI_TW,
+    LOAD_SUBTYPE_NONE,
+    LOAD_TYPE_DALI,
+    LOAD_TYPE_DIM,
+    LOAD_TYPE_HVAC,
+    LOAD_TYPE_MOTOR,
+    LOAD_TYPE_ONOFF,
+)
 from .device import Device
 from .errors import InvalidLoadType
 from .job import Job
@@ -978,19 +988,19 @@ class WiserByFellerAPI:
 
     def resolve_class(self, data: dict):
         """Resolve this library's implementation class for given load."""
-        if data["type"] == "onoff":
+        if data["type"] == LOAD_TYPE_ONOFF:
             return OnOff(data, self.auth)
-        if data["type"] == "dim":
+        if data["type"] == LOAD_TYPE_DIM:
             return Dim(data, self.auth)
-        if data["type"] == "dali" and data["sub_type"] == "":
+        if data["type"] == LOAD_TYPE_DALI and data["sub_type"] == LOAD_SUBTYPE_NONE:
             return Dali(data, self.auth)
-        if data["type"] == "dali" and data["sub_type"] == "tw":
+        if data["type"] == LOAD_TYPE_DALI and data["sub_type"] == LOAD_SUBTYPE_DALI_TW:
             return DaliTw(data, self.auth)
-        if data["type"] == "dali" and data["sub_type"] == "rgb":
+        if data["type"] == LOAD_TYPE_DALI and data["sub_type"] == LOAD_SUBTYPE_DALI_RGB:
             return DaliRgbw(data, self.auth)
-        if data["type"] == "motor":
+        if data["type"] == LOAD_TYPE_MOTOR:
             return Motor(data, self.auth)
-        if data["type"] == "hvac":
+        if data["type"] == LOAD_TYPE_HVAC:
             return Hvac(data, self.auth)
 
         raise InvalidLoadType("Invalid load type: " + data["type"])
