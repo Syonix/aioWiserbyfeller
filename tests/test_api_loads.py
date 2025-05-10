@@ -2,20 +2,14 @@
 
 import pytest
 
-from aiowiserbyfeller import (
+from aiowiserbyfeller import DaliRgbw, DaliTw, Dim, Hvac, InvalidArgument, Motor, OnOff
+from aiowiserbyfeller.const import (
     KIND_LIGHT,
     KIND_VENETIAN_BLINDS,
     STATE_COOLING,
     STATE_HEATING,
     STATE_IDLE,
     STATE_OFF,
-    DaliRgbw,
-    DaliTw,
-    Dim,
-    Hvac,
-    InvalidArgument,
-    Motor,
-    OnOff,
 )
 
 from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
