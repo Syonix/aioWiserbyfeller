@@ -22,17 +22,38 @@ def ref_c_data() -> list[list]:
         [
             # Bedienaufsatz Wiser Szenentaster 1 Szene
             "926-3400.1.S1.A",
-            {"type": "scene", "wlan": False, "scene": 1, "loads": 0, "generation": "A"},
+            {
+                "type": "scene",
+                "wlan": False,
+                "scene": 1,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Szenentaster 2 Szenen vertikal
             "926-3400.2.VS.A",
-            {"type": "scene", "wlan": False, "scene": 2, "loads": 0, "generation": "A"},
+            {
+                "type": "scene",
+                "wlan": False,
+                "scene": 2,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Szenentaster 4 Szenen
             "926-3400.4.S4.A",
-            {"type": "scene", "wlan": False, "scene": 4, "loads": 0, "generation": "A"},
+            {
+                "type": "scene",
+                "wlan": False,
+                "scene": 4,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Druckschalter 1-Kanal
@@ -42,6 +63,7 @@ def ref_c_data() -> list[list]:
                 "wlan": False,
                 "scene": 0,
                 "loads": 1,
+                "sensors": 0,
                 "generation": "A",
             },
         ],
@@ -53,6 +75,7 @@ def ref_c_data() -> list[list]:
                 "wlan": False,
                 "scene": 1,
                 "loads": 1,
+                "sensors": 0,
                 "generation": "A",
             },
         ],
@@ -64,23 +87,45 @@ def ref_c_data() -> list[list]:
                 "wlan": False,
                 "scene": 0,
                 "loads": 2,
+                "sensors": 0,
                 "generation": "A",
             },
         ],
         [
             # Bedienaufsatz Wiser Storenschalter 1-Kanal
             "926-3404.2.A",
-            {"type": "motor", "wlan": False, "scene": 0, "loads": 1, "generation": "A"},
+            {
+                "type": "motor",
+                "wlan": False,
+                "scene": 0,
+                "loads": 1,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Storenschalter 1-Kanal Szene
             "926-3404.4.S.A",
-            {"type": "motor", "wlan": False, "scene": 1, "loads": 1, "generation": "A"},
+            {
+                "type": "motor",
+                "wlan": False,
+                "scene": 1,
+                "loads": 1,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Storenschalter 2-Kanal
             "926-3405.4.A",
-            {"type": "motor", "wlan": False, "scene": 0, "loads": 2, "generation": "A"},
+            {
+                "type": "motor",
+                "wlan": False,
+                "scene": 0,
+                "loads": 2,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Dimmer 1-Kanal
@@ -90,6 +135,7 @@ def ref_c_data() -> list[list]:
                 "wlan": False,
                 "scene": 0,
                 "loads": 1,
+                "sensors": 0,
                 "generation": "A",
             },
         ],
@@ -101,6 +147,7 @@ def ref_c_data() -> list[list]:
                 "wlan": False,
                 "scene": 1,
                 "loads": 1,
+                "sensors": 0,
                 "generation": "A",
             },
         ],
@@ -112,6 +159,7 @@ def ref_c_data() -> list[list]:
                 "wlan": False,
                 "scene": 0,
                 "loads": 2,
+                "sensors": 0,
                 "generation": "A",
             },
         ],
@@ -119,99 +167,232 @@ def ref_c_data() -> list[list]:
         [
             # Bedienaufsatz Wiser Szenentaster 1 Szene WLAN Gen.A
             "926-3400.1.S1.W.A",
-            {"type": "scene", "wlan": True, "scene": 1, "loads": 0, "generation": "A"},
+            {
+                "type": "scene",
+                "wlan": True,
+                "scene": 1,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Szenentaster 2 Szenen vertikal WLAN Gen.A
             "926-3400.2.VS.W.A",
-            {"type": "scene", "wlan": True, "scene": 2, "loads": 0, "generation": "A"},
+            {
+                "type": "scene",
+                "wlan": True,
+                "scene": 2,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Szenentaster 4 Szenen WLAN Gen.A
             "926-3400.4.S4.W.A",
-            {"type": "scene", "wlan": True, "scene": 4, "loads": 0, "generation": "A"},
+            {
+                "type": "scene",
+                "wlan": True,
+                "scene": 4,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Druckschalter 1-Kanal WLAN Gen.A
             "926-3401.1.W.A",
-            {"type": "switch", "wlan": True, "scene": 0, "loads": 1, "generation": "A"},
+            {
+                "type": "switch",
+                "wlan": True,
+                "scene": 0,
+                "loads": 1,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Druckschalter 1-Kanal Szene WLAN Gen.A
             "926-3401.2.S1.W.A",
-            {"type": "switch", "wlan": True, "scene": 1, "loads": 1, "generation": "A"},
+            {
+                "type": "switch",
+                "wlan": True,
+                "scene": 1,
+                "loads": 1,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Druckschalter 2-Kanal WLAN Gen.A
             "926-3402.2.W.A",
-            {"type": "switch", "wlan": True, "scene": 0, "loads": 2, "generation": "A"},
+            {
+                "type": "switch",
+                "wlan": True,
+                "scene": 0,
+                "loads": 2,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Storenschalter 1-Kanal WLAN Gen.A
             "926-3404.2.W.A",
-            {"type": "motor", "wlan": True, "scene": 0, "loads": 1, "generation": "A"},
+            {
+                "type": "motor",
+                "wlan": True,
+                "scene": 0,
+                "loads": 1,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Storenschalter 1-Kanal Szene WLAN Gen.A
             "926-3404.4.S.W.A",
-            {"type": "motor", "wlan": True, "scene": 1, "loads": 1, "generation": "A"},
+            {
+                "type": "motor",
+                "wlan": True,
+                "scene": 1,
+                "loads": 1,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Storenschalter 2-Kanal WLAN Gen.A
             "926-3405.4.W.A",
-            {"type": "motor", "wlan": True, "scene": 0, "loads": 2, "generation": "A"},
+            {
+                "type": "motor",
+                "wlan": True,
+                "scene": 0,
+                "loads": 2,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Dimmer 1-Kanal WLAN Gen.A
             "926-3406.2.W.A",
-            {"type": "dimmer", "wlan": True, "scene": 0, "loads": 1, "generation": "A"},
+            {
+                "type": "dimmer",
+                "wlan": True,
+                "scene": 0,
+                "loads": 1,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Dimmer 1-Kanal Szene WLAN Gen.A
             "926-3406.4.S.W.A",
-            {"type": "dimmer", "wlan": True, "scene": 1, "loads": 1, "generation": "A"},
+            {
+                "type": "dimmer",
+                "wlan": True,
+                "scene": 1,
+                "loads": 1,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Dimmer 2-Kanal WLAN Gen.A
             "926-3407.4.W.A",
-            {"type": "dimmer", "wlan": True, "scene": 0, "loads": 2, "generation": "A"},
+            {
+                "type": "dimmer",
+                "wlan": True,
+                "scene": 0,
+                "loads": 2,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # Bedienaufsatz Wiser Dimmer 2-Kanal WLAN Gen.B
             "926-3407.4.W.B",
-            {"type": "dimmer", "wlan": True, "scene": 0, "loads": 2, "generation": "B"},
+            {
+                "type": "dimmer",
+                "wlan": True,
+                "scene": 0,
+                "loads": 2,
+                "sensors": 0,
+                "generation": "B",
+            },
         ],
         # -- Full assembly numbers --------------------------------------------
         # (not reported by Wiser API but available in webshop)
         [
             # Bedienaufsatz Wiser Dimmer 2-Kanal WLAN Gen.B
             "926-3407.4.W.B.FMI.61",
-            {"type": "dimmer", "wlan": True, "scene": 0, "loads": 2, "generation": "B"},
+            {
+                "type": "dimmer",
+                "wlan": True,
+                "scene": 0,
+                "loads": 2,
+                "sensors": 0,
+                "generation": "B",
+            },
         ],
         [
             # EDIZIOdue Bedienaufsatz Wiser Szenentaster 1 Szene WLAN Gen.A
             "926-3400.1.S1.W.A.FMI.61",
-            {"type": "scene", "wlan": True, "scene": 1, "loads": 0, "generation": "A"},
+            {
+                "type": "scene",
+                "wlan": True,
+                "scene": 1,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # EDIZIOdue Bedienaufsatz Wiser Szenentaster 1 Szene WLAN Gen.B
             "926-3400.1.S1.W.B.FMI.61",
-            {"type": "scene", "wlan": True, "scene": 1, "loads": 0, "generation": "B"},
+            {
+                "type": "scene",
+                "wlan": True,
+                "scene": 1,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "B",
+            },
         ],
         [
             # STANDARDdue Bedienaufsatz Wiser Szenentaster 1 Szene WLAN Gen.A
             "926-3400.1.S1.W.A.QMI.61",
-            {"type": "scene", "wlan": True, "scene": 1, "loads": 0, "generation": "A"},
+            {
+                "type": "scene",
+                "wlan": True,
+                "scene": 1,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # EDIZIO.liv Abdeckset Wiser Szenentaster 1 Szene
             "920-3400.1.S1.GMI.A.61",
-            {"type": "scene", "wlan": False, "scene": 1, "loads": 0, "generation": "A"},
+            {
+                "type": "scene",
+                "wlan": False,
+                "scene": 1,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # EDIZIO.liv Bedienaufsatz Wiser Szenentaster 1 Szene WLAN Gen.A
             "926-3400.1.S1.W.A.GMI.A.61",
-            {"type": "scene", "wlan": True, "scene": 1, "loads": 0, "generation": "A"},
+            {
+                "type": "scene",
+                "wlan": True,
+                "scene": 1,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "A",
+            },
         ],
         [
             # EDIZIOdue Abdeckset Wiser Szenentaster 1 Szene
@@ -221,7 +402,70 @@ def ref_c_data() -> list[list]:
                 "wlan": False,
                 "scene": 1,
                 "loads": 0,
+                "sensors": 0,
                 "generation": None,
+            },
+        ],
+        [
+            # EDIZIO.liv Bedienaufsatz Wiser Raumtemperatursensor
+            "926-3475.0.T1.A.G.A.61",
+            {
+                "type": "sensor-temp",
+                "wlan": False,
+                "scene": 0,
+                "loads": 0,
+                "sensors": 1,
+                "generation": "A",
+            },
+        ],
+        # -- Weather station --------------------------------------------------
+        [
+            # Wiser Kombisensor/Wetterstation
+            "3440.A.4.MS",
+            {
+                "type": "weather-station",
+                "wlan": False,
+                "scene": 0,
+                "loads": 0,
+                "sensors": 4,
+                "generation": "A",
+            },
+        ],
+        [
+            # Wiser Wetterstation REG-Modul
+            "3440.B.1.REG",
+            {
+                "type": "weather-station-reg",
+                "wlan": False,
+                "scene": 0,
+                "loads": 0,
+                "sensors": 0,
+                "generation": "B",
+            },
+        ],
+        # -- Heating controller -----------------------------------------------
+        [
+            # Wiser Heizungskontroller 6K
+            "3470.B.6.HK",
+            {
+                "type": "hvac",
+                "wlan": False,
+                "scene": 0,
+                "loads": 6,
+                "sensors": 0,
+                "generation": "B",
+            },
+        ],
+        [
+            # Wiser Raumtemperatursensor
+            "3475.0.T1.A",
+            {
+                "type": "sensor-temp",
+                "wlan": False,
+                "scene": 0,
+                "loads": 0,
+                "sensors": 1,
+                "generation": "A",
             },
         ],
     ]

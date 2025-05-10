@@ -2,6 +2,26 @@
 
 from __future__ import annotations
 
+from .const import (
+    DEVICE_A_TYPE_DIMMER_DALI,
+    DEVICE_A_TYPE_DIMMER_LED,
+    DEVICE_A_TYPE_HVAC,
+    DEVICE_A_TYPE_MOTOR,
+    DEVICE_A_TYPE_NOOP,
+    DEVICE_A_TYPE_SWITCH,
+    DEVICE_A_TYPE_WEATHER_STATION,
+    DEVICE_A_TYPE_WEATHER_STATION_REG,
+    DEVICE_C_TYPE_DIMMER,
+    DEVICE_C_TYPE_HVAC,
+    DEVICE_C_TYPE_MOTOR,
+    DEVICE_C_TYPE_SCENE,
+    DEVICE_C_TYPE_SENSOR_TEMPERATURE,
+    DEVICE_C_TYPE_SWITCH,
+    DEVICE_C_TYPE_WEATHER_STATION,
+    DEVICE_C_TYPE_WEATHER_STATION_REG,
+    DEVICE_GENERATION_A,
+    DEVICE_GENERATION_B,
+)
 from .errors import InvalidArgument
 
 
@@ -22,34 +42,50 @@ def parse_wiser_device_ref_c(value: str) -> dict:
         "wlan": ".W" in value,
         "scene": 0,
         "loads": 0,
+        "sensors": 0,
         "generation": None,
     }
 
-    if "VS" in value:
+    if ".VS" in value:
         result["scene"] = 2
-    elif "S4" in value:
+    elif ".S4" in value:
         result["scene"] = 4
-    elif "S" in value or "S1" in value:
+    elif ".S" in value or ".S1" in value:
         result["scene"] = 1
 
     if "3400" in value:
-        result["type"] = "scene"
+        result["type"] = DEVICE_C_TYPE_SCENE
     elif "3404" in value or "3405" in value:
-        result["type"] = "motor"
+        result["type"] = DEVICE_C_TYPE_MOTOR
     elif "3406" in value or "3407" in value:
-        result["type"] = "dimmer"
+        result["type"] = DEVICE_C_TYPE_DIMMER
     elif "3401" in value or "3402" in value:
-        result["type"] = "switch"
+        result["type"] = DEVICE_C_TYPE_SWITCH
+    elif "3440" in value and ".MS" in value:
+        result["type"] = DEVICE_C_TYPE_WEATHER_STATION
+    elif "3440" in value and ".REG" in value:
+        result["type"] = DEVICE_C_TYPE_WEATHER_STATION_REG
+    elif "3470" in value and ".HK" in value:
+        result["type"] = DEVICE_C_TYPE_HVAC
+    elif "3475" in value and ".T1" in value:
+        result["type"] = DEVICE_C_TYPE_SENSOR_TEMPERATURE
 
     if "3401" in value or "3406" in value or "3404" in value:
         result["loads"] = 1
     elif "3402" in value or "3405" in value or "3407" in value:
         result["loads"] = 2
+    elif "3470" in value and ".6." in value:
+        result["loads"] = 6
+
+    if "3440" in value and ".MS" in value:
+        result["sensors"] = 4
+    elif "3475" in value and ".T1" in value:
+        result["sensors"] = 1
 
     if ".A." in value or value.endswith(".A"):
-        result["generation"] = "A"
+        result["generation"] = DEVICE_GENERATION_A
     elif ".B." in value or value.endswith(".B"):
-        result["generation"] = "B"
+        result["generation"] = DEVICE_GENERATION_B
 
     return result
 
@@ -59,24 +95,32 @@ def parse_wiser_device_ref_a(value: str) -> dict:
     result = {"loads": 0, "generation": None}
 
     if "3400" in value:
-        result["type"] = "noop"
+        result["type"] = DEVICE_A_TYPE_NOOP
     elif "3401" in value or "3402" in value:
-        result["type"] = "switch"
+        result["type"] = DEVICE_A_TYPE_SWITCH
     elif "3404" in value or "3405" in value:
-        result["type"] = "motor"
+        result["type"] = DEVICE_A_TYPE_MOTOR
     elif "3406" in value or "3407" in value:
-        result["type"] = "dimmer-led"
+        result["type"] = DEVICE_A_TYPE_DIMMER_LED
     elif "3411" in value:
-        result["type"] = "dimmer-dali"
+        result["type"] = DEVICE_A_TYPE_DIMMER_DALI
+    elif "3440" in value and ".MS" in value:
+        result["type"] = DEVICE_A_TYPE_WEATHER_STATION
+    elif "3440" in value and ".REG" in value:
+        result["type"] = DEVICE_A_TYPE_WEATHER_STATION_REG
+    elif "3470" in value and ".HK" in value:
+        result["type"] = DEVICE_A_TYPE_HVAC
 
     if "3401" in value or "3404" in value or "3406" in value or "3411" in value:
         result["loads"] = 1
     elif "3402" in value or "3405" in value or "3407" in value:
         result["loads"] = 2
+    elif "3470" in value and ".6." in value:
+        result["loads"] = 6
 
-    if ".A." in value:
-        result["generation"] = "A"
-    elif ".B." in value:
-        result["generation"] = "B"
+    if ".A." in value or value.endswith(".A"):
+        result["generation"] = DEVICE_GENERATION_A
+    elif ".B." in value or value.endswith(".B"):
+        result["generation"] = DEVICE_GENERATION_B
 
     return result
