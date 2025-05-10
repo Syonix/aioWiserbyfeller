@@ -35,20 +35,36 @@ async def test_async_get_devices(client_api_auth, mock_aioresponse):
                 "id": "000004d7",
                 "last_seen": 6,
                 "a": {
-                    "fw_id": "0x0100",
-                    "hw_id": "0x1110",
+                    "fw_id": "0x010C",
+                    "hw_id": "0x1511",
                     "fw_version": "0x00501a30",
                     "address": "0x00000af6",
                     "comm_ref": "3404.A",
                 },
                 "c": {
-                    "fw_id": "0x8402",
+                    "fw_id": "0x9509",
                     "hw_id": "0x8443",
                     "fw_version": "0x00500a28",
                     "cmd_matrix": "0x0002",
                     "comm_ref": "926-3406-4.S4.A.F",
                 },
             },
+            {
+                "id": "00023698",
+                "last_seen": 31,
+                "a": {
+                    "hw_id": "",
+                    "fw_version": "0x20606000",
+                    "fw_id": "",
+                    "address": "0x00023698"
+                },
+                "c": {
+                    "hw_id": "",
+                    "fw_version": "0x20606000",
+                    "fw_id": "",
+                    "cmd_matrix": "0x0001"
+                }
+            }
         ],
     }
 
@@ -58,12 +74,18 @@ async def test_async_get_devices(client_api_auth, mock_aioresponse):
 
     actual = await client_api_auth.async_get_devices()
 
-    assert len(actual) == 2
+    assert len(actual) == 3
     assert isinstance(actual[0], Device)
     assert actual[0].id == "00000679"
     assert actual[0].last_seen == 25
     assert actual[0].a == response_json["data"][0]["a"]
     assert actual[0].c == response_json["data"][0]["c"]
+    assert actual[0].actuator_name == "DIMMER 1K"
+    assert actual[0].control_name == "Button-Front C-Block"
+    assert actual[1].actuator_name == "UNKNOWN 1K"
+    assert actual[1].control_name == "Unknown"
+    assert actual[2].actuator_name == "UNKNOWN"
+    assert actual[2].control_name == "Unknown"
 
 
 @pytest.mark.asyncio
@@ -97,7 +119,7 @@ async def test_async_get_devices_detail(client_api_auth, mock_aioresponse):
                 },
                 "inputs": [{"type": "up down"}],
                 "outputs": [{"load": 6, "type": "motor", "sub_type": ""}],
-            }
+            },
         ],
     }
 
@@ -112,6 +134,9 @@ async def test_async_get_devices_detail(client_api_auth, mock_aioresponse):
     assert actual[0].a == response_json["data"][0]["a"]
     assert actual[0].inputs == response_json["data"][0]["inputs"]
     assert actual[0].outputs == response_json["data"][0]["outputs"]
+    assert actual[0].actuator_name == "ONOFF 1K"
+    assert actual[0].control_name == "Button-Front C-Block"
+    assert actual[0].actuator_name == "ONOFF 1K"
 
     c_sn = response_json["data"][0]["c"]["serial_nr"]
     a_sn = response_json["data"][0]["a"]["serial_nr"]
@@ -162,6 +187,8 @@ async def test_async_get_device(client_api_auth, mock_aioresponse):
     assert actual.last_seen == 39
     assert actual.a == response_json["data"]["a"]
     assert actual.outputs == response_json["data"]["outputs"]
+    assert actual.actuator_name == "ONOFF 1K"
+    assert actual.control_name == "Button-Front C-Block"
 
 
 @pytest.mark.asyncio

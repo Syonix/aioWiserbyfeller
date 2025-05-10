@@ -124,3 +124,77 @@ def parse_wiser_device_ref_a(value: str) -> dict:
         result["generation"] = DEVICE_GENERATION_B
 
     return result
+
+
+def parse_wiser_device_hwid_a(value: str) -> str:
+    """Parse a Feller Wiser actuator (Funktionseinsatz) hardware id."""
+    a_block_map = [
+        {"name": "NS", "type": 0x0, "feature": None},
+        {"name": "ONOFF", "type": 0x1, "feature": None},
+        {"name": "DIMMER", "type": 0x2, "feature": None},
+        {"name": "MOTOR", "type": 0x3, "feature": None},
+        {"name": "THERMOSTAT", "type": 0x4, "feature": None},
+        {"name": "VALVE CONTROLLER", "type": 0x4, "feature": 0x1},
+        {"name": "DALI", "type": 0x2, "feature": 0x1},
+        {"name": "WEATHER STATION", "type": 0x0, "feature": 0x4},
+    ]
+    if value in (None, ""):
+        return "UNKNOWN"
+
+    value = int(value, 16)
+    channel_type = (value >> 8) & 0x0F
+    channel_features = (value >> 4) & 0x0F
+    channels = (value >> 12) & 0x07
+    best_match = "UNKNOWN"
+    for entry in a_block_map:
+        if entry["type"] == channel_type:
+            if entry["feature"] == channel_features:
+                best_match = entry["name"]
+                break  # Exact match
+            if entry["feature"] is None:
+                best_match = entry["name"]  # Temporarily set, but continue searching
+    return best_match + (f" {channels}K" if channel_type != 0x0 else "")
+
+def parse_wiser_device_fwid(value: str) -> str:
+    """Parse a Feller Wiser device firmware id."""
+    if value in (None, ""):
+        return "Unknown"
+
+    c_block_map = {
+        0x8402: "Button-Front",
+        0x8600: "microGW Button-Front",
+        0x9000: "Sensor-Front",
+        0x9200: "Display-Front",
+        0xA000: "WEST-Interface",
+        0xAA00: "Valve-Controller",
+        0xBA00: "Push-Button-Interface",
+        0xC000: "DinRailGW",
+    }
+    a_block_map = {
+        0x0100: "OnOff/NS",
+        0x0200: "RLRC-Dimmer",
+        0x0210: "DALI-Dimmer",
+        0x0220: "10V-Dimmer",
+        0x0300: "Motor",
+        0x0400: "Thermostat",
+        0x0410: "Valve-Controller",
+    }
+    block_map = [
+        {
+            "mask": 0x7E00,
+            "main_name": "C-Block",
+            "fw_id_map": c_block_map,
+        },
+        {
+            "mask": 0xFF0,
+            "main_name": "A-Block",
+            "fw_id_map": a_block_map,
+        },
+    ]
+    fw_id = int(value, 16)
+    b = block_map[0] if (fw_id & 0x8000) else block_map[1]
+
+    for map_fwid, name in b["fw_id_map"].items():
+        if (map_fwid & b["mask"]) == (fw_id & b["mask"]):
+            return f"{name} {b['main_name']}"
+    return "Unknown"

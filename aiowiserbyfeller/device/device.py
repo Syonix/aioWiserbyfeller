@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from aiowiserbyfeller.auth import Auth
+from aiowiserbyfeller.util import parse_wiser_device_fwid, parse_wiser_device_hwid_a
 
 
 class Device:
@@ -37,9 +38,19 @@ class Device:
         return self.raw_data["a"]
 
     @property
+    def actuator_name(self) -> str:
+        """Name of the actuator module (Funktionseinsatz)."""
+        return parse_wiser_device_hwid_a(self.raw_data["a"]["hw_id"])
+
+    @property
     def c(self) -> dict:
         """Information about the control module (Bedienaufsatz)."""
         return self.raw_data["c"]
+
+    @property
+    def control_name(self) -> str:
+        """Name of the control module (Bedienaufsatz)."""
+        return parse_wiser_device_fwid(self.raw_data["c"]["fw_id"])
 
     @property
     def inputs(self) -> list:
