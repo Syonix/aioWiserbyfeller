@@ -162,9 +162,6 @@ def parse_wiser_device_fwid(value: str, include_block_suffix: bool = False) -> s
 
     for map_fwid, name in b["fw_id_map"].items():
         if (map_fwid & b["mask"]) == (fw_id & b["mask"]):
-            if include_block_suffix:
-                return f"{name} {b['main_name']}"
-
-            return f"{name}"
+            return name + (f" {b['main_name']}" if include_block_suffix else "")
 
     return "Unknown"
