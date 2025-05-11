@@ -80,12 +80,12 @@ async def test_async_get_devices(client_api_auth, mock_aioresponse):
     assert actual[0].last_seen == 25
     assert actual[0].a == response_json["data"][0]["a"]
     assert actual[0].c == response_json["data"][0]["c"]
-    assert actual[0].actuator_name == "DIMMER 1K"
-    assert actual[0].control_name == "Button-Front C-Block"
-    assert actual[1].actuator_name == "UNKNOWN 1K"
-    assert actual[1].control_name == "Unknown"
-    assert actual[2].actuator_name == "UNKNOWN"
-    assert actual[2].control_name == "Unknown"
+    assert actual[0].a_name == "Dimmer 1K"
+    assert actual[0].c_name == "Button Front"
+    assert actual[1].a_name == "Unknown 1K"
+    assert actual[1].c_name == "Unknown"
+    assert actual[2].a_name == "Unknown"
+    assert actual[2].c_name == "Unknown"
 
 
 @pytest.mark.asyncio
@@ -134,9 +134,9 @@ async def test_async_get_devices_detail(client_api_auth, mock_aioresponse):
     assert actual[0].a == response_json["data"][0]["a"]
     assert actual[0].inputs == response_json["data"][0]["inputs"]
     assert actual[0].outputs == response_json["data"][0]["outputs"]
-    assert actual[0].actuator_name == "ONOFF 1K"
-    assert actual[0].control_name == "Button-Front C-Block"
-    assert actual[0].actuator_name == "ONOFF 1K"
+    assert actual[0].a_name == "On/Off 1K"
+    assert actual[0].c_name == "Button Front"
+    assert actual[0].a_name == "On/Off 1K"
 
     c_sn = response_json["data"][0]["c"]["serial_nr"]
     a_sn = response_json["data"][0]["a"]["serial_nr"]
@@ -187,8 +187,8 @@ async def test_async_get_device(client_api_auth, mock_aioresponse):
     assert actual.last_seen == 39
     assert actual.a == response_json["data"]["a"]
     assert actual.outputs == response_json["data"]["outputs"]
-    assert actual.actuator_name == "ONOFF 1K"
-    assert actual.control_name == "Button-Front C-Block"
+    assert actual.a_name == "On/Off 1K"
+    assert actual.c_name == "Button Front"
 
 
 @pytest.mark.asyncio

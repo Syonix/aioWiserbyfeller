@@ -494,37 +494,37 @@ def ref_a_data() -> list[list]:
 def fwid_data() -> list[list]:
     """Provide data for test_parse_wiser_device_hwid_a."""
     return [
-        ["0x8402", "Button-Front C-Block"],
-        ["0x8600", "microGW Button-Front C-Block"],
-        ["0x9000", "Sensor-Front C-Block"],
-        ["0x9200", "Display-Front C-Block"],
-        ["0xA000", "WEST-Interface C-Block"],
-        ["0xAA00", "Valve-Controller C-Block"],
-        ["0xBA00", "Push-Button-Interface C-Block"],
-        ["0xC000", "DinRailGW C-Block"],
-        ["0x0100", "OnOff/NS A-Block"],
-        ["0x0200", "RLRC-Dimmer A-Block"],
-        ["0x0210", "DALI-Dimmer A-Block"],
-        ["0x0220", "10V-Dimmer A-Block"],
-        ["0x0300", "Motor A-Block"],
-        ["0x0400", "Thermostat A-Block"],
-        ["0x0410", "Valve-Controller A-Block"],
+        ["0x8402", "Button Front", "C-Block"],
+        ["0x8600", "µGateway Button Front", "C-Block"],
+        ["0x9000", "Sensor Front", "C-Block"],
+        ["0x9200", "Display Front", "C-Block"],
+        ["0xA000", "Weather Station", "C-Block"],
+        ["0xAA00", "Valve Controller", "C-Block"],
+        ["0xBA00", "Push Button Interface", "C-Block"],
+        ["0xC000", "DIN Rail Gateway", "C-Block"],
+        ["0x0100", "On/Off / Secondary Control", "A-Block"],
+        ["0x0200", "RL/RC Dimmer", "A-Block"],
+        ["0x0210", "DALI Dimmer", "A-Block"],
+        ["0x0220", "10V Dimmer", "A-Block"],
+        ["0x0300", "Motor", "A-Block"],
+        ["0x0400", "Thermostat", "A-Block"],
+        ["0x0410", "Valve Controller", "A-Block"],
     ]
 
 
 def hwid_data() -> list[list]:
     """Provide data for test_parse_wiser_device_hwid_a."""
     return [
-        ["0x0033", "NS"],
-        ["0x1113", "ONOFF 1K"],
-        ["0x1203", "DIMMER 1K"],
-        ["0x2203", "DIMMER 2K"],
-        ["0x1303", "MOTOR 1K"],
-        ["0x2303", "MOTOR 2K"],
-        ["0x6413", "VALVE CONTROLLER 6K"],
-        ["0x2212", "DALI 2K"],
-        ["0x0040", "WEATHER STATION"],
-        ["0x0400", "THERMOSTAT"],
+        ["0x0033", "Secondary Control"],
+        ["0x1113", "On/Off 1K"],
+        ["0x1203", "Dimmer 1K"],
+        ["0x2203", "Dimmer 2K"],
+        ["0x1303", "Motor 1K"],
+        ["0x2303", "Motor 2K"],
+        ["0x6413", "Valve Controller 6K"],
+        ["0x2212", "Dali 2K"],
+        ["0x0040", "Weather Station"],
+        ["0x0400", "Thermostat"],
     ]
 
 
@@ -578,3 +578,10 @@ def test_parse_wiser_device_fwid(data: list):
     """Test parse_wiser_device_fwid."""
     actual = parse_wiser_device_fwid(data[0])
     assert actual == data[1]
+
+
+@pytest.mark.parametrize("data", fwid_data())
+def test_parse_wiser_device_fwid_with_blocktype(data: list):
+    """Test parse_wiser_device_fwid with blocktype."""
+    actual = parse_wiser_device_fwid(data[0], include_block_suffix=True)
+    assert actual == data[1] + " " + data[2]

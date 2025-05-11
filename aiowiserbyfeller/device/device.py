@@ -13,6 +13,8 @@ class Device:
         """Initialize a device object."""
         self.raw_data = raw_data
         self.auth = auth
+        self._a_name = parse_wiser_device_hwid_a(raw_data["a"]["hw_id"])
+        self._c_name = parse_wiser_device_fwid(raw_data["c"]["fw_id"])
 
     @property
     def id(self) -> str:
@@ -38,9 +40,9 @@ class Device:
         return self.raw_data["a"]
 
     @property
-    def actuator_name(self) -> str:
+    def a_name(self) -> str:
         """Name of the actuator module (Funktionseinsatz)."""
-        return parse_wiser_device_hwid_a(self.raw_data["a"]["hw_id"])
+        return self._a_name
 
     @property
     def c(self) -> dict:
@@ -48,9 +50,9 @@ class Device:
         return self.raw_data["c"]
 
     @property
-    def control_name(self) -> str:
+    def c_name(self) -> str:
         """Name of the control module (Bedienaufsatz)."""
-        return parse_wiser_device_fwid(self.raw_data["c"]["fw_id"])
+        return self._c_name
 
     @property
     def inputs(self) -> list:
