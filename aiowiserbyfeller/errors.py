@@ -29,6 +29,18 @@ class UnsuccessfulRequest(AiowiserbyfellerException):
     """Request returned non-success response."""
 
 
+class NoButtonPressed(AiowiserbyfellerException):
+    """No button has been pressed within the specified time Frame."""
+
+    def __init__(
+        self,
+        msg="No button has been pressed",
+        *args,
+    ):
+        """Initialize a no button pressed exception."""
+        super().__init__(msg, *args)
+
+
 class InvalidJson(UnsuccessfulRequest):
     """Request returned invalid JSON."""
 

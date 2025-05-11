@@ -14,7 +14,7 @@ from .const import (
     LOAD_TYPE_ONOFF,
 )
 from .device import Device
-from .errors import InvalidLoadType
+from .errors import InvalidLoadType, NoButtonPressed, UnsuccessfulRequest
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
@@ -679,7 +679,7 @@ class WiserByFellerAPI:
 
         return await self.auth.request("post", "smartbuttons/program", json=json)
 
-    async def async_notify_smart_buttons(self) -> int:
+    async def async_notify_smart_buttons(self) -> dict:
         """Start blinking all SmartButtons and wait until one is pressed.
 
         As soon as one blinking SmartButton is pressed, all SmartButtons
@@ -688,9 +688,14 @@ class WiserByFellerAPI:
         If no SmartButton is pressed, an error response is sent.
         """
 
-        result = await self.auth.request("get", "smartbuttons/notify")
+        try:
+            result = await self.auth.request("get", "smartbuttons/notify")
+        except UnsuccessfulRequest as e:
+            if f"{e}" == "no button pressed":
+                raise NoButtonPressed from e
+            raise e from None
 
-        return result["button"]
+        return result
 
     # -- Jobs ----------------------------------------------------------
 
