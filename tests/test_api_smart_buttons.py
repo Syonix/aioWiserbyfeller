@@ -2,7 +2,8 @@
 
 import pytest
 
-from aiowiserbyfeller import InvalidArgument, SmartButton
+from aiowiserbyfeller import InvalidArgument, SmartButton, UnsuccessfulRequest
+from aiowiserbyfeller.errors import NoButtonPressed
 
 from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
@@ -129,14 +130,35 @@ async def test_async_program_smart_buttons(client_api_auth, mock_aioresponse):
 @pytest.mark.asyncio
 async def test_async_notify_smart_buttons(client_api_auth, mock_aioresponse):
     """Test async_notify_smart_buttons."""
-    response_json = {"status": "success", "data": {"button": 9}}
+    response_json = {
+        "status": "success",
+        "data": {"button": 9, "id": 9, "device": "00006c0b", "channel": 2},
+    }
 
     await prepare_test_authenticated(
         mock_aioresponse, f"{BASE_URL}/smartbuttons/notify", "get", response_json
     )
 
     actual = await client_api_auth.async_notify_smart_buttons()
-    assert actual == 9
+    assert actual == response_json["data"]
+
+    response_json = {"message": "no button pressed", "status": "error"}
+
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/smartbuttons/notify", "get", response_json
+    )
+
+    with pytest.raises(NoButtonPressed, match="No button has been pressed"):
+        await client_api_auth.async_notify_smart_buttons()
+
+    response_json = {"message": "different error", "status": "error"}
+
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/smartbuttons/notify", "get", response_json
+    )
+
+    with pytest.raises(UnsuccessfulRequest, match="different error"):
+        await client_api_auth.async_notify_smart_buttons()
 
 
 @pytest.mark.asyncio
