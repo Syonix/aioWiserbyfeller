@@ -23,6 +23,7 @@ from .const import (
     DEVICE_GENERATION_B,
 )
 from .errors import InvalidArgument
+from .map import DEVICE_A_BLOCK_FWID_BLOCK_MAP, DEVICE_A_BLOCK_HWID_MAP
 
 
 def validate_str(value, valid, **kwargs):
@@ -124,3 +125,43 @@ def parse_wiser_device_ref_a(value: str) -> dict:
         result["generation"] = DEVICE_GENERATION_B
 
     return result
+
+
+def parse_wiser_device_hwid_a(value: str) -> str:
+    """Parse a Feller Wiser actuator (Funktionseinsatz) hardware id."""
+    if value in (None, ""):
+        return "Unknown"
+
+    value = int(value, 16)
+    channel_type = (value >> 8) & 0x0F
+    channel_features = (value >> 4) & 0x0F
+    channels = (value >> 12) & 0x07
+    best_match = "Unknown"
+    for entry in DEVICE_A_BLOCK_HWID_MAP:
+        if entry["type"] == channel_type:
+            if entry["feature"] == channel_features:
+                best_match = entry["name"]
+                break  # Exact match
+            if entry["feature"] is None:
+                best_match = entry["name"]  # Temporarily set, but continue searching
+
+    return best_match + (f" {channels}K" if channels != 0x0 else "")
+
+
+def parse_wiser_device_fwid(value: str, include_block_suffix: bool = False) -> str:
+    """Parse a Feller Wiser device firmware id."""
+    if value in (None, ""):
+        return "Unknown"
+
+    fw_id = int(value, 16)
+    b = (
+        DEVICE_A_BLOCK_FWID_BLOCK_MAP[0]
+        if (fw_id & 0x8000)
+        else DEVICE_A_BLOCK_FWID_BLOCK_MAP[1]
+    )
+
+    for map_fwid, name in b["fw_id_map"].items():
+        if (map_fwid & b["mask"]) == (fw_id & b["mask"]):
+            return name + (f" {b['main_name']}" if include_block_suffix else "")
+
+    return "Unknown"
