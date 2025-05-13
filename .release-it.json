@@ -1,17 +1,15 @@
 {
   "$schema": "https://unpkg.com/release-it/schema/release-it.json",
   "git": {
-    "requireCleanWorkingDir": false,
-    "commitMessage": "Prepare ${version} release"
+    "commitMessage": "Prepare v${version} release"
   },
   "npm": false,
   "github": {
     "release": true,
-    "preRelease": true,
-    "github.draft": true,
-    "web": true
+    "releaseName": "${version}",
+    "github.draft": true
   },
   "hooks": {
-    "after:bump": "./bin/release-it-after-bump.sh"
+    "after:bump": "./bin/update-version.sh ${version}"
   }
 }
