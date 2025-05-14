@@ -680,12 +680,13 @@ class WiserByFellerAPI:
         return await self.auth.request("post", "smartbuttons/program", json=json)
 
     async def async_notify_smart_buttons(self) -> dict:
-        """Start blinking all SmartButtons and wait until one is pressed.
+        """Identify a SmartButton by pressing a blinking button.
 
+        Start blinking all SmartButtons and wait until one is pressed.
         As soon as one blinking SmartButton is pressed, all SmartButtons
-        stop blinking and the notify request comes back with a response.
+        stop blinking and the method returns a result.
 
-        If no SmartButton is pressed, an error response is sent.
+        If no SmartButton is pressed, a NoButtonPressed is raised.
         """
 
         try:
