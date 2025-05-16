@@ -1,5 +1,8 @@
 """aiowiserbyfeller Api class device tests."""
 
+import json
+from pathlib import Path
+
 import pytest
 
 from aiowiserbyfeller import Device
@@ -142,6 +145,30 @@ async def test_async_get_devices_detail(client_api_auth, mock_aioresponse):
     a_sn = response_json["data"][0]["a"]["serial_nr"]
     assert actual[0].combined_serial_number == f"{c_sn} / {a_sn}"
 
+def device_family_data() -> list[list]:
+    """Provide data for test_device_family."""
+    base = "tests/data/devices"
+    with Path(base + "/valid/simple_switch.json").open("r") as f:
+        simple_switch = json.load(f)
+    with Path(base + "/valid/valve_controller_6k.json").open("r") as f:
+        valve_controller_6k = json.load(f)
+    with Path(base + "/empty-a-hw-id/valve_controller_6k.json").open("r") as f:
+        invalid_valve_controller_6k = json.load(f)
+
+    return [
+        [0x11, simple_switch],
+        [0x41, valve_controller_6k],
+        [None, invalid_valve_controller_6k],
+    ]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("data", device_family_data())
+def test_a_device_family(client_api_auth, data):
+    """Test a_device_family property."""
+    device = Device(data[1], client_api_auth)
+
+    assert device.a_device_family == data[0]
 
 @pytest.mark.asyncio
 async def test_async_get_device(client_api_auth, mock_aioresponse):

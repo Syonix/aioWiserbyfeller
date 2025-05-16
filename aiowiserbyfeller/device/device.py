@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from aiowiserbyfeller.auth import Auth
-from aiowiserbyfeller.util import parse_wiser_device_fwid, parse_wiser_device_hwid_a
+from aiowiserbyfeller.errors import UnexpectedGatewayResponse
+from aiowiserbyfeller.map import DEVICE_ALLOWED_EMPTY_FIELDS, DEVICE_CHECK_FIELDS
 from aiowiserbyfeller.util import get_device_name_by_fwid, get_device_name_by_hwid_a
 
 
@@ -44,6 +45,34 @@ class Device:
     def a_name(self) -> str:
         """Name of the actuator module (Funktionseinsatz)."""
         return self._a_name
+
+    @property
+    def a_device_family(self) -> int | None:
+        """Return the device family identifier.
+
+        The A block hardware ID (self.a["hw_id"]) is a bit field of 2 bytes.
+        Those bytes contain four values: type, features, channels and a hardware revision.
+        See aiowiserbyfeller.util.parse_wiser_device_hwid_a for technical details.
+
+        The device family is very similar to the hardware ID, but omits the channel number
+        and revision information.
+        This allows for identifying multiple devices of the same type (e.g. on/off switch 1K, 2K)
+        without having to list each device explicitly.
+
+        # +----+----+----+----+----+----+----+----+----+
+        # |  0 |   channel_type    |  channel_features |
+        # +----+----+----+----+----+----+----+----+----+
+        """
+        hw_id = self.a.get("hw_id", "")
+
+        if hw_id == "":
+            return None
+
+        hw_id = int(hw_id, 16)
+        device_type = (hw_id >> 8) & 0x0F
+        device_features = (hw_id >> 4) & 0x0F
+
+        return (device_type << 4) | device_features
 
     @property
     def c(self) -> dict:
