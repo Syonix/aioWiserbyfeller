@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from aiowiserbyfeller.auth import Auth
 from aiowiserbyfeller.util import parse_wiser_device_fwid, parse_wiser_device_hwid_a
+from aiowiserbyfeller.util import get_device_name_by_fwid, get_device_name_by_hwid_a
 
 
 class Device:
@@ -13,8 +14,8 @@ class Device:
         """Initialize a device object."""
         self.raw_data = raw_data
         self.auth = auth
-        self._a_name = parse_wiser_device_hwid_a(raw_data["a"]["hw_id"])
-        self._c_name = parse_wiser_device_fwid(raw_data["c"]["fw_id"])
+        self._a_name = get_device_name_by_hwid_a(raw_data["a"]["hw_id"])
+        self._c_name = get_device_name_by_fwid(raw_data["c"]["fw_id"])
 
     @property
     def id(self) -> str:

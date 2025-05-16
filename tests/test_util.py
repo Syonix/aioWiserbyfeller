@@ -4,6 +4,8 @@ import pytest
 
 from aiowiserbyfeller import InvalidArgument
 from aiowiserbyfeller.util import (
+    get_device_name_by_fwid,
+    get_device_name_by_hwid_a,
     parse_wiser_device_fwid,
     parse_wiser_device_hwid_a,
     parse_wiser_device_ref_a,
@@ -492,7 +494,108 @@ def ref_a_data() -> list[list]:
 
 
 def fwid_data() -> list[list]:
-    """Provide data for test_parse_wiser_device_hwid_a."""
+    """Provide data for parse_wiser_device_fwid."""
+    return [
+        # Invalid
+        ["not a hex number", {"block_type": None, "revision": None}],
+        # C block
+        ["0x8402", {"block_type": "C", "revision": 2, "hw_type": 2}],
+        ["0x8600", {"block_type": "C", "revision": 0, "hw_type": 3}],
+        ["0x9000", {"block_type": "C", "revision": 0, "hw_type": 8}],
+        ["0x9200", {"block_type": "C", "revision": 0, "hw_type": 9}],
+        ["0xA000", {"block_type": "C", "revision": 0, "hw_type": 16}],
+        ["0xAA00", {"block_type": "C", "revision": 0, "hw_type": 21}],
+        ["0xBA00", {"block_type": "C", "revision": 0, "hw_type": 29}],
+        ["0xC000", {"block_type": "C", "revision": 0, "hw_type": 32}],
+        # A block
+        [
+            "0x0100",
+            {
+                "block_type": "A",
+                "revision": 0,
+                "channel_type": 1,
+                "channel_features": 0,
+            },
+        ],
+        [
+            "0x0200",
+            {
+                "block_type": "A",
+                "revision": 0,
+                "channel_type": 2,
+                "channel_features": 0,
+            },
+        ],
+        [
+            "0x0210",
+            {
+                "block_type": "A",
+                "revision": 0,
+                "channel_type": 2,
+                "channel_features": 1,
+            },
+        ],
+        [
+            "0x0220",
+            {
+                "block_type": "A",
+                "revision": 0,
+                "channel_type": 2,
+                "channel_features": 2,
+            },
+        ],
+        [
+            "0x0300",
+            {
+                "block_type": "A",
+                "revision": 0,
+                "channel_type": 3,
+                "channel_features": 0,
+            },
+        ],
+        [
+            "0x0400",
+            {
+                "block_type": "A",
+                "revision": 0,
+                "channel_type": 4,
+                "channel_features": 0,
+            },
+        ],
+        [
+            "0x0410",
+            {
+                "block_type": "A",
+                "revision": 0,
+                "channel_type": 4,
+                "channel_features": 1,
+            },
+        ],
+    ]
+
+
+def hwid_a_data() -> list[list]:
+    """Provide data for parse_wiser_device_hwid_a."""
+    return [
+        [
+            "not a hex number",
+            {"revision": None, "features": None, "type": None, "channels": 0},
+        ],
+        ["0x0033", {"revision": 3, "features": 3, "type": 0, "channels": 0}],
+        ["0x1113", {"revision": 3, "features": 1, "type": 1, "channels": 1}],
+        ["0x1203", {"revision": 3, "features": 0, "type": 2, "channels": 1}],
+        ["0x2203", {"revision": 3, "features": 0, "type": 2, "channels": 2}],
+        ["0x1303", {"revision": 3, "features": 0, "type": 3, "channels": 1}],
+        ["0x2303", {"revision": 3, "features": 0, "type": 3, "channels": 2}],
+        ["0x6413", {"revision": 3, "features": 1, "type": 4, "channels": 6}],
+        ["0x2212", {"revision": 2, "features": 1, "type": 2, "channels": 2}],
+        ["0x0040", {"revision": 0, "features": 4, "type": 0, "channels": 0}],
+        ["0x0400", {"revision": 0, "features": 0, "type": 4, "channels": 0}],
+    ]
+
+
+def fwid_name_data() -> list[list]:
+    """Provide data for test_get_device_name_by_fwid."""
     return [
         ["0x8402", "Button Front", "C-Block"],
         ["0x8600", "µGateway Button Front", "C-Block"],
@@ -512,8 +615,8 @@ def fwid_data() -> list[list]:
     ]
 
 
-def hwid_data() -> list[list]:
-    """Provide data for test_parse_wiser_device_hwid_a."""
+def hwid_a_name_data() -> list[list]:
+    """Provide data for test_get_device_name_by_hwid_a."""
     return [
         ["0x0033", "Secondary Control"],
         ["0x1113", "On/Off 1K"],
@@ -566,7 +669,7 @@ def test_parse_wiser_device_ref_a(data: list):
     assert actual == data[1]
 
 
-@pytest.mark.parametrize("data", hwid_data())
+@pytest.mark.parametrize("data", hwid_a_data())
 def test_parse_wiser_device_hwid_a(data: list):
     """Test parse_wiser_device_hwid_a."""
     actual = parse_wiser_device_hwid_a(data[0])
@@ -580,8 +683,22 @@ def test_parse_wiser_device_fwid(data: list):
     assert actual == data[1]
 
 
-@pytest.mark.parametrize("data", fwid_data())
-def test_parse_wiser_device_fwid_with_blocktype(data: list):
-    """Test parse_wiser_device_fwid with blocktype."""
-    actual = parse_wiser_device_fwid(data[0], include_block_suffix=True)
+@pytest.mark.parametrize("data", hwid_a_name_data())
+def test_get_device_name_by_hwid_a(data: list):
+    """Test get_device_name_by_hwid_a."""
+    actual = get_device_name_by_hwid_a(data[0])
+    assert actual == data[1]
+
+
+@pytest.mark.parametrize("data", fwid_name_data())
+def test_get_device_name_by_fwid(data: list):
+    """Test get_device_name_by_fwid."""
+    actual = get_device_name_by_fwid(data[0])
+    assert actual == data[1]
+
+
+@pytest.mark.parametrize("data", fwid_name_data())
+def test_get_device_name_by_fwid_with_blocktype(data: list):
+    """Test get_device_name_by_fwid with blocktype."""
+    actual = get_device_name_by_fwid(data[0], include_block_suffix=True)
     assert actual == data[1] + " " + data[2]
