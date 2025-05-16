@@ -101,8 +101,15 @@ class Device:
         As wiser devices always consist of two components, offer a combined
         serial number. This should be used as serial number, as changing out
         one of the component might change the feature set of the whole device.
+
+        Note that non-modular devices (e.g. valve controller) do send an empty
+        serial_nr for the C block.
         """
-        return f"{self.c['serial_nr']} / {self.a['serial_nr']}"
+        return (
+            f"{self.c['serial_nr']} / {self.a['serial_nr']}"
+            if self.c["serial_nr"] != ""
+            else self.a["serial_nr"]
+        )
 
     async def async_ping(self) -> bool:
         """Light up the yellow LEDs of all buttons for a short time."""

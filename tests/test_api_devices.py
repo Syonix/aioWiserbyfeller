@@ -145,6 +145,15 @@ async def test_async_get_devices_detail(client_api_auth, mock_aioresponse):
     a_sn = response_json["data"][0]["a"]["serial_nr"]
     assert actual[0].combined_serial_number == f"{c_sn} / {a_sn}"
 
+    # Special case for non-modular devices like valve-controllers
+    response_json["data"][0]["c"]["serial_nr"] = ""
+    mock_aioresponse.get(f"{BASE_URL}/devices/*", payload=response_json)
+
+    actual = await client_api_auth.async_get_devices_detail()
+
+    assert actual[0].combined_serial_number == a_sn
+
+
 def device_family_data() -> list[list]:
     """Provide data for test_device_family."""
     base = "tests/data/devices"
