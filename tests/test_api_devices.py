@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from aiowiserbyfeller import Device
+from aiowiserbyfeller.errors import UnexpectedGatewayResponse
 
 from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
@@ -178,6 +179,47 @@ def test_a_device_family(client_api_auth, data):
     device = Device(data[1], client_api_auth)
 
     assert device.a_device_family == data[0]
+
+
+def validate_data(base: str) -> list[dict]:
+    """Provide data for test_validate_data_valid."""
+    result = []
+
+    for device in ["simple_switch", "valve_controller_6k"]:
+        with Path(f"{base}/{device}.json").open("r") as f:
+            result.append(json.load(f))
+
+    return result
+
+
+def validate_data_valid() -> list[dict]:
+    """Provide data for test_validate_data_valid."""
+    return validate_data("tests/data/devices/valid")
+
+
+def validate_data_invalid() -> list[dict]:
+    """Provide data for test_validate_data_invalid."""
+    return validate_data("tests/data/devices/missing-fields")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("data", validate_data_valid())
+async def test_validate_data_valid(client_api_auth, data: dict):
+    """Test validate_data with valid data."""
+
+    device = Device(data, client_api_auth)
+    device.validate_data()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("data", validate_data_invalid())
+async def test_validate_data_invalid(client_api_auth, data: dict):
+    """Test validate_data with invalid data."""
+
+    device = Device(data, client_api_auth)
+    with pytest.raises(UnexpectedGatewayResponse):
+        device.validate_data()
+
 
 @pytest.mark.asyncio
 async def test_async_get_device(client_api_auth, mock_aioresponse):

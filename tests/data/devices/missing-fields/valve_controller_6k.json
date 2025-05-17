@@ -1,0 +1,82 @@
+{
+  "inputs": [
+    {
+      "sub_type": "toggle",
+      "type": "button"
+    },
+    {
+      "sub_type": "toggle",
+      "type": "button"
+    },
+    {
+      "sub_type": "toggle",
+      "type": "button"
+    },
+    {
+      "sub_type": "toggle",
+      "type": "button"
+    },
+    {
+      "sub_type": "toggle",
+      "type": "button"
+    },
+    {
+      "sub_type": "toggle",
+      "type": "button"
+    }
+  ],
+  "outputs": [
+    {
+      "sub_type": "",
+      "load": 47,
+      "type": "hvac"
+    },
+    {
+      "sub_type": "",
+      "load": 48,
+      "type": "hvac"
+    },
+    {
+      "sub_type": "",
+      "load": 49,
+      "type": "hvac"
+    },
+    {
+      "sub_type": "",
+      "load": 50,
+      "type": "hvac"
+    },
+    {
+      "sub_type": "",
+      "load": 51,
+      "type": "hvac"
+    },
+    {
+      "sub_type": "",
+      "load": 52,
+      "type": "hvac"
+    }
+  ],
+  "a": {
+    "hw_id": "0x6413",
+    "comm_name": "Heizungskontroller 6K",
+    "fw_version": "0x20602000",
+    "address": "0x000365a0",
+    "nubes_id": 0,
+    "serial_nr": "",
+    "fw_id": "0x0410",
+    "comm_ref": "3470.B.6.HK"
+  },
+  "last_seen": 15,
+  "id": "000365a0",
+  "c": {
+    "hw_id": "0xaa60",
+    "comm_name": "Heizungskontroller 6K",
+    "fw_version": "0x20606000",
+    "cmd_matrix": "0x4106",
+    "nubes_id": 0,
+    "serial_nr": "",
+    "fw_id": "0xaa00",
+    "comm_ref": "3470.B.6.HK"
+  }
+}

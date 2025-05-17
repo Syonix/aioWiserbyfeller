@@ -111,6 +111,30 @@ class Device:
             else self.a["serial_nr"]
         )
 
+    def validate_data(self):
+        """Validate if the API has sent all device identifying data fields.
+
+        More information about why this method exists: https://github.com/Feller-AG/wiser-api/issues/43
+        """
+        for key in DEVICE_CHECK_FIELDS:
+            for prop in DEVICE_CHECK_FIELDS[key]:
+                if getattr(self, key)[prop] != "":
+                    continue
+
+                if prop in DEVICE_ALLOWED_EMPTY_FIELDS.get(
+                    self.a_device_family, {}
+                ).get(key, []):
+                    continue
+
+                # Re-enable the following lines when needed.
+                # hw_id = self.a.get("hw_id", "")
+                # if prop in DEVICE_ALLOWED_EMPTY_FIELDS.get(hw_id, {}).get(key, []):
+                #    continue
+
+                raise UnexpectedGatewayResponse(
+                    f"Invalid API response: Device {self.id} has an empty field {key}.{prop}!"
+                )
+
     async def async_ping(self) -> bool:
         """Light up the yellow LEDs of all buttons for a short time."""
         resp = await self.auth.request("get", f"devices/{self.id}/ping")
