@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from aiowiserbyfeller.auth import Auth
-from aiowiserbyfeller.util import parse_wiser_device_fwid, parse_wiser_device_hwid_a
+from aiowiserbyfeller.errors import UnexpectedGatewayResponse
+from aiowiserbyfeller.map import DEVICE_ALLOWED_EMPTY_FIELDS, DEVICE_CHECK_FIELDS
+from aiowiserbyfeller.util import get_device_name_by_fwid, get_device_name_by_hwid_a
 
 
 class Device:
@@ -13,8 +15,8 @@ class Device:
         """Initialize a device object."""
         self.raw_data = raw_data
         self.auth = auth
-        self._a_name = parse_wiser_device_hwid_a(raw_data["a"]["hw_id"])
-        self._c_name = parse_wiser_device_fwid(raw_data["c"]["fw_id"])
+        self._a_name = get_device_name_by_hwid_a(raw_data["a"]["hw_id"])
+        self._c_name = get_device_name_by_fwid(raw_data["c"]["fw_id"])
 
     @property
     def id(self) -> str:
@@ -45,6 +47,34 @@ class Device:
         return self._a_name
 
     @property
+    def a_device_family(self) -> int | None:
+        """Return the device family identifier.
+
+        The A block hardware ID (self.a["hw_id"]) is a bit field of 2 bytes.
+        Those bytes contain four values: type, features, channels and a hardware revision.
+        See aiowiserbyfeller.util.parse_wiser_device_hwid_a for technical details.
+
+        The device family is very similar to the hardware ID, but omits the channel number
+        and revision information.
+        This allows for identifying multiple devices of the same type (e.g. on/off switch 1K, 2K)
+        without having to list each device explicitly.
+
+        # +----+----+----+----+----+----+----+----+----+
+        # |  0 |   channel_type    |  channel_features |
+        # +----+----+----+----+----+----+----+----+----+
+        """
+        hw_id = self.a.get("hw_id", "")
+
+        if hw_id == "":
+            return None
+
+        hw_id = int(hw_id, 16)
+        device_type = (hw_id >> 8) & 0x0F
+        device_features = (hw_id >> 4) & 0x0F
+
+        return (device_type << 4) | device_features
+
+    @property
     def c(self) -> dict:
         """Information about the control module (Bedienaufsatz)."""
         return self.raw_data["c"]
@@ -71,8 +101,39 @@ class Device:
         As wiser devices always consist of two components, offer a combined
         serial number. This should be used as serial number, as changing out
         one of the component might change the feature set of the whole device.
+
+        Note that non-modular devices (e.g. valve controller) do send an empty
+        serial_nr for the C block.
         """
-        return f"{self.c['serial_nr']} / {self.a['serial_nr']}"
+        return (
+            f"{self.c['serial_nr']} / {self.a['serial_nr']}"
+            if self.c["serial_nr"] != ""
+            else self.a["serial_nr"]
+        )
+
+    def validate_data(self):
+        """Validate if the API has sent all device identifying data fields.
+
+        More information about why this method exists: https://github.com/Feller-AG/wiser-api/issues/43
+        """
+        for key in DEVICE_CHECK_FIELDS:
+            for prop in DEVICE_CHECK_FIELDS[key]:
+                if getattr(self, key)[prop] != "":
+                    continue
+
+                if prop in DEVICE_ALLOWED_EMPTY_FIELDS.get(
+                    self.a_device_family, {}
+                ).get(key, []):
+                    continue
+
+                # Re-enable the following lines when needed.
+                # hw_id = self.a.get("hw_id", "")
+                # if prop in DEVICE_ALLOWED_EMPTY_FIELDS.get(hw_id, {}).get(key, []):
+                #    continue
+
+                raise UnexpectedGatewayResponse(
+                    f"Invalid API response: Device {self.id} has an empty field {key}.{prop}!"
+                )
 
     async def async_ping(self) -> bool:
         """Light up the yellow LEDs of all buttons for a short time."""

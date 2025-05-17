@@ -1,8 +1,12 @@
 """aiowiserbyfeller Api class device tests."""
 
+import json
+from pathlib import Path
+
 import pytest
 
 from aiowiserbyfeller import Device
+from aiowiserbyfeller.errors import UnexpectedGatewayResponse
 
 from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
@@ -141,6 +145,80 @@ async def test_async_get_devices_detail(client_api_auth, mock_aioresponse):
     c_sn = response_json["data"][0]["c"]["serial_nr"]
     a_sn = response_json["data"][0]["a"]["serial_nr"]
     assert actual[0].combined_serial_number == f"{c_sn} / {a_sn}"
+
+    # Special case for non-modular devices like valve-controllers
+    response_json["data"][0]["c"]["serial_nr"] = ""
+    mock_aioresponse.get(f"{BASE_URL}/devices/*", payload=response_json)
+
+    actual = await client_api_auth.async_get_devices_detail()
+
+    assert actual[0].combined_serial_number == a_sn
+
+
+def device_family_data() -> list[list]:
+    """Provide data for test_device_family."""
+    base = "tests/data/devices"
+    with Path(base + "/valid/simple_switch.json").open("r") as f:
+        simple_switch = json.load(f)
+    with Path(base + "/valid/valve_controller_6k.json").open("r") as f:
+        valve_controller_6k = json.load(f)
+    with Path(base + "/empty-a-hw-id/valve_controller_6k.json").open("r") as f:
+        invalid_valve_controller_6k = json.load(f)
+
+    return [
+        [0x11, simple_switch],
+        [0x41, valve_controller_6k],
+        [None, invalid_valve_controller_6k],
+    ]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("data", device_family_data())
+def test_a_device_family(client_api_auth, data):
+    """Test a_device_family property."""
+    device = Device(data[1], client_api_auth)
+
+    assert device.a_device_family == data[0]
+
+
+def validate_data(base: str) -> list[dict]:
+    """Provide data for test_validate_data_valid."""
+    result = []
+
+    for device in ["simple_switch", "valve_controller_6k"]:
+        with Path(f"{base}/{device}.json").open("r") as f:
+            result.append(json.load(f))
+
+    return result
+
+
+def validate_data_valid() -> list[dict]:
+    """Provide data for test_validate_data_valid."""
+    return validate_data("tests/data/devices/valid")
+
+
+def validate_data_invalid() -> list[dict]:
+    """Provide data for test_validate_data_invalid."""
+    return validate_data("tests/data/devices/missing-fields")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("data", validate_data_valid())
+async def test_validate_data_valid(client_api_auth, data: dict):
+    """Test validate_data with valid data."""
+
+    device = Device(data, client_api_auth)
+    device.validate_data()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("data", validate_data_invalid())
+async def test_validate_data_invalid(client_api_auth, data: dict):
+    """Test validate_data with invalid data."""
+
+    device = Device(data, client_api_auth)
+    with pytest.raises(UnexpectedGatewayResponse):
+        device.validate_data()
 
 
 @pytest.mark.asyncio

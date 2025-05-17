@@ -1,0 +1,36 @@
+{
+  "inputs": [
+    {
+      "type": "toggle"
+    }
+  ],
+  "outputs": [
+    {
+      "sub_type": "dto",
+      "load": 1,
+      "type": "onoff"
+    }
+  ],
+  "a": {
+    "hw_id": "0x1113",
+    "comm_name": "",
+    "fw_version": "0x2030a00d",
+    "address": "0x0002244a",
+    "nubes_id": 275171,
+    "serial_nr": "",
+    "fw_id": "0x0100",
+    "comm_ref": ""
+  },
+  "last_seen": 1,
+  "id": "0002244a",
+  "c": {
+    "hw_id": "0x8613",
+    "comm_name": "",
+    "fw_version": "0x5011c000",
+    "cmd_matrix": "0x0101",
+    "nubes_id": 283913,
+    "serial_nr": "",
+    "fw_id": "0x8692",
+    "comm_ref": ""
+  }
+}

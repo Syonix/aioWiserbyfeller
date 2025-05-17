@@ -25,6 +25,10 @@ class InvalidArgument(AiowiserbyfellerException):
     """InvalidArgument."""
 
 
+class UnexpectedGatewayResponse(AiowiserbyfellerException):
+    """Unexpected gateway response."""
+
+
 class UnsuccessfulRequest(AiowiserbyfellerException):
     """Request returned non-success response."""
 

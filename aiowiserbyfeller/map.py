@@ -48,3 +48,13 @@ DEVICE_A_BLOCK_FWID_BLOCK_MAP = [
         "fw_id_map": DEVICE_A_BLOCK_FWID_MAP,
     },
 ]
+
+# Fields that are required when validating device data
+DEVICE_CHECK_FIELDS = {
+    "c": ["comm_ref", "fw_version", "comm_name", "serial_nr"],
+    "a": ["comm_ref", "fw_version", "comm_name", "serial_nr"],
+}
+
+# Fields that are allowed to be empty for specific device types.
+# Keys can be a combination of hwid type and hwid feature flag or specific hardware ids.
+DEVICE_ALLOWED_EMPTY_FIELDS = {0x41: {"c": ["serial_nr"], "a": []}}

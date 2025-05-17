@@ -127,29 +127,105 @@ def parse_wiser_device_ref_a(value: str) -> dict:
     return result
 
 
-def parse_wiser_device_hwid_a(value: str) -> str:
-    """Parse a Feller Wiser actuator (Funktionseinsatz) hardware id."""
-    if value in (None, ""):
-        return "Unknown"
+def parse_wiser_device_hwid_a(value: str) -> dict[str, int | None]:
+    """Parse a Feller Wiser A block hardware ID.
 
-    value = int(value, 16)
-    channel_type = (value >> 8) & 0x0F
-    channel_features = (value >> 4) & 0x0F
-    channels = (value >> 12) & 0x07
+    The A block hardware ID (self.a["hw_id"]) is a bit field of 2 bytes.
+    Those bytes contain four values: type, features, channels and a hardware revision.
+
+    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+    |  0 | channels 0-4 |   channel_type    |  channel_features |   hw_revision     |
+    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+    Source: http://{µGW host}/kPlus/lib.js
+
+    Examples:
+        Type=4, Features=1, Channels=6 is the heating valve controller with 6 channels.
+        Type=4, Features=0, Channels=0 is the room temperature sensor.
+
+    This helper function breaks out each value into a dict.
+
+    """
+    result = {
+        "revision": None,
+        "features": None,
+        "type": None,
+        "channels": 0,
+    }
+
+    try:
+        value = int(value, 16)
+    except ValueError:
+        return result
+
+    result["revision"] = value & 0x0F
+    result["features"] = (value >> 4) & 0x0F
+    result["type"] = (value >> 8) & 0x0F
+    result["channels"] = (value >> 12) & 0x0F
+
+    return result
+
+
+def parse_wiser_device_fwid(value: str) -> dict[str, int | None]:
+    """Parse a Feller Wiser device firmware ID.
+
+    The Wiser device firmware ID (self.a["hw_id"]) is a bit field of 2 bytes.
+    Depending on the device type (A block or C block) it contains different information:
+
+    C block
+    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+    | 1  |           hw_type           |                        |   fw_revision     |
+    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+
+    A block
+    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+    | 0  |              |   channel_type    |  channel_features |   fw_revision     |
+    +----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+    Source: http://{µGW host}/kPlus/lib.js
+
+    This helper function breaks out each value into a dict.
+    """
+
+    result = {
+        "block_type": None,
+        "revision": None,
+    }
+
+    try:
+        value = int(value, 16)
+    except ValueError:
+        return result
+
+    is_c_block = value & 0x8000
+    result["block_type"] = "C" if is_c_block else "A"
+    result["revision"] = value & 0x0F
+
+    if is_c_block:
+        result["hw_type"] = (value >> 9) & 0x3F
+    else:
+        result["channel_type"] = (value >> 8) & 0x0F
+        result["channel_features"] = (value >> 4) & 0x0F
+
+    return result
+
+
+def get_device_name_by_hwid_a(value: str) -> str:
+    """Return device name by hardware ID."""
+    info = parse_wiser_device_hwid_a(value)
+
     best_match = "Unknown"
     for entry in DEVICE_A_BLOCK_HWID_MAP:
-        if entry["type"] == channel_type:
-            if entry["feature"] == channel_features:
+        if entry["type"] == info["type"]:
+            if entry["feature"] == info["features"]:
                 best_match = entry["name"]
                 break  # Exact match
             if entry["feature"] is None:
                 best_match = entry["name"]  # Temporarily set, but continue searching
 
-    return best_match + (f" {channels}K" if channels != 0x0 else "")
+    return best_match + (f" {info['channels']}K" if info["channels"] != 0x0 else "")
 
 
-def parse_wiser_device_fwid(value: str, include_block_suffix: bool = False) -> str:
-    """Parse a Feller Wiser device firmware id."""
+def get_device_name_by_fwid(value: str, include_block_suffix: bool = False) -> str:
+    """Return device name by firmware ID."""
     if value in (None, ""):
         return "Unknown"
 
