@@ -37,6 +37,16 @@ class Sensor:
         return self.raw_data["name"]
 
     @property
+    def value(self) -> float | None:
+        """Current state of the sensor."""
+        return self.raw_data.get("value")
+
+    @property
+    def unit(self) -> str:
+        """Unit of the sensor."""
+        return self.raw_data.get("unit")
+
+    @property
     def device(self) -> str:
         """Reference id to the physical device."""
         return self.raw_data["device"]

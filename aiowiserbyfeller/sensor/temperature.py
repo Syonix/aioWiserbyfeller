@@ -22,12 +22,7 @@ class Temperature(Sensor):
     @property
     def state_temperature(self) -> float:
         """Current temperature of the sensor."""
-        return self.raw_data.get("value")
-
-    @property
-    def unit(self) -> str:
-        """Unit of the temperature sensor."""
-        return self.raw_data.get("unit")
+        return self.value
 
     @property
     def history(self) -> list[TemperatureRecord] | None:
