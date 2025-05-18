@@ -20,19 +20,13 @@ class Temperature(Sensor):
     """Representation of a temperature sensor in the Feller Wiser µGateway API."""
 
     @property
-    def state_temperature(self) -> float | None:
+    def state_temperature(self) -> float:
         """Current temperature of the sensor."""
-        if self.raw_data is None:
-            return None
-
-        return self.raw_data.get("value", None)
+        return self.raw_data.get("value")
 
     @property
-    def unit(self) -> str | None:
+    def unit(self) -> str:
         """Unit of the temperature sensor."""
-        if self.raw_data is None:
-            return None
-
         return self.raw_data.get("unit", None)
 
     @property

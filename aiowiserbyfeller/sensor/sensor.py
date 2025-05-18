@@ -21,12 +21,12 @@ class Sensor:
     @property
     def type(self) -> str:
         """The type of the sensor."""
-        return self.raw_data.get("type", None)
+        return self.raw_data.get("type")
 
     @property
     def sub_type(self) -> str:
         """The subtype of the sensor."""
-        return self.raw_data.get("subtype", None)
+        return self.raw_data.get("subtype")
 
     @property
     def name(self) -> str:
