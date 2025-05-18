@@ -27,7 +27,7 @@ class Temperature(Sensor):
     @property
     def unit(self) -> str:
         """Unit of the temperature sensor."""
-        return self.raw_data.get("unit", None)
+        return self.raw_data.get("unit")
 
     @property
     def history(self) -> list[TemperatureRecord] | None:

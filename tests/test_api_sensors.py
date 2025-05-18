@@ -5,6 +5,7 @@ from datetime import datetime
 import pytest
 
 from aiowiserbyfeller import Sensor, Temperature
+from aiowiserbyfeller.const import SENSOR_TYPE_TEMPERATURE
 
 from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
@@ -55,7 +56,10 @@ async def test_async_get_sensors(client_api_auth, mock_aioresponse):
     assert actual[0].id == 31
     assert actual[0].channel == 0
     assert actual[0].state_temperature == 25.3
+    assert actual[0].type == SENSOR_TYPE_TEMPERATURE
     assert actual[1].history is None
+    assert actual[1].unit == "℃"
+    assert actual[1].sub_type is None
 
 
 @pytest.mark.asyncio
