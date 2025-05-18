@@ -17,6 +17,7 @@ from .errors import (
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
+from .sensor import Sensor, Temperature
 from .smart_button import SmartButton
 from .system import SystemCondition, SystemFlag
 from .time import NtpConfig
@@ -42,9 +43,11 @@ __all__ = [
     "NtpConfig",
     "OnOff",
     "Scene",
+    "Sensor",
     "SmartButton",
     "SystemCondition",
     "SystemFlag",
+    "Temperature",
     "Timer",
     "TokenMissing",
     "UnauthorizedUser",

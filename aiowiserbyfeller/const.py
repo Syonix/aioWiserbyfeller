@@ -48,6 +48,9 @@ KIND_VENETIAN_BLINDS = 1
 KIND_ROLLER_SHUTTER = 2
 KIND_AWNING = 3
 
+# Sensor types
+SENSOR_TYPE_TEMPERATURE = "temperature"
+
 # Heating load states
 STATE_HEATING = "heating"
 STATE_COOLING = "cooling"
