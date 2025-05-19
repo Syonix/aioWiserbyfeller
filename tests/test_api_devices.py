@@ -315,14 +315,16 @@ async def test_async_delete_device(client_api_auth, mock_aioresponse):
 async def test_async_ping_device(client_api_auth, mock_aioresponse):
     """Test async_ping_device."""
 
+    response_body = {"status": "success", "data": {"ping": "pong"}}
     await prepare_test_authenticated(
-        mock_aioresponse, f"{BASE_URL}/devices/000006d7/ping", "get", {"ping": "pong"}
+        mock_aioresponse, f"{BASE_URL}/devices/000006d7/ping", "get", response_body
     )
 
     assert await client_api_auth.async_ping_device("000006d7") is True
 
+    response_body = {"status": "success", "data": {"ping": "nope"}}
     await prepare_test_authenticated(
-        mock_aioresponse, f"{BASE_URL}/devices/000006d7/ping", "get", {"ping": "nope"}
+        mock_aioresponse, f"{BASE_URL}/devices/000006d7/ping", "get", response_body
     )
 
     assert await client_api_auth.async_ping_device("000006d7") is False
