@@ -15,11 +15,13 @@ class Device:
         """Initialize a device object."""
         self.raw_data = raw_data
         self.auth = auth
-        self._a_name = get_device_name_by_hwid_a(raw_data["a"]["hw_id"])
-        self._c_name = get_device_name_by_fwid(raw_data["c"]["fw_id"])
+        self._a_name = get_device_name_by_hwid_a(
+            raw_data.get("a", {}).get("hw_id", None)
+        )
+        self._c_name = get_device_name_by_fwid(raw_data.get("c", {}).get("fw_id", None))
 
     @property
-    def id(self) -> str:
+    def id(self) -> str | None:
         """Internal device id.
 
         Note: This is equal to the A block (actuator module) K+ address. K+ addresses are
@@ -29,17 +31,17 @@ class Device:
               Therefore, if the C block is exchanged, the combined serial number changes,
               but the A block address and thus device id remains the same.
         """
-        return self.raw_data["id"]
+        return self.raw_data.get("id", None)
 
     @property
-    def last_seen(self) -> int:
+    def last_seen(self) -> int | None:
         """Seconds since the device was last seen on the kPlus network."""
-        return self.raw_data["last_seen"]
+        return self.raw_data.get("last_seen", None)
 
     @property
     def a(self) -> dict:
         """Information about the actuator module (Funktionseinsatz)."""
-        return self.raw_data["a"]
+        return self.raw_data.get("a", {})
 
     @property
     def a_name(self) -> str:
@@ -77,7 +79,7 @@ class Device:
     @property
     def c(self) -> dict:
         """Information about the control module (Bedienaufsatz)."""
-        return self.raw_data["c"]
+        return self.raw_data.get("c", {})
 
     @property
     def c_name(self) -> str:
@@ -87,15 +89,15 @@ class Device:
     @property
     def inputs(self) -> list:
         """List of inputs (e.g. buttons)."""
-        return self.raw_data["inputs"]
+        return self.raw_data.get("inputs", [])
 
     @property
     def outputs(self) -> list:
         """List of outputs (e.g. lights or covers)."""
-        return self.raw_data["outputs"]
+        return self.raw_data.get("outputs", [])
 
     @property
-    def combined_serial_number(self) -> str:
+    def combined_serial_number(self) -> str | None:
         """The combination of the A and C block serial numbers.
 
         As wiser devices always consist of two components, offer a combined
@@ -106,9 +108,9 @@ class Device:
         serial_nr for the C block.
         """
         return (
-            f"{self.c['serial_nr']} / {self.a['serial_nr']}"
-            if self.c["serial_nr"] != ""
-            else self.a["serial_nr"]
+            f"{self.c.get('serial_nr')} / {self.a.get('serial_nr')}"
+            if self.c.get("serial_nr", "") != ""
+            else self.a.get("serial_nr", None)
         )
 
     def validate_data(self):

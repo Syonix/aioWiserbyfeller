@@ -208,11 +208,14 @@ def parse_wiser_device_fwid(value: str) -> dict[str, int | None]:
     return result
 
 
-def get_device_name_by_hwid_a(value: str) -> str:
+def get_device_name_by_hwid_a(value: str | None) -> str:
     """Return device name by hardware ID."""
-    info = parse_wiser_device_hwid_a(value)
-
     best_match = "Unknown"
+
+    if value in (None, ""):
+        return best_match
+
+    info = parse_wiser_device_hwid_a(value)
     for entry in DEVICE_A_BLOCK_HWID_MAP:
         if entry["type"] == info["type"]:
             if entry["feature"] == info["features"]:
@@ -224,7 +227,9 @@ def get_device_name_by_hwid_a(value: str) -> str:
     return best_match + (f" {info['channels']}K" if info["channels"] != 0x0 else "")
 
 
-def get_device_name_by_fwid(value: str, include_block_suffix: bool = False) -> str:
+def get_device_name_by_fwid(
+    value: str | None, include_block_suffix: bool = False
+) -> str:
     """Return device name by firmware ID."""
     if value in (None, ""):
         return "Unknown"
@@ -238,6 +243,7 @@ def get_device_name_by_fwid(value: str, include_block_suffix: bool = False) -> s
 
     for map_fwid, name in b["fw_id_map"].items():
         if (map_fwid & b["mask"]) == (fw_id & b["mask"]):
-            return name + (f" {b['main_name']}" if include_block_suffix else "")
+            suffix = b["main_name"] if include_block_suffix else ""
+            return f"{name} {suffix}".strip()
 
     return "Unknown"

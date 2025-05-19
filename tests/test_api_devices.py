@@ -172,7 +172,6 @@ def device_family_data() -> list[list]:
     ]
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize("data", device_family_data())
 def test_a_device_family(client_api_auth, data):
     """Test a_device_family property."""
@@ -310,6 +309,25 @@ async def test_async_delete_device(client_api_auth, mock_aioresponse):
 
     assert isinstance(actual, Device)
     assert actual.id == "000006d7"
+
+
+@pytest.mark.asyncio
+async def test_async_ping_device(client_api_auth, mock_aioresponse):
+    """Test async_ping_device."""
+
+    response_body = {"status": "success", "data": {"ping": "pong"}}
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/devices/000006d7/ping", "get", response_body
+    )
+
+    assert await client_api_auth.async_ping_device("000006d7") is True
+
+    response_body = {"status": "success", "data": {"ping": "nope"}}
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/devices/000006d7/ping", "get", response_body
+    )
+
+    assert await client_api_auth.async_ping_device("000006d7") is False
 
 
 @pytest.mark.asyncio
