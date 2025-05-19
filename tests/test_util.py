@@ -612,6 +612,8 @@ def fwid_name_data() -> list[list]:
         ["0x0300", "Motor", "A-Block"],
         ["0x0400", "Thermostat", "A-Block"],
         ["0x0410", "Valve Controller", "A-Block"],
+        ["", "Unknown", ""],
+        [None, "Unknown", ""],
     ]
 
 
@@ -628,6 +630,8 @@ def hwid_a_name_data() -> list[list]:
         ["0x2212", "Dali 2K"],
         ["0x0040", "Weather Station"],
         ["0x0400", "Thermostat"],
+        ["", "Unknown"],
+        [None, "Unknown"],
     ]
 
 
@@ -701,4 +705,4 @@ def test_get_device_name_by_fwid(data: list):
 def test_get_device_name_by_fwid_with_blocktype(data: list):
     """Test get_device_name_by_fwid with blocktype."""
     actual = get_device_name_by_fwid(data[0], include_block_suffix=True)
-    assert actual == data[1] + " " + data[2]
+    assert actual == (data[1] + " " + data[2] if data[2] != "" else data[1])
