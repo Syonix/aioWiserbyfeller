@@ -12,10 +12,19 @@ from .const import (
     LOAD_TYPE_HVAC,
     LOAD_TYPE_MOTOR,
     LOAD_TYPE_ONOFF,
+    SENSOR_TYPE_HAIL,
+    SENSOR_TYPE_ILLUMINANCE,
+    SENSOR_TYPE_RAIN,
     SENSOR_TYPE_TEMPERATURE,
+    SENSOR_TYPE_WIND,
 )
 from .device import Device
-from .errors import InvalidLoadType, NoButtonPressed, UnsuccessfulRequest
+from .errors import (
+    InvalidLoadType,
+    NoButtonPressed,
+    NotImplementedSensorType,
+    UnsuccessfulRequest,
+)
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
@@ -1007,7 +1016,7 @@ class WiserByFellerAPI:
     # -- Helpers -------------------------------------------------------
 
     def resolve_class(self, data: dict):
-        """Resolve this library's implementation class for given load."""
+        """Resolve this library's implementation class for given load or sensor."""
         if data["type"] == LOAD_TYPE_ONOFF:
             return OnOff(data, self.auth)
         if data["type"] == LOAD_TYPE_DIM:
@@ -1024,5 +1033,15 @@ class WiserByFellerAPI:
             return Hvac(data, self.auth)
         if data["type"] == SENSOR_TYPE_TEMPERATURE:
             return Temperature(data, self.auth)
+
+        if data["type"] in (
+            SENSOR_TYPE_ILLUMINANCE,
+            SENSOR_TYPE_WIND,
+            SENSOR_TYPE_HAIL,
+            SENSOR_TYPE_RAIN,
+        ):
+            raise NotImplementedSensorType(
+                "Not implemented sensor type: " + data["type"]
+            )
 
         raise InvalidLoadType("Invalid load type: " + data["type"])

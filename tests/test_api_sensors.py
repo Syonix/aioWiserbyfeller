@@ -1,49 +1,41 @@
 """aiowiserbyfeller Api class sensors tests."""
 
 from datetime import datetime
+import json
+from pathlib import Path
 
 import pytest
 
 from aiowiserbyfeller import Sensor, Temperature
-from aiowiserbyfeller.const import SENSOR_TYPE_TEMPERATURE
+from aiowiserbyfeller.const import SENSOR_TYPE_TEMPERATURE, UNIT_TEMPERATURE_CELSIUS
 
 from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
+
+
+def validate_data(base: str) -> list[dict]:
+    """Provide data for test_validate_data_valid."""
+    result = []
+
+    for sensor in [
+        "temperature_sensor_with_history",
+        "temperature_sensor",
+    ]:
+        with Path(f"{base}/{sensor}.json").open("r", encoding="utf-8") as f:
+            result.append(json.load(f))
+
+    return result
+
+
+def validate_data_valid() -> list[dict]:
+    """Provide data for test_validate_data_valid."""
+    return validate_data("tests/data/sensors/valid")
 
 
 @pytest.mark.asyncio
 async def test_async_get_sensors(client_api_auth, mock_aioresponse):
     """Test async_get_sensors."""
 
-    response_json = {
-        "status": "success",
-        "data": [
-            {
-                "value": 25.3,
-                "sub_type": "",
-                "type": "temperature",
-                "history": [
-                    {"time": "2025-05-18T12:42:06+00:00", "value": 25.1},
-                    {"time": "2025-05-18T12:52:02+00:00", "value": 25.2},
-                    {"time": "2025-05-18T13:11:54+00:00", "value": 25.3},
-                ],
-                "name": "Room Sensor (0002bc60_0)",
-                "device": "0002bc60",
-                "id": 31,
-                "channel": 0,
-                "unit": "℃",
-            },
-            {
-                "value": 21.9,
-                "sub_type": "",
-                "type": "temperature",
-                "name": "Room Sensor (0002bc61_0)",
-                "device": "0002bc61",
-                "id": 32,
-                "channel": 0,
-                "unit": "℃",
-            },
-        ],
-    }
+    response_json = {"status": "success", "data": validate_data_valid()}
 
     await prepare_test_authenticated(
         mock_aioresponse, f"{BASE_URL}/sensors", "get", response_json
@@ -55,35 +47,19 @@ async def test_async_get_sensors(client_api_auth, mock_aioresponse):
     assert isinstance(actual[0], Temperature)
     assert actual[0].id == 31
     assert actual[0].channel == 0
-    assert actual[0].state_temperature == 25.3
+    assert actual[0].value_temperature == 25.3
     assert actual[0].type == SENSOR_TYPE_TEMPERATURE
-    assert actual[1].history is None
-    assert actual[1].unit == "℃"
+    assert actual[1].history == []
+    assert actual[1].unit == UNIT_TEMPERATURE_CELSIUS
     assert actual[1].sub_type is None
 
 
 @pytest.mark.asyncio
 async def test_async_get_sensor(client_api_auth, mock_aioresponse):
     """Test async_get_sensor."""
+    data = validate_data_valid()[0]
 
-    response_json = {
-        "data": {
-            "value": 25.3,
-            "sub_type": "",
-            "type": "temperature",
-            "history": [
-                {"time": "2025-05-18T12:42:06+00:00", "value": 25.1},
-                {"time": "2025-05-18T12:52:02+00:00", "value": 25.2},
-                {"time": "2025-05-18T13:11:54+00:00", "value": 25.3},
-            ],
-            "name": "Room Sensor (0002bc60_0)",
-            "device": "0002bc60",
-            "id": 31,
-            "channel": 0,
-            "unit": "℃",
-        },
-        "status": "success",
-    }
+    response_json = {"status": "success", "data": data}
 
     await prepare_test_authenticated(
         mock_aioresponse, f"{BASE_URL}/sensors/31", "get", response_json
@@ -95,5 +71,5 @@ async def test_async_get_sensor(client_api_auth, mock_aioresponse):
     assert actual.id == 31
     assert actual.name == "Room Sensor (0002bc60_0)"
     assert actual.device == "0002bc60"
-    assert actual.history.__len__() == 3
+    assert len(actual.history) == 3
     assert actual.history[0].time == datetime.fromisoformat("2025-05-18T12:42:06+00:00")
