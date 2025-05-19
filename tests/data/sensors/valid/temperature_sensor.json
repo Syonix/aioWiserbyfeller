@@ -1,0 +1,10 @@
+{
+  "value": 21.9,
+  "sub_type": "",
+  "type": "temperature",
+  "name": "Room Sensor (0002bc61_0)",
+  "device": "0002bc61",
+  "id": 32,
+  "channel": 0,
+  "unit": "℃"
+}

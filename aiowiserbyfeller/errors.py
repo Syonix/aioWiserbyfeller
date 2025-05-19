@@ -21,6 +21,10 @@ class InvalidLoadType(AiowiserbyfellerException):
     """InvalidLoadType."""
 
 
+class NotImplementedSensorType(AiowiserbyfellerException):
+    """NotImplementedSensorType."""
+
+
 class InvalidArgument(AiowiserbyfellerException):
     """InvalidArgument."""
 

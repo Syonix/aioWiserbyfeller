@@ -1,0 +1,24 @@
+{
+  "value": 25.3,
+  "sub_type": "",
+  "type": "temperature",
+  "history": [
+    {
+      "time": "2025-05-18T12:42:06+00:00",
+      "value": 25.1
+    },
+    {
+      "time": "2025-05-18T12:52:02+00:00",
+      "value": 25.2
+    },
+    {
+      "time": "2025-05-18T13:11:54+00:00",
+      "value": 25.3
+    }
+  ],
+  "name": "Room Sensor (0002bc60_0)",
+  "device": "0002bc60",
+  "id": 31,
+  "channel": 0,
+  "unit": "℃"
+}

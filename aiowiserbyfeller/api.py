@@ -12,12 +12,23 @@ from .const import (
     LOAD_TYPE_HVAC,
     LOAD_TYPE_MOTOR,
     LOAD_TYPE_ONOFF,
+    SENSOR_TYPE_HAIL,
+    SENSOR_TYPE_ILLUMINANCE,
+    SENSOR_TYPE_RAIN,
+    SENSOR_TYPE_TEMPERATURE,
+    SENSOR_TYPE_WIND,
 )
 from .device import Device
-from .errors import InvalidLoadType, NoButtonPressed, UnsuccessfulRequest
+from .errors import (
+    InvalidLoadType,
+    NoButtonPressed,
+    NotImplementedSensorType,
+    UnsuccessfulRequest,
+)
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
+from .sensor import Sensor, Temperature
 from .smart_button import SmartButton
 from .system import SystemCondition, SystemFlag
 from .time import NtpConfig
@@ -867,6 +878,18 @@ class WiserByFellerAPI:
         data = await self.auth.request("delete", f"scenes/{scene_id}")
         return Scene(data, self.auth)
 
+    # -- Sensors -------------------------------------------------------
+
+    async def async_get_sensors(self) -> list[Sensor]:
+        """Get a list of all sensors."""
+        data = await self.auth.request("get", "sensors")
+        return [self.resolve_class(sensor_data) for sensor_data in data]
+
+    async def async_get_sensor(self, sensor_id: int) -> Sensor:
+        """Get one sensor by id with all its properties."""
+        raw_data = await self.auth.request("get", f"sensors/{sensor_id}")
+        return self.resolve_class(raw_data)
+
     # -- System --------------------------------------------------------
 
     async def async_get_system_health(self) -> dict:
@@ -993,7 +1016,7 @@ class WiserByFellerAPI:
     # -- Helpers -------------------------------------------------------
 
     def resolve_class(self, data: dict):
-        """Resolve this library's implementation class for given load."""
+        """Resolve this library's implementation class for given load or sensor."""
         if data["type"] == LOAD_TYPE_ONOFF:
             return OnOff(data, self.auth)
         if data["type"] == LOAD_TYPE_DIM:
@@ -1008,5 +1031,17 @@ class WiserByFellerAPI:
             return Motor(data, self.auth)
         if data["type"] == LOAD_TYPE_HVAC:
             return Hvac(data, self.auth)
+        if data["type"] == SENSOR_TYPE_TEMPERATURE:
+            return Temperature(data, self.auth)
+
+        if data["type"] in (
+            SENSOR_TYPE_ILLUMINANCE,
+            SENSOR_TYPE_WIND,
+            SENSOR_TYPE_HAIL,
+            SENSOR_TYPE_RAIN,
+        ):
+            raise NotImplementedSensorType(
+                "Not implemented sensor type: " + data["type"]
+            )
 
         raise InvalidLoadType("Invalid load type: " + data["type"])
