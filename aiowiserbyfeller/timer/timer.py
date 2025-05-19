@@ -16,7 +16,7 @@ class Timer:
     @property
     def id(self) -> int | None:
         """[read-only] unique ID."""
-        return self.raw_data.get("id", None)
+        return self.raw_data.get("id")
 
     @property
     def enabled(self) -> bool:

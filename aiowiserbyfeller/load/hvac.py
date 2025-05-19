@@ -107,4 +107,4 @@ class Hvac(Load):
 
     def flag(self, identifier: str) -> bool | None:
         """Get the value of a specific flag."""
-        return self.flags.get(identifier, None)
+        return self.flags.get(identifier)
