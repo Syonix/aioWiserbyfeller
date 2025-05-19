@@ -17,7 +17,7 @@ class Job:
     @property
     def id(self) -> int | None:
         """The id of the job."""
-        return self.raw_data.get("id", None)
+        return self.raw_data.get("id")
 
     @property
     def target_states(self) -> list[dict]:

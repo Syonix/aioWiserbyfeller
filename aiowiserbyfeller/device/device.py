@@ -15,10 +15,8 @@ class Device:
         """Initialize a device object."""
         self.raw_data = raw_data
         self.auth = auth
-        self._a_name = get_device_name_by_hwid_a(
-            raw_data.get("a", {}).get("hw_id", None)
-        )
-        self._c_name = get_device_name_by_fwid(raw_data.get("c", {}).get("fw_id", None))
+        self._a_name = get_device_name_by_hwid_a(raw_data.get("a", {}).get("hw_id"))
+        self._c_name = get_device_name_by_fwid(raw_data.get("c", {}).get("fw_id"))
 
     @property
     def id(self) -> str | None:
@@ -31,12 +29,12 @@ class Device:
               Therefore, if the C block is exchanged, the combined serial number changes,
               but the A block address and thus device id remains the same.
         """
-        return self.raw_data.get("id", None)
+        return self.raw_data.get("id")
 
     @property
     def last_seen(self) -> int | None:
         """Seconds since the device was last seen on the kPlus network."""
-        return self.raw_data.get("last_seen", None)
+        return self.raw_data.get("last_seen")
 
     @property
     def a(self) -> dict:
@@ -110,7 +108,7 @@ class Device:
         return (
             f"{self.c.get('serial_nr')} / {self.a.get('serial_nr')}"
             if self.c.get("serial_nr", "") != ""
-            else self.a.get("serial_nr", None)
+            else self.a.get("serial_nr")
         )
 
     def validate_data(self):

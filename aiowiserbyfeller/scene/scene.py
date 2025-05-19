@@ -16,7 +16,7 @@ class Scene:
     @property
     def id(self) -> int | None:
         """The id of the scene."""
-        return self.raw_data.get("id", None)
+        return self.raw_data.get("id")
 
     @property
     def type(self) -> int:
