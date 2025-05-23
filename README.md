@@ -9,6 +9,9 @@ A modern async Python library to control and integrate **Wiser by Feller** smart
 > [!IMPORTANT]
 > This integration implements [Wiser by Feller](https://wiser.feller.ch) and not [Wiser by Schneider Electric](https://www.se.com/de/de/product-range/65635-wiser/), which is a competing Smart Home platform (and is not compatible). It is even more confusing, as Feller (the company) is a local subsidiary of Schneider Electric, catering only to the Swiss market.
 
+> [!CAUTION]
+> **Warning:** This project is under **_heavy development_** and does not yet have a stable release. Expect breaking changes in susequent beta releases. All breaking changes will be documented in the [release notes](https://github.com/Syonix/aioWiserbyfeller/releases) including resultion advisories.
+
 ## 📦 Installation
 ```bash
 pip install aiowiserbyfeller
