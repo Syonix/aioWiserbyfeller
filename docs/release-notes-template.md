@@ -8,14 +8,17 @@
 ### 🚧 Breaking changes
 Inform the user about breaking changes and required steps to fix.
 
-### ✨ Added
+### 🔒 Security
+- Security relevant change #42 _(Thanks, @contributer)_
+
+### 🚀 Features
 - Adds feature #42 _(Thanks, @contributer)_
 
-### 🛠️ Updated
-- Updates some functionality #42
+### 🌟️ Enhancements
+- Updates some functionality #42 _(Thanks, @contributer)_
 
-### 🐛 Fixed
-- Fixes feature #42
+### 🐛 Bug fixes
+- Fixes feature #42 _(Thanks, @contributer)_
 
 ### 📦 Dependencies
 - Update xyz to 1.2.3
