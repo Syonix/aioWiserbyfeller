@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aiowiserbyfeller"
-version = "1.0.0-beta.17"
+version = "1.0.0-beta.18"
 description = "Wiser by Feller µGateway API"
 readme = "README.md"
 requires-python = ">=3.10"
