@@ -1,0 +1,10 @@
+{
+  "id": 12,
+  "sub_type": "",
+  "name": "Weather Station (00039813_3)",
+  "unit": "m/s",
+  "value": 10,
+  "device": "00039813",
+  "channel": 3,
+  "type": "wind"
+}

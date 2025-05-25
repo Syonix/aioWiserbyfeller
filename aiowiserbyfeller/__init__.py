@@ -9,7 +9,6 @@ from .errors import (
     InvalidArgument,
     InvalidLoadType,
     NoButtonPressed,
-    NotImplementedSensorType,
     TokenMissing,
     UnauthorizedUser,
     UnsuccessfulRequest,
@@ -18,7 +17,7 @@ from .errors import (
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
-from .sensor import Sensor, Temperature
+from .sensor import Brightness, Hail, Rain, Sensor, Temperature, Wind
 from .smart_button import SmartButton
 from .system import SystemCondition, SystemFlag
 from .time import NtpConfig
@@ -29,11 +28,13 @@ __all__ = [
     "AiowiserbyfellerException",
     "Auth",
     "AuthorizationFailed",
+    "Brightness",
     "Dali",
     "DaliRgbw",
     "DaliTw",
     "Device",
     "Dim",
+    "Hail",
     "Hvac",
     "InvalidArgument",
     "InvalidLoadType",
@@ -41,9 +42,9 @@ __all__ = [
     "Load",
     "Motor",
     "NoButtonPressed",
-    "NotImplementedSensorType",
     "NtpConfig",
     "OnOff",
+    "Rain",
     "Scene",
     "Sensor",
     "SmartButton",
@@ -57,5 +58,6 @@ __all__ = [
     "Websocket",
     "WebsocketError",
     "WebsocketWatchdog",
+    "Wind",
     "WiserByFellerAPI",
 ]

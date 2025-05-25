@@ -162,12 +162,15 @@ def device_family_data() -> list[list]:
         simple_switch = json.load(f)
     with Path(base + "/valid/valve_controller_6k.json").open("r") as f:
         valve_controller_6k = json.load(f)
+    with Path(base + "/valid/west.json").open("r") as f:
+        west = json.load(f)
     with Path(base + "/empty-a-hw-id/valve_controller_6k.json").open("r") as f:
         invalid_valve_controller_6k = json.load(f)
 
     return [
         [0x11, simple_switch],
         [0x41, valve_controller_6k],
+        [0x04, west],
         [None, invalid_valve_controller_6k],
     ]
 
@@ -184,7 +187,7 @@ def validate_data(base: str) -> list[dict]:
     """Provide data for test_validate_data_valid."""
     result = []
 
-    for device in ["simple_switch", "valve_controller_6k"]:
+    for device in ["simple_switch", "valve_controller_6k", "west"]:
         with Path(f"{base}/{device}.json").open("r") as f:
             result.append(json.load(f))
 

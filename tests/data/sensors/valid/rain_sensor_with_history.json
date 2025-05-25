@@ -1,0 +1,24 @@
+{
+  "id": 13,
+  "sub_type": "",
+  "name": "Weather Station (00039813_4)",
+  "unit": "bool",
+  "value": 0,
+  "device": "00039813",
+  "channel": 4,
+  "type": "rain",
+  "history": [
+    {
+      "time": "2025-05-18T12:42:06+00:00",
+      "value": 0
+    },
+    {
+      "time": "2025-05-18T12:52:02+00:00",
+      "value": 1
+    },
+    {
+      "time": "2025-05-18T13:11:54+00:00",
+      "value": 0
+    }
+  ]
+}

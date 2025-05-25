@@ -1,0 +1,72 @@
+{
+  "inputs": [
+    {
+      "sub_type": "setup_west",
+      "type": "button"
+    },
+    {
+      "sub_type": "",
+      "sensor": 9,
+      "type": "temperature"
+    },
+    {
+      "sub_type": "",
+      "type": "humidity"
+    },
+    {
+      "sub_type": "",
+      "sensor": 11,
+      "type": "brightness"
+    },
+    {
+      "sub_type": "",
+      "sensor": 12,
+      "type": "wind"
+    },
+    {
+      "sub_type": "",
+      "sensor": 13,
+      "type": "rain"
+    },
+    {
+      "sub_type": "",
+      "sensor": 14,
+      "type": "hail"
+    },
+    {
+      "sub_type": "left",
+      "type": "brightness"
+    },
+    {
+      "sub_type": "center",
+      "type": "brightness"
+    },
+    {
+      "sub_type": "right",
+      "type": "brightness"
+    }
+  ],
+  "outputs": [],
+  "a": {
+    "hw_id": "",
+    "comm_name": "Wetterstation REG-Modul",
+    "fw_version": "0x20602000",
+    "address": "0x00039813",
+    "nubes_id": 506573,
+    "serial_nr": "010043_H_001234",
+    "fw_id": "0x0100",
+    "comm_ref": "3440.B.1.REG"
+  },
+  "last_seen": 69,
+  "id": "00039813",
+  "c": {
+    "hw_id": "0xa000",
+    "comm_name": "",
+    "fw_version": "0x20602000",
+    "cmd_matrix": "0x5001",
+    "nubes_id": 4294967294,
+    "serial_nr": "",
+    "fw_id": "0xa000",
+    "comm_ref": ""
+  }
+}

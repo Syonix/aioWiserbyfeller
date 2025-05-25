@@ -12,23 +12,18 @@ from .const import (
     LOAD_TYPE_HVAC,
     LOAD_TYPE_MOTOR,
     LOAD_TYPE_ONOFF,
+    SENSOR_TYPE_BRIGHTNESS,
     SENSOR_TYPE_HAIL,
-    SENSOR_TYPE_ILLUMINANCE,
     SENSOR_TYPE_RAIN,
     SENSOR_TYPE_TEMPERATURE,
     SENSOR_TYPE_WIND,
 )
 from .device import Device
-from .errors import (
-    InvalidLoadType,
-    NoButtonPressed,
-    NotImplementedSensorType,
-    UnsuccessfulRequest,
-)
+from .errors import InvalidLoadType, NoButtonPressed, UnsuccessfulRequest
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
-from .sensor import Sensor, Temperature
+from .sensor import Brightness, Hail, Rain, Sensor, Temperature, Wind
 from .smart_button import SmartButton
 from .system import SystemCondition, SystemFlag
 from .time import NtpConfig
@@ -1031,17 +1026,15 @@ class WiserByFellerAPI:
             return Motor(data, self.auth)
         if data["type"] == LOAD_TYPE_HVAC:
             return Hvac(data, self.auth)
+        if data["type"] == SENSOR_TYPE_BRIGHTNESS:
+            return Brightness(data, self.auth)
+        if data["type"] == SENSOR_TYPE_HAIL:
+            return Hail(data, self.auth)
+        if data["type"] == SENSOR_TYPE_RAIN:
+            return Rain(data, self.auth)
         if data["type"] == SENSOR_TYPE_TEMPERATURE:
             return Temperature(data, self.auth)
-
-        if data["type"] in (
-            SENSOR_TYPE_ILLUMINANCE,
-            SENSOR_TYPE_WIND,
-            SENSOR_TYPE_HAIL,
-            SENSOR_TYPE_RAIN,
-        ):
-            raise NotImplementedSensorType(
-                "Not implemented sensor type: " + data["type"]
-            )
+        if data["type"] == SENSOR_TYPE_WIND:
+            return Wind(data, self.auth)
 
         raise InvalidLoadType("Invalid load type: " + data["type"])

@@ -57,4 +57,7 @@ DEVICE_CHECK_FIELDS = {
 
 # Fields that are allowed to be empty for specific device types.
 # Keys can be a combination of hwid type and hwid feature flag or specific hardware ids.
-DEVICE_ALLOWED_EMPTY_FIELDS = {0x41: {"c": ["serial_nr"], "a": []}}
+DEVICE_ALLOWED_EMPTY_FIELDS = {
+    0x41: {"c": ["serial_nr"], "a": []},
+    0x4: {"c": ["serial_nr"], "a": []},
+}

@@ -1,10 +1,10 @@
 {
-  "id": 25,
+  "id": 13,
   "sub_type": "",
-  "name": "00000124_4",
+  "name": "Weather Station (00039813_4)",
   "unit": "bool",
   "value": 0,
-  "device": "00000124",
+  "device": "00039813",
   "channel": 4,
   "type": "rain"
 }

@@ -21,7 +21,7 @@ class Temperature(Sensor):
 
     @property
     def value_temperature(self) -> float:
-        """Current temperature of the sensor."""
+        """Current temperature."""
         return self.value
 
     @property
