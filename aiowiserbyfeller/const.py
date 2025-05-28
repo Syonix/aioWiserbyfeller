@@ -76,3 +76,10 @@ BUTTON_STOP = "stop"
 EVENT_CLICK = "click"
 EVENT_PRESS = "press"
 EVENT_RELEASE = "release"
+
+# HTTP Methods
+HTTP_METHOD_GET = "get"
+HTTP_METHOD_POST = "post"
+HTTP_METHOD_PUT = "put"
+HTTP_METHOD_PATCH = "patch"
+HTTP_METHOD_DELETE = "delete"
