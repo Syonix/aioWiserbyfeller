@@ -10,6 +10,7 @@ import pytest_asyncio
 from aiowiserbyfeller import Auth, WiserByFellerAPI
 
 BASE_URL = "http://192.168.0.1/api"
+BASE_DATA_PATH = "tests/data/devices"
 TEST_API_TOKEN = "TEST-API-TOKEN"
 
 

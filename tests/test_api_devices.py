@@ -8,7 +8,11 @@ import pytest
 from aiowiserbyfeller import Device
 from aiowiserbyfeller.errors import UnexpectedGatewayResponse
 
-from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
+from .conftest import (  # noqa: TID251
+    BASE_DATA_PATH,
+    BASE_URL,
+    prepare_test_authenticated,
+)
 
 
 @pytest.mark.asyncio
@@ -157,14 +161,15 @@ async def test_async_get_devices_detail(client_api_auth, mock_aioresponse):
 
 def device_family_data() -> list[list]:
     """Provide data for test_device_family."""
-    base = "tests/data/devices"
-    with Path(base + "/valid/simple_switch.json").open("r") as f:
+    with Path(BASE_DATA_PATH + "/valid/simple_switch.json").open("r") as f:
         simple_switch = json.load(f)
-    with Path(base + "/valid/valve_controller_6k.json").open("r") as f:
+    with Path(BASE_DATA_PATH + "/valid/valve_controller_6k.json").open("r") as f:
         valve_controller_6k = json.load(f)
-    with Path(base + "/valid/west.json").open("r") as f:
+    with Path(BASE_DATA_PATH + "/valid/west.json").open("r") as f:
         west = json.load(f)
-    with Path(base + "/empty-a-hw-id/valve_controller_6k.json").open("r") as f:
+    with Path(BASE_DATA_PATH + "/empty-a-hw-id/valve_controller_6k.json").open(
+        "r"
+    ) as f:
         invalid_valve_controller_6k = json.load(f)
 
     return [
@@ -196,12 +201,12 @@ def validate_data(base: str) -> list[dict]:
 
 def validate_data_valid() -> list[dict]:
     """Provide data for test_validate_data_valid."""
-    return validate_data("tests/data/devices/valid")
+    return validate_data(BASE_DATA_PATH + "/valid")
 
 
 def validate_data_invalid() -> list[dict]:
     """Provide data for test_validate_data_invalid."""
-    return validate_data("tests/data/devices/missing-fields")
+    return validate_data(BASE_DATA_PATH + "/missing-fields")
 
 
 @pytest.mark.asyncio

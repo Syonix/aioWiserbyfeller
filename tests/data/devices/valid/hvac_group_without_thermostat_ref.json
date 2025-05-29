@@ -1,0 +1,10 @@
+{
+  "id": 25,
+  "loads": [
+    1
+  ],
+  "name": "Office Heating Zone",
+  "max_temperature": 25,
+  "min_temperature": 15,
+  "offset_temperature": 0
+}

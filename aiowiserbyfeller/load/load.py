@@ -27,9 +27,19 @@ class Load:
         self.auth = auth
 
     @property
+    def raw_data(self) -> dict:
+        """Raw data dict."""
+        return self._raw_data
+
+    @raw_data.setter
+    def raw_data(self, raw_data) -> None:
+        """Raw data dict setter."""
+        self._raw_data = raw_data
+
+    @property
     def id(self) -> int:
         """Internal unique id of the load."""
-        return self.raw_data["id"]
+        return self.raw_data.get("id")
 
     @property
     def name(self) -> str:
@@ -37,12 +47,12 @@ class Load:
 
         (e.g. ceiling spots, chandeliers, window west, stand lamp)
         """
-        return self.raw_data["name"]
+        return self.raw_data.get("name")
 
     @property
     def unused(self) -> bool:
         """Flag to indicate that the underlying load is currently not used (no load is physically connected to that channel)."""
-        return self.raw_data["unused"]
+        return self.raw_data.get("unused")
 
     @property
     def type(self) -> str:
@@ -50,27 +60,27 @@ class Load:
 
         Possible values: onoff, dim, motor or dali
         """
-        return self.raw_data["type"]
+        return self.raw_data.get("type")
 
     @property
     def sub_type(self) -> str:
         """The channel subtype."""
-        return self.raw_data["sub_type"]
+        return self.raw_data.get("sub_type")
 
     @property
     def device(self) -> str:
         """Reference id to the physical device."""
-        return self.raw_data["device"]
+        return self.raw_data.get("device")
 
     @property
     def channel(self) -> int:
         """Channel of the load."""
-        return self.raw_data["channel"]
+        return self.raw_data.get("channel")
 
     @property
     def room(self) -> int:
         """Reference id an id of a room created and deleted by the app."""
-        return self.raw_data["room"]
+        return self.raw_data.get("room")
 
     @property
     def kind(self) -> int | None:
@@ -83,7 +93,7 @@ class Load:
         if self.raw_data is None or "kind" not in self.raw_data:
             return None
 
-        return self.raw_data["kind"]
+        return self.raw_data.get("kind")
 
     @property
     def state(self) -> dict | None:

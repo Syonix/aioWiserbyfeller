@@ -25,7 +25,7 @@ from .const import (
 )
 from .device import Device
 from .errors import InvalidLoadType, NoButtonPressed, UnsuccessfulRequest
-from .hvacgroups import HvacGroup
+from .hvac import HvacGroup
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
@@ -1041,6 +1041,69 @@ class WiserByFellerAPI:
             HTTP_METHOD_DELETE, f"system/conditions/{condition_id}"
         )
         return SystemCondition(data, self.auth)
+
+    # -- HVAC Groups ---------------------------------------------------
+
+    async def async_get_hvac_groups(self) -> list[HvacGroup]:
+        """Get a list of all HVAC groups."""
+        data = await self.auth.request(HTTP_METHOD_GET, "hvacgroups")
+        return [HvacGroup(group, self.auth) for group in data]
+
+    async def async_create_hvac_group(self, group: HvacGroup) -> HvacGroup:
+        """Create a new HVAC group."""
+        data = await self.auth.request(
+            HTTP_METHOD_POST, "hvacgroups", json=group.raw_data
+        )
+        return HvacGroup({**group.raw_data, "id": data["id"]}, self.auth)
+
+    async def async_get_hvac_group(self, group_id: int) -> HvacGroup:
+        """Get a list of all HVAC groups."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"hvacgroups/{group_id}")
+        return HvacGroup(data, self.auth)
+
+    async def async_delete_hvac_group(self, group_id: int) -> HvacGroup:
+        """Delete an existing HVAC groups."""
+        data = await self.auth.request(HTTP_METHOD_DELETE, f"hvacgroups/{group_id}")
+        return HvacGroup(data, self.auth)
+
+    async def async_get_hvac_group_states(self) -> dict:
+        """Get all HVAC group states.
+
+        Returns:
+            A dict with an ID and the state dict for each entry.
+
+        """
+        return await self.auth.request(HTTP_METHOD_GET, "hvacgroups/state")
+
+    async def async_create_hvac_group_config(self, group_id: int) -> dict:
+        """Create a new HVAC group configuration object and set the HVAC group into configuration mode."""
+        return await self.auth.request(HTTP_METHOD_GET, f"hvacgroups/{group_id}/config")
+
+    async def async_get_hvac_group_config(self, config_id: int) -> dict:
+        """Get an existing HVAC group configuration object."""
+        return await self.auth.request(
+            HTTP_METHOD_GET, f"hvacgroups/configs/{config_id}"
+        )
+
+    async def async_update_hvac_group_config(
+        self, config_id: int, config_data: dict
+    ) -> dict:
+        """Change the HVAC group configuration object."""
+        return await self.auth.request(
+            HTTP_METHOD_PATCH, f"hvacgroups/configs/{config_id}", json=config_data
+        )
+
+    async def async_apply_hvac_group_config(self, config_id: int) -> dict:
+        """Apply and close the HVAC group configuration object."""
+        return await self.auth.request(
+            HTTP_METHOD_PUT, f"hvacgroups/configs/{config_id}"
+        )
+
+    async def async_discard_hvac_group_config(self, config_id: int) -> dict:
+        """Discard and close the HVAC group configuration object."""
+        return await self.auth.request(
+            HTTP_METHOD_DELETE, f"hvacgroups/configs/{config_id}"
+        )
 
     # -- Helpers -------------------------------------------------------
 
