@@ -1,0 +1,11 @@
+{
+  "pi": true,
+  "state_brightness": 0,
+  "max_temperature": 25,
+  "min_temperature": 15,
+  "offset_temperature": 0,
+  "id": 34,
+  "keep_alive": 600,
+  "cooling": false,
+  "modified": []
+}

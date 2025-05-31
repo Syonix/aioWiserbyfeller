@@ -18,7 +18,11 @@ class AuthorizationFailed(AiowiserbyfellerException):
 
 
 class InvalidLoadType(AiowiserbyfellerException):
-    """InvalidLoadType."""
+    """Invalid load type."""
+
+
+class InvalidState(AiowiserbyfellerException):
+    """Invalid state."""
 
 
 class InvalidArgument(AiowiserbyfellerException):

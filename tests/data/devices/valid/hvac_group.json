@@ -1,0 +1,15 @@
+{
+  "id": 25,
+  "loads": [
+    1
+  ],
+  "name": "Office Heating Zone",
+  "max_temperature": 25,
+  "min_temperature": 15,
+  "offset_temperature": 0,
+  "thermostat_ref": {
+    "input_type": 17,
+    "input_channel": 0,
+    "address": "0x00037797"
+  }
+}

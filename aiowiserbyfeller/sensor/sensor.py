@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from aiowiserbyfeller.auth import Auth
-from aiowiserbyfeller.const import UNIT_TEMPERATURE_CELSIUS
+from aiowiserbyfeller.util import normalize_unit
 
 
 class Sensor:
@@ -49,11 +49,7 @@ class Sensor:
         Note: The API returns the unit character `℃`. This is being normalized
               to `°C` for better compatibility.
         """
-        unit = self.raw_data.get("unit")
-        if unit == "℃":
-            return UNIT_TEMPERATURE_CELSIUS
-
-        return unit
+        return normalize_unit(self.raw_data.get("unit"))
 
     @property
     def device(self) -> str:

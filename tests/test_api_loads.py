@@ -3,14 +3,8 @@
 import pytest
 
 from aiowiserbyfeller import DaliRgbw, DaliTw, Dim, Hvac, InvalidArgument, Motor, OnOff
-from aiowiserbyfeller.const import (
-    KIND_LIGHT,
-    KIND_VENETIAN_BLINDS,
-    STATE_COOLING,
-    STATE_HEATING,
-    STATE_IDLE,
-    STATE_OFF,
-)
+from aiowiserbyfeller.const import KIND_LIGHT, KIND_VENETIAN_BLINDS
+from aiowiserbyfeller.hvac import HvacChannelState
 
 from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
@@ -807,7 +801,7 @@ async def test_hvac(client_api_auth, mock_aioresponse):
     assert load.ambient_temperature is None
     assert load.unit is None
     assert load.flags == {}
-    assert load.state is None
+    assert load.state == HvacChannelState.UNKNOWN
     assert load.state_heating is None
     assert load.state_cooling is None
 
@@ -823,7 +817,7 @@ async def test_hvac(client_api_auth, mock_aioresponse):
     assert load.target_temperature == 21.0
     assert load.boost_temperature == 0
     assert load.ambient_temperature == 25.1
-    assert load.unit == "C"
+    assert load.unit == "°C"
     assert load.flags == {
         "remote_controlled": False,
         "sensor_error": False,
@@ -837,20 +831,20 @@ async def test_hvac(client_api_auth, mock_aioresponse):
 
     assert load.state_heating is True
     assert load.state_cooling is False
-    assert load.state == STATE_HEATING
+    assert load.state == HvacChannelState.HEATING
 
     load.raw_state["flags"]["cooling"] = True
     assert load.state_heating is False
     assert load.state_cooling is True
-    assert load.state == STATE_COOLING
+    assert load.state == HvacChannelState.COOLING
 
     load.raw_state["flags"]["output_on"] = False
     load.raw_state["flags"]["cooling"] = False
     assert load.state_heating is False
     assert load.state_cooling is False
-    assert load.state == STATE_IDLE
+    assert load.state == HvacChannelState.IDLE
 
     load.raw_state["boost_temperature"] = -99
     assert load.state_heating is False
     assert load.state_cooling is False
-    assert load.state == STATE_OFF
+    assert load.state == HvacChannelState.OFF

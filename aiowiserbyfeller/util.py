@@ -21,6 +21,7 @@ from .const import (
     DEVICE_C_TYPE_WEATHER_STATION_REG,
     DEVICE_GENERATION_A,
     DEVICE_GENERATION_B,
+    UNIT_TEMPERATURE_CELSIUS,
 )
 from .errors import InvalidArgument
 from .map import DEVICE_A_BLOCK_FWID_BLOCK_MAP, DEVICE_A_BLOCK_HWID_MAP
@@ -247,3 +248,12 @@ def get_device_name_by_fwid(
             return f"{name} {suffix}".strip()
 
     return "Unknown"
+
+
+def normalize_unit(value):
+    """Normalize unit values from the API."""
+    match value:
+        case "℃" | "C":
+            return UNIT_TEMPERATURE_CELSIUS
+        case _:
+            return value

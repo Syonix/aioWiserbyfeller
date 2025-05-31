@@ -48,6 +48,25 @@ KIND_VENETIAN_BLINDS = 1
 KIND_ROLLER_SHUTTER = 2
 KIND_AWNING = 3
 
+# Input types
+INPUT_TYPE_BUTTON = "button"
+INPUT_TYPE_TEMPERATURE = "temperature"
+INPUT_TYPE_HUMIDITY = "humidity"
+INPUT_TYPE_BRIGHTNESS = "brightness"
+INPUT_TYPE_WIND = "wind"
+INPUT_TYPE_RAIN = "rain"
+INPUT_TYPE_HAIL = "hail"
+
+# Input subtypes
+INPUT_SUBTYPE_BUTTON_TOGGLE = "toggle"
+INPUT_SUBTYPE_BUTTON_UPDOWN = "up down"
+INPUT_SUBTYPE_BUTTON_SCENE = "scene"
+INPUT_SUBTYPE_BUTTON_SETUP_SENSOR = "setup_sensor"
+INPUT_SUBTYPE_BUTTON_SETUP_WEST = "setup_west"
+INPUT_SUBTYPE_BRIGHTNESS_LEFT = "left"
+INPUT_SUBTYPE_BRIGHTNESS_CENTER = "center"
+INPUT_SUBTYPE_BRIGHTNESS_RIGHT = "right"
+
 # Sensor types
 SENSOR_TYPE_TEMPERATURE = "temperature"
 SENSOR_TYPE_BRIGHTNESS = "brightness"
@@ -57,12 +76,6 @@ SENSOR_TYPE_RAIN = "rain"
 
 # Sensor units
 UNIT_TEMPERATURE_CELSIUS = "°C"
-
-# Heating load states
-STATE_HEATING = "heating"
-STATE_COOLING = "cooling"
-STATE_IDLE = "idle"
-STATE_OFF = "off"
 
 # Buttons
 BUTTON_ON = "on"
@@ -76,3 +89,10 @@ BUTTON_STOP = "stop"
 EVENT_CLICK = "click"
 EVENT_PRESS = "press"
 EVENT_RELEASE = "release"
+
+# HTTP Methods
+HTTP_METHOD_GET = "get"
+HTTP_METHOD_POST = "post"
+HTTP_METHOD_PUT = "put"
+HTTP_METHOD_PATCH = "patch"
+HTTP_METHOD_DELETE = "delete"

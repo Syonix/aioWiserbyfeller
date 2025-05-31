@@ -1,0 +1,31 @@
+{
+  "id": 27,
+  "loads": [
+    2
+  ],
+  "name": "Living Room Heating Zone",
+  "max_temperature": 25,
+  "min_temperature": 15,
+  "offset_temperature": 0,
+  "thermostat_ref": {
+    "input_type": 17,
+    "input_channel": 0,
+    "address": "0x000377e3"
+  },
+  "state": {
+    "on": true,
+    "flags": {
+      "remote_controlled": 0,
+      "sensor_error": 0,
+      "valve_error": 0,
+      "noise": 0,
+      "output_on": 1,
+      "cooling": 0
+    },
+    "boost_temperature": 0,
+    "heating_cooling_level": 0,
+    "unit": "C",
+    "ambient_temperature": 23.2,
+    "target_temperature": 21
+  }
+}
