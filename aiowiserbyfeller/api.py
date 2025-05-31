@@ -290,7 +290,7 @@ class WiserByFellerAPI:
 
     async def async_get_site_info(self) -> dict:
         """Get all site information."""
-        return await self.auth.request(HTTP_METHOD_GET, "site")
+        return await self.auth.request(HTTP_METHOD_GET, "site", require_token=False)
 
     async def async_set_site_info(self, info: dict) -> dict:
         """Create a new site information object.
