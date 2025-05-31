@@ -1,8 +1,8 @@
 # Wiser by Feller API Async Python Library
 [![aioWiserbyfeller](https://github.com/Syonix/aioWiserbyfeller/actions/workflows/python-app.yml/badge.svg)](https://github.com/Syonix/aioWiserbyfeller/actions/workflows/python-app.yml)
 [![codecov](https://codecov.io/gh/Syonix/aioWiserbyfeller/graph/badge.svg?token=VU0MZKEMPM)](https://codecov.io/gh/Syonix/aioWiserbyfeller)
-![PyPI - Version](https://img.shields.io/pypi/v/aioWiserbyfeller)
-![GitHub License](https://img.shields.io/github/license/Syonix/aioWiserByFeller)
+[![PyPI - Version](https://img.shields.io/pypi/v/aioWiserbyfeller)](https://pypi.org/project/aiowiserbyfeller/)
+[![GitHub License](https://img.shields.io/github/license/Syonix/aioWiserByFeller)](https://github.com/Syonix/aioWiserbyfeller/blob/main/LICENSE)
 
 A modern async Python library to control and integrate **Wiser by Feller** smart light switches, cover controls, and scene buttons, hvac controls and weather stations into your Python applications.
 
