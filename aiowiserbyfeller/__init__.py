@@ -16,6 +16,7 @@ from .errors import (
 )
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
+from .hvac import HvacGroup
 from .scene import Scene
 from .sensor import Brightness, Hail, Rain, Sensor, Temperature, Wind
 from .smart_button import SmartButton

@@ -199,7 +199,7 @@ class HvacGroup(HvacStateProperties):
         return self.raw_data.get("loads")
 
     @property
-    def name(self) -> dict[int]:
+    def name(self) -> str:
         """The HVAC group's name."""
         return self.raw_data.get("name")
 
