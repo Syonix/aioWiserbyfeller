@@ -177,6 +177,16 @@ class ThermostatReference:
     input_channel: int
     address: str
 
+    @property
+    def unprefixed_address(self) -> str:
+        """Return an unprefixed version of the address string.
+
+        The API for some reason returns the address as 0x00012345 instead of 00012345
+        as all the other address strings. This property returns a normalized version
+        of the string.
+        """
+        return self.address[2:]
+
 
 class HvacGroup(HvacStateProperties):
     """Class that represents a Feller Wiser HVAC group."""

@@ -594,3 +594,10 @@ async def test_async_discard_hvac_group_config(client_api_auth, mock_aioresponse
     )
 
     await client_api_auth.async_discard_hvac_group_config(34)
+
+
+def test_thermostat_reference():
+    """Test ThermostatReference.unprefixed_address."""
+    ref = ThermostatReference(17, 0, "0x00012345")
+
+    assert ref.unprefixed_address == "00012345"
