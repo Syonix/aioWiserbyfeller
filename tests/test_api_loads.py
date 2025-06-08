@@ -4,6 +4,7 @@ import pytest
 
 from aiowiserbyfeller import DaliRgbw, DaliTw, Dim, Hvac, InvalidArgument, Motor, OnOff
 from aiowiserbyfeller.const import KIND_LIGHT, KIND_VENETIAN_BLINDS
+from aiowiserbyfeller.enum import BlinkPattern
 from aiowiserbyfeller.hvac import HvacChannelState
 
 from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
@@ -402,7 +403,7 @@ async def test_load_async_ping(client_api_auth, mock_aioresponse):
         request_json,
     )
 
-    await load.async_ping(2000, "ramp", "#505050")
+    await load.async_ping(2000, BlinkPattern.RAMP, "#505050")
 
 
 @pytest.mark.asyncio
@@ -419,7 +420,9 @@ async def test_async_find_loads(client_api_auth, mock_aioresponse):
         mock_aioresponse, f"{BASE_URL}/loads/findme", "put", response_json, request_json
     )
 
-    actual = await client_api_auth.async_find_loads(True, 2, "ramp", "#505050")
+    actual = await client_api_auth.async_find_loads(
+        True, 2, BlinkPattern.RAMP, "#505050"
+    )
     assert actual == response_json["data"]
 
 

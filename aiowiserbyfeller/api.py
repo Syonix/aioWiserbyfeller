@@ -24,6 +24,7 @@ from .const import (
     SENSOR_TYPE_WIND,
 )
 from .device import Device
+from .enum import BlinkPattern
 from .errors import InvalidLoadType, NoButtonPressed, UnsuccessfulRequest
 from .hvac import HvacGroup
 from .job import Job
@@ -363,7 +364,7 @@ class WiserByFellerAPI:
         return load
 
     async def async_load_ping(
-        self, load_id: int, time_ms: int, blink_pattern: str, color: str
+        self, load_id: int, time_ms: int, blink_pattern: BlinkPattern, color: str
     ) -> dict:
         """Get the corresponding buttons to control a load lights up."""
         load = Load({"id": load_id}, self.auth)
@@ -378,7 +379,7 @@ class WiserByFellerAPI:
         return await self.auth.request(HTTP_METHOD_GET, f"loads/{load_id}/state")
 
     async def async_find_loads(
-        self, on: bool, time: int, blink_pattern: str, color: str
+        self, on: bool, time: int, blink_pattern: BlinkPattern, color: str
     ) -> dict:
         """Put all loads into the find me mode.
 
@@ -387,7 +388,12 @@ class WiserByFellerAPI:
         sends the following event over the Websocket connection: {"findme": {"load": 345}}.
         """
 
-        json = {"on": on, "time": time, "blink_pattern": blink_pattern, "color": color}
+        json = {
+            "on": on,
+            "time": time,
+            "blink_pattern": blink_pattern.value,
+            "color": color,
+        }
 
         return await self.auth.request(HTTP_METHOD_PUT, "loads/findme", json=json)
 

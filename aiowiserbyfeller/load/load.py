@@ -14,6 +14,7 @@ from aiowiserbyfeller.const import (
     EVENT_PRESS,
     EVENT_RELEASE,
 )
+from aiowiserbyfeller.enum import BlinkPattern
 from aiowiserbyfeller.util import validate_str
 
 
@@ -165,7 +166,13 @@ class Load:
 
         return await self.auth.request("put", f"loads/{self.id}/ctrl", json=json)
 
-    async def async_ping(self, time_ms: int, blink_pattern: str, color: str) -> dict:
+    async def async_ping(
+        self, time_ms: int, blink_pattern: BlinkPattern, color: str
+    ) -> dict:
         """Get the corresponding buttons to control a load lights up."""
-        json = {"time_ms": time_ms, "blink_pattern": blink_pattern, "color": color}
+        json = {
+            "time_ms": time_ms,
+            "blink_pattern": blink_pattern.value,
+            "color": color,
+        }
         return await self.auth.request("put", f"loads/{self.id}/ping", json=json)
