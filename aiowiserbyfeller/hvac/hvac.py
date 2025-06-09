@@ -256,7 +256,7 @@ class HvacGroup(HvacStateProperties):
         data = await self._auth.request(
             HTTP_METHOD_PUT, f"hvacgroups/{self.id}/target_state", json=target_state
         )
-        self.raw_state = data["state"]
+        self.raw_state = data["target_state"]
 
     async def async_set_target_temperature(self, target_temperature: float):
         """Set target temperature state."""
