@@ -201,9 +201,14 @@ async def test_async_set_target_state(client_api_auth, mock_aioresponse):
         "status": "success",
         "data": {
             **raw_data,
-            "state": {**raw_data["state"], "on": False, "target_temperature": 21.5},
+            "target_state": {
+                **raw_data["state"],
+                "on": False,
+                "target_temperature": 21.5,
+            },
         },
     }
+    del response_json["data"]["state"]
 
     group = HvacGroup(raw_data, client_api_auth.auth)
 
@@ -232,9 +237,10 @@ async def test_async_set_target_temperature(client_api_auth, mock_aioresponse):
         "status": "success",
         "data": {
             **raw_data,
-            "state": {**raw_data["state"], "target_temperature": 25.5},
+            "target_state": {**raw_data["state"], "target_temperature": 25.5},
         },
     }
+    del response_json["data"]["state"]
 
     group = HvacGroup(raw_data, client_api_auth.auth)
 
@@ -260,8 +266,9 @@ async def test_async_enable(client_api_auth, mock_aioresponse):
 
     response_json = {
         "status": "success",
-        "data": {**raw_data, "state": {**raw_data["state"], "on": False}},
+        "data": {**raw_data, "target_state": {**raw_data["state"], "on": False}},
     }
+    del response_json["data"]["state"]
 
     group = HvacGroup(raw_data, client_api_auth.auth)
 
@@ -277,7 +284,7 @@ async def test_async_enable(client_api_auth, mock_aioresponse):
 
     assert group.is_on is False
 
-    response_json["data"]["state"]["on"] = True
+    response_json["data"]["target_state"]["on"] = True
     await prepare_test_authenticated(
         mock_aioresponse,
         f"{BASE_URL}/hvacgroups/27/target_state",
