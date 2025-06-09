@@ -25,11 +25,13 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: '3.x'
+        python-version: "3.13.3"
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build
+        pip install build ".[test]"
+    - name: Test with pytest
+      run: pytest
     - name: Build package
       run: python -m build
     - name: Publish package
