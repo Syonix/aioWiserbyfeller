@@ -41,3 +41,21 @@ class SystemFlag:
         """Fetch data from µGateway."""
         data = await self.auth.request("get", f"system/flags/{self.id}")
         self.raw_data = data
+
+    async def async_set_value(self, value: bool):
+        """Enable flag."""
+        self.raw_data = await self.auth.request(
+            "patch", f"system/flags/{self.id}", json={"value": value}
+        )
+
+    async def async_enable(self):
+        """Enable flag."""
+        await self.async_set_value(True)
+
+    async def async_disable(self):
+        """Disable flag."""
+        await self.async_set_value(False)
+
+    async def async_toggle(self):
+        """Toggle flag."""
+        await self.async_set_value(not self.value)
