@@ -100,6 +100,59 @@ async def test_system_flag_async_update(client_api_auth, mock_aioresponse):
 
 
 @pytest.mark.asyncio
+async def test_system_flag_async_enable_disable_toggle(
+    client_api_auth, mock_aioresponse
+):
+    """Test SystemFlag.async_enable, SystemFlag.async_disable and SystemFlag.async_toggle."""
+    response_json = {
+        "status": "success",
+        "data": {"id": 2, "symbol": "cleaning", "value": True, "name": "Putzen"},
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/system/flags/2",
+        "patch",
+        response_json,
+        {"value": True},
+    )
+
+    flag = SystemFlag(
+        {"id": 2, "symbol": "cleaning", "value": False, "name": "Putzen"},
+        client_api_auth.auth,
+    )
+
+    await flag.async_enable()
+    assert flag.value
+
+    # Test disable
+    response_json["data"]["value"] = False
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/system/flags/2",
+        "patch",
+        response_json,
+        {"value": False},
+    )
+
+    await flag.async_disable()
+    assert not flag.value
+
+    # Test toggle
+    response_json["data"]["value"] = True
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/system/flags/2",
+        "patch",
+        response_json,
+        {"value": True},
+    )
+
+    await flag.async_toggle()
+    assert flag.value
+
+
+@pytest.mark.asyncio
 async def test_async_delete_system_flag(client_api_auth, mock_aioresponse):
     """Test async_delete_system_flag."""
     response_json = {
