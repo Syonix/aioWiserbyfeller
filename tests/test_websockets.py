@@ -4,6 +4,12 @@ import asyncio
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
+from websockets.exceptions import (
+    ConnectionClosed,
+    ConnectionClosedOK,
+    WebSocketException,
+)
+from websockets.frames import Close
 
 from aiowiserbyfeller import Websocket, WebsocketWatchdog
 
@@ -111,8 +117,6 @@ async def test_watchdog_trigger_cancels_previous(test_logger):
 @pytest.mark.asyncio
 async def test_connect_handles_connection_closed(mock_connect, test_logger):
     """Test that connect method handles closed connections."""
-    from websockets.exceptions import ConnectionClosedOK
-    from websockets.frames import Close
 
     mock_ws = AsyncMock()
     mock_ws.__aiter__.side_effect = ConnectionClosedOK(Close(1000, "closed"), None)
@@ -130,7 +134,6 @@ async def test_connect_handles_connection_closed(mock_connect, test_logger):
 @pytest.mark.asyncio
 async def test_connect_handles_websocket_exception(mock_connect, test_logger):
     """Test that websocket exceptions are handled in connect method."""
-    from websockets.exceptions import WebSocketException
 
     # Simulate connect() itself raising the exception
     mock_connect.side_effect = WebSocketException("fail")
@@ -167,8 +170,6 @@ def test_websocket_init_starts_connection(mock_create_task, test_logger):
 @pytest.mark.asyncio
 async def test_websocket_stops_after_10_failures(mock_connect, test_logger):
     """Test that websocket stops after 10 failures."""
-    from websockets.exceptions import ConnectionClosed
-    from websockets.frames import Close
 
     # Create a mock websocket that simulates 11 reconnects, each with a message
     class FakeWebSocket:
@@ -197,7 +198,6 @@ async def test_websocket_stops_after_10_failures(mock_connect, test_logger):
 @pytest.mark.asyncio
 async def test_websocket_exception_triggers_on_error(mock_connect, test_logger):
     """Test that an exception is raised on error."""
-    from websockets.exceptions import WebSocketException
 
     class FailingAsyncIterable:
         def __aiter__(self):
