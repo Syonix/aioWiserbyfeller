@@ -1111,6 +1111,31 @@ class WiserByFellerAPI:
             HTTP_METHOD_DELETE, f"hvacgroups/configs/{config_id}"
         )
 
+    # -- Buttons --------------------------------------------------------
+
+    async def async_get_buttons(self) -> list[dict]:
+        """Get all Wiser buttons."""
+        return await self.auth.request(HTTP_METHOD_GET, "buttons")
+        
+    async def async_set_button_led(
+        self,
+        button_id: int,
+        led_index: int,
+        on: bool,
+        pattern: str = "permanent",
+        color: str = "#000000",
+    ) -> dict:
+        """Set LED override for a Wiser button LED."""
+        return await self.auth.request(
+            HTTP_METHOD_PUT,
+            f"buttons/{button_id}/leds/{led_index}",
+            json={
+                "on": on,
+                "pattern": pattern,
+                "color": color,
+            },
+        )
+
     # -- Helpers -------------------------------------------------------
 
     def resolve_class(self, data: dict):
