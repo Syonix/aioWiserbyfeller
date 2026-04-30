@@ -1111,7 +1111,7 @@ class WiserByFellerAPI:
             HTTP_METHOD_DELETE, f"hvacgroups/configs/{config_id}"
         )
 
-    # -- Buttons --------------------------------------------------------
+    # -- Buttons for LED override --------------------------------------------------------
 
     async def async_get_buttons(self) -> list[dict]:
         """Get all Wiser buttons."""
