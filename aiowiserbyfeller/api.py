@@ -551,7 +551,9 @@ class WiserByFellerAPI:
     ) -> dict:
         """Change the configuration of a device input."""
         return await self.auth.request(
-            HTTP_METHOD_PATCH, f"devices/config/{config_id}/inputs/{input_channel}", json=data
+            HTTP_METHOD_PATCH,
+            f"devices/config/{config_id}/inputs/{input_channel}",
+            json=data,
         )
 
     async def async_get_device_output_config(
@@ -570,7 +572,9 @@ class WiserByFellerAPI:
     ) -> dict:
         """Change the configuration of a device output."""
         return await self.auth.request(
-            HTTP_METHOD_PATCH, f"devices/config/{config_id}/outputs/{output_channel}", json=data
+            HTTP_METHOD_PATCH,
+            f"devices/config/{config_id}/outputs/{output_channel}",
+            json=data,
         )
 
     async def async_get_device_config_by_config_id(self, config_id: str) -> dict:
@@ -649,7 +653,9 @@ class WiserByFellerAPI:
         Unknown properties will be stored but ignored.
         A successful response contains the changed timer.
         """
-        return await self.auth.request(HTTP_METHOD_PATCH, f"timers/{timer_id}", json=timer)
+        return await self.auth.request(
+            HTTP_METHOD_PATCH, f"timers/{timer_id}", json=timer
+        )
 
     async def async_delete_timer(self, timer_id: int) -> Timer:
         """Delete an existing timer.
@@ -898,7 +904,9 @@ class WiserByFellerAPI:
         Values of missing keys are preserved.
         A successful response contains the changed scene.
         """
-        return await self.auth.request(HTTP_METHOD_PATCH, f"scenes/{scene_id}", json=scene)
+        return await self.auth.request(
+            HTTP_METHOD_PATCH, f"scenes/{scene_id}", json=scene
+        )
 
     async def async_delete_scene(self, scene_id: int) -> Scene:
         """Delete an existing scene.
@@ -988,7 +996,9 @@ class WiserByFellerAPI:
         A successful response contains the changed flag.
         """
 
-        return await self.auth.request(HTTP_METHOD_PATCH, f"system/flags/{flag_id}", json=data)
+        return await self.auth.request(
+            HTTP_METHOD_PATCH, f"system/flags/{flag_id}", json=data
+        )
 
     async def async_delete_system_flag(self, flag_id: int) -> SystemFlag:
         """Delete an existing System Flag. A successful response contains the deleted flag."""

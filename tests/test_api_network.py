@@ -201,7 +201,11 @@ async def test_async_put_net_wlan(client_api_auth, mock_aioresponse):
     request_json = {"ssid": "Weekly Special", "bssid": "77:67:51:5f:87:b2"}
 
     await prepare_test_authenticated(
-        mock_aioresponse, f"{BASE_URL}/net/wlans/1", "patch", response_json, request_json
+        mock_aioresponse,
+        f"{BASE_URL}/net/wlans/1",
+        "patch",
+        response_json,
+        request_json,
     )
 
     actual = await client_api_auth.async_update_net_wlan(1, request_json)

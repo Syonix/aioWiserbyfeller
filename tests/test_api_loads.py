@@ -857,6 +857,4 @@ async def test_hvac(client_api_auth, mock_aioresponse):
 def test_resolve_class_unknown_type(client_api_auth):
     """Test that resolve_class raises InvalidLoadType for an unknown type string."""
     with pytest.raises(InvalidLoadType, match="unknown_future_type"):
-        client_api_auth.resolve_class(
-            {"type": "unknown_future_type", "sub_type": ""}
-        )
+        client_api_auth.resolve_class({"type": "unknown_future_type", "sub_type": ""})
