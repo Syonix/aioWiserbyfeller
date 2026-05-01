@@ -237,3 +237,63 @@ async def test_async_sync_account_clones(client_api_auth, mock_aioresponse):
 
     actual = await client_api_auth.async_sync_account_clones(request_json)
     assert actual == response_json["data"]
+
+
+@pytest.mark.asyncio
+async def test_async_config_reset_account_default(client_api_auth, mock_aioresponse):
+    """Test async_config_reset_account with default magnet_binding=False."""
+    response_json = {
+        "status": "success",
+        "data": {
+            "user": "admin",
+            "source": "installer",
+        },
+    }
+
+    captured = {}
+
+    def mock_callback(callback_url, **kwargs):
+        captured["json"] = kwargs.get("json")
+
+    mock_aioresponse.add(
+        f"{BASE_URL}/account/config-reset",
+        "post",
+        payload=response_json,
+        callback=mock_callback,
+    )
+
+    actual = await client_api_auth.async_config_reset_account()
+
+    assert actual == response_json["data"]
+    assert captured["json"] == {"magnet_binding": False}
+
+
+@pytest.mark.asyncio
+async def test_async_config_reset_account_magnet_binding(
+    client_api_auth, mock_aioresponse
+):
+    """Test async_config_reset_account with magnet_binding=True resets all kPlus bindings."""
+    response_json = {
+        "status": "success",
+        "data": {
+            "user": "admin",
+            "source": "installer",
+        },
+    }
+
+    captured = {}
+
+    def mock_callback(callback_url, **kwargs):
+        captured["json"] = kwargs.get("json")
+
+    mock_aioresponse.add(
+        f"{BASE_URL}/account/config-reset",
+        "post",
+        payload=response_json,
+        callback=mock_callback,
+    )
+
+    actual = await client_api_auth.async_config_reset_account(magnet_binding=True)
+
+    assert actual == response_json["data"]
+    assert captured["json"] == {"magnet_binding": True}

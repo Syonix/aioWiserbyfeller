@@ -439,6 +439,19 @@ class WiserByFellerAPI:
         """
         return await self.auth.request(HTTP_METHOD_POST, "account/reset")
 
+    async def async_config_reset_account(self, magnet_binding: bool = False) -> dict:
+        """Delete user-specific data, remove partial system configuration (except network settings), and reboot.
+
+        Retains the account itself and network settings.
+        When magnet_binding=False (default), only µGateway bindings are reset.
+        When magnet_binding=True, all kPlus bindings including installation bindings are reset.
+        """
+        return await self.auth.request(
+            HTTP_METHOD_POST,
+            "account/config-reset",
+            json={"magnet_binding": magnet_binding},
+        )
+
     async def async_sync_account(self, sync: dict):
         """Sync user-specific data from an existing user (source-account) to other cloned accounts by passing secrets.
 
@@ -595,7 +608,7 @@ class WiserByFellerAPI:
         Hint: This service can take a long time (up to 6 minutes) depending on the size of the blinds
         (windows) or bad installations!
         """
-        return await self.auth.request(HTTP_METHOD_PUT, "devices/motor/calibration")
+        return await self.auth.request(HTTP_METHOD_GET, "devices/motor/calibration")
 
     # -- Timers --------------------------------------------------------
 

@@ -731,7 +731,7 @@ async def test_async_calibrate_motor_devices(client_api_auth, mock_aioresponse):
     await prepare_test_authenticated(
         mock_aioresponse,
         f"{BASE_URL}/devices/motor/calibration",
-        "put",
+        "get",
         response_json,
     )
 
