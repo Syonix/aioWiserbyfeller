@@ -112,7 +112,7 @@ class WiserByFellerAPI:
         If a URL in the new array occurs more than once then all copies after the first will be removed.
         """
 
-        data = await self.auth.request("patch", "time/ntpconfig", json=data)
+        data = await self.auth.request(HTTP_METHOD_PATCH, "time/ntpconfig", json=data)
         return NtpConfig(data, self.auth)
 
     async def async_get_time_sun_info(self) -> dict:
@@ -246,7 +246,7 @@ class WiserByFellerAPI:
         If an id in the combined order array occurs more than once then all copies after the first will be removed.
         Attention: The property https is for future use, do not change it!
         """
-        return await self.auth.request("patch", "net/state", json=state)
+        return await self.auth.request(HTTP_METHOD_PATCH, "net/state", json=state)
 
     async def async_get_net_rssi(self) -> int:
         """Return the current RSSI in dBm.
@@ -281,7 +281,7 @@ class WiserByFellerAPI:
 
     async def async_update_room(self, room_id: int, room: dict) -> dict:
         """Patch new values into some properties of an existing room."""
-        return await self.auth.request("patch", f"rooms/{room_id}", json=room)
+        return await self.auth.request(HTTP_METHOD_PATCH, f"rooms/{room_id}", json=room)
 
     async def async_delete_room(self, room_id: int) -> dict:
         """Delete an existing room."""
@@ -302,7 +302,7 @@ class WiserByFellerAPI:
 
     async def async_update_site_info(self, info: dict) -> dict:
         """Patch new values into site."""
-        return await self.auth.request("patch", "site", json=info)
+        return await self.auth.request(HTTP_METHOD_PATCH, "site", json=info)
 
     # -- Loads ---------------------------------------------------------
 
@@ -316,21 +316,11 @@ class WiserByFellerAPI:
 
         Note that the heating controller can have loads that are not connected and thus are marked as unused.
         """
-        data = await self.auth.request(HTTP_METHOD_GET, "loads")
-        return [
-            self.resolve_class(light_data)
-            for light_data in data
-            if not light_data["unused"]
-        ]
+        return [load for load in await self.async_get_loads() if not load.unused]
 
     async def async_get_unused_loads(self) -> list[Load]:
         """Get all unused loads with all their properties."""
-        data = await self.auth.request(HTTP_METHOD_GET, "loads")
-        return [
-            self.resolve_class(light_data)
-            for light_data in data
-            if light_data["unused"]
-        ]
+        return [load for load in await self.async_get_loads() if load.unused]
 
     async def async_get_load(self, load_id: int) -> Load:
         """Get one load with all its properties."""
@@ -344,7 +334,7 @@ class WiserByFellerAPI:
 
     async def async_patch_load(self, load_id: int, load: dict) -> dict:
         """Patch new values into an existing load."""
-        return await self.auth.request("patch", f"loads/{load_id}", json=load)
+        return await self.auth.request(HTTP_METHOD_PATCH, f"loads/{load_id}", json=load)
 
     async def async_load_set_target_state(self, load_id: int, state: dict) -> Load:
         """Save new target state to µGateway.
@@ -439,7 +429,7 @@ class WiserByFellerAPI:
 
     async def async_update_account(self, data: dict):
         """Patch new values or arbitrary keys into an account (identified by header token)."""
-        return await self.auth.request("patch", "account", json=data)
+        return await self.auth.request(HTTP_METHOD_PATCH, "account", json=data)
 
     async def async_reset_account(self):
         """Reset an existing account.
@@ -548,7 +538,7 @@ class WiserByFellerAPI:
     ) -> dict:
         """Change the configuration of a device input."""
         return await self.auth.request(
-            "patch", f"devices/config/{config_id}/inputs/{input_channel}", json=data
+            HTTP_METHOD_PATCH, f"devices/config/{config_id}/inputs/{input_channel}", json=data
         )
 
     async def async_get_device_output_config(
@@ -567,7 +557,7 @@ class WiserByFellerAPI:
     ) -> dict:
         """Change the configuration of a device output."""
         return await self.auth.request(
-            "patch", f"devices/config/{config_id}/outputs/{output_channel}", json=data
+            HTTP_METHOD_PATCH, f"devices/config/{config_id}/outputs/{output_channel}", json=data
         )
 
     async def async_get_device_config_by_config_id(self, config_id: str) -> dict:
@@ -646,7 +636,7 @@ class WiserByFellerAPI:
         Unknown properties will be stored but ignored.
         A successful response contains the changed timer.
         """
-        return await self.auth.request("patch", f"timers/{timer_id}", json=timer)
+        return await self.auth.request(HTTP_METHOD_PATCH, f"timers/{timer_id}", json=timer)
 
     async def async_delete_timer(self, timer_id: int) -> Timer:
         """Delete an existing timer.
@@ -681,7 +671,7 @@ class WiserByFellerAPI:
         devices! This service may take a few seconds before the response is sent back!
         """
         data = await self.auth.request(
-            "patch", f"smartbuttons/{button.id}", json=button.raw_data
+            HTTP_METHOD_PATCH, f"smartbuttons/{button.id}", json=button.raw_data
         )
         return SmartButton(data, self.auth)
 
@@ -772,7 +762,7 @@ class WiserByFellerAPI:
         Append more filenames to the existing list of scripts.
         A successful response contains the changed job.
         """
-        data = await self.auth.request("patch", f"jobs/{job_id}", json=job)
+        data = await self.auth.request(HTTP_METHOD_PATCH, f"jobs/{job_id}", json=job)
         return Job(data, self.auth)
 
     async def async_delete_job(self, job_id: int) -> Job:
@@ -895,7 +885,7 @@ class WiserByFellerAPI:
         Values of missing keys are preserved.
         A successful response contains the changed scene.
         """
-        return await self.auth.request("patch", f"scenes/{scene_id}", json=scene)
+        return await self.auth.request(HTTP_METHOD_PATCH, f"scenes/{scene_id}", json=scene)
 
     async def async_delete_scene(self, scene_id: int) -> Scene:
         """Delete an existing scene.
@@ -985,7 +975,7 @@ class WiserByFellerAPI:
         A successful response contains the changed flag.
         """
 
-        return await self.auth.request("patch", f"system/flags/{flag_id}", json=data)
+        return await self.auth.request(HTTP_METHOD_PATCH, f"system/flags/{flag_id}", json=data)
 
     async def async_delete_system_flag(self, flag_id: int) -> SystemFlag:
         """Delete an existing System Flag. A successful response contains the deleted flag."""
@@ -1034,7 +1024,7 @@ class WiserByFellerAPI:
         """
 
         return await self.auth.request(
-            "patch", f"system/conditions/{condition_id}", json=condition
+            HTTP_METHOD_PATCH, f"system/conditions/{condition_id}", json=condition
         )
 
     async def async_delete_system_condition(self, condition_id: int) -> SystemCondition:

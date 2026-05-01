@@ -1,6 +1,7 @@
 """Support for system flags."""
 
 from aiowiserbyfeller.auth import Auth
+from aiowiserbyfeller.const import HTTP_METHOD_PATCH
 
 
 class SystemFlag:
@@ -45,7 +46,7 @@ class SystemFlag:
     async def async_set_value(self, value: bool):
         """Enable flag."""
         self.raw_data = await self.auth.request(
-            "patch", f"system/flags/{self.id}", json={"value": value}
+            HTTP_METHOD_PATCH, f"system/flags/{self.id}", json={"value": value}
         )
 
     async def async_enable(self):
