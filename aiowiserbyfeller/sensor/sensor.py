@@ -31,11 +31,8 @@ class Sensor:
 
     @property
     def name(self) -> str | None:
-        """UTF-8 string for the name of a load defined by the user.
-
-        (e.g. ceiling spots, chandeliers, window west, floor lamp)
-        """
-        return self.raw_data["name"]
+        """UTF-8 string for the name of a sensor defined by the user."""
+        return self.raw_data.get("name")
 
     @property
     def value(self) -> float | bool | None:
@@ -52,11 +49,11 @@ class Sensor:
         return normalize_unit(self.raw_data.get("unit"))
 
     @property
-    def device(self) -> str:
+    def device(self) -> str | None:
         """Reference id to the physical device."""
-        return self.raw_data["device"]
+        return self.raw_data.get("device")
 
     @property
-    def channel(self) -> int:
-        """Channel of the load."""
-        return self.raw_data["channel"]
+    def channel(self) -> int | None:
+        """Channel of the sensor."""
+        return self.raw_data.get("channel")
