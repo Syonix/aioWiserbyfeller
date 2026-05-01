@@ -459,7 +459,7 @@ async def test_async_get_device_output_config(client_api_auth, mock_aioresponse)
 
     await prepare_test_authenticated(
         mock_aioresponse,
-        f"{BASE_URL}/devices/config/4294976294/inputs/0",
+        f"{BASE_URL}/devices/config/4294976294/outputs/0",
         "get",
         response_json,
     )

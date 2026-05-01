@@ -214,7 +214,7 @@ class WiserByFellerAPI:
         The resulting WLAN configuration has the same limitations as explained in section POST /wlans.
         """
         return await self.auth.request(
-            HTTP_METHOD_PUT, f"net/wlans/{config_id}", json=config
+            HTTP_METHOD_PATCH, f"net/wlans/{config_id}", json=config
         )
 
     async def async_delete_net_wlan(self, config_id: int) -> dict:
@@ -418,10 +418,10 @@ class WiserByFellerAPI:
         if login is not None:
             json["login"] = login
 
-        if login is not None:
+        if company is not None:
             json["company"] = company
 
-        if login is not None:
+        if name is not None:
             json["name"] = name
 
         return await self.auth.request(HTTP_METHOD_POST, "account/clone", json=json)
@@ -559,7 +559,7 @@ class WiserByFellerAPI:
         Response content can vary depending on output type.
         """
         return await self.auth.request(
-            HTTP_METHOD_GET, f"devices/config/{config_id}/inputs/{output_channel}"
+            HTTP_METHOD_GET, f"devices/config/{config_id}/outputs/{output_channel}"
         )
 
     async def async_set_device_output_config(
