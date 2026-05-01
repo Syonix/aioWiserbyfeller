@@ -54,7 +54,7 @@ class Job:
     @property
     def blocked_by(self) -> int | None:
         """Id of a system flag or condition that may block this job."""
-        return self.raw_data["blocked_by"]
+        return self.raw_data.get("blocked_by")
 
     @property
     def triggers(self) -> list[int]:
