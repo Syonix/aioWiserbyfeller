@@ -3,9 +3,11 @@
 import pytest
 
 from aiowiserbyfeller import InvalidArgument
+from aiowiserbyfeller.const import UNIT_TEMPERATURE_CELSIUS
 from aiowiserbyfeller.util import (
     get_device_name_by_fwid,
     get_device_name_by_hwid_a,
+    normalize_unit,
     parse_wiser_device_fwid,
     parse_wiser_device_hwid_a,
     parse_wiser_device_ref_a,
@@ -706,3 +708,20 @@ def test_get_device_name_by_fwid_with_blocktype(data: list):
     """Test get_device_name_by_fwid with blocktype."""
     actual = get_device_name_by_fwid(data[0], include_block_suffix=True)
     assert actual == (data[1] + " " + data[2] if data[2] != "" else data[1])
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("℃", UNIT_TEMPERATURE_CELSIUS),
+        ("C", UNIT_TEMPERATURE_CELSIUS),
+        ("°C", UNIT_TEMPERATURE_CELSIUS),
+        ("m/s", "m/s"),
+        ("lx", "lx"),
+        (None, None),
+        ("", ""),
+    ],
+)
+def test_normalize_unit(value, expected):
+    """Test normalize_unit with all relevant inputs."""
+    assert normalize_unit(value) == expected

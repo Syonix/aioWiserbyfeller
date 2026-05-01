@@ -5,6 +5,7 @@ import pytest
 from aiowiserbyfeller import DaliRgbw, DaliTw, Dim, Hvac, InvalidArgument, Motor, OnOff
 from aiowiserbyfeller.const import KIND_LIGHT, KIND_VENETIAN_BLINDS
 from aiowiserbyfeller.enum import BlinkPattern
+from aiowiserbyfeller.errors import InvalidLoadType
 from aiowiserbyfeller.hvac import HvacChannelState
 
 from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
@@ -851,3 +852,11 @@ async def test_hvac(client_api_auth, mock_aioresponse):
     assert load.state_heating is False
     assert load.state_cooling is False
     assert load.state == HvacChannelState.OFF
+
+
+def test_resolve_class_unknown_type(client_api_auth):
+    """Test that resolve_class raises InvalidLoadType for an unknown type string."""
+    with pytest.raises(InvalidLoadType, match="unknown_future_type"):
+        client_api_auth.resolve_class(
+            {"type": "unknown_future_type", "sub_type": ""}
+        )

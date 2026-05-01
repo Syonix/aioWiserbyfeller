@@ -160,3 +160,34 @@ async def test_request_merges_headers(client_auth, mock_aioresponse):
     result = await client_auth.request("get", "some/path", headers={"X-Test": "value"})
 
     assert result == {"value": 42}
+
+
+@pytest.mark.asyncio
+async def test_claim_without_source(client_auth, mock_aioresponse):
+    """Test that claim omits the source key when source=None is passed explicitly."""
+    response_json = {
+        "status": "success",
+        "data": {
+            "secret": "61b096f3-9f20-46db-932c-c8bbf7f6011d",
+            "user": "enduser",
+        },
+    }
+
+    captured = {}
+
+    def mock_callback(callback_url, **kwargs):
+        captured["json"] = kwargs.get("json")
+
+    mock_aioresponse.post(
+        f"{BASE_URL}/account/claim",
+        payload=response_json,
+        callback=mock_callback,
+    )
+
+    token = await client_auth.claim("enduser", source=None)
+
+    assert token == response_json["data"]["secret"]
+    assert "source" not in captured["json"], (
+        "source should not be sent when source=None"
+    )
+    assert captured["json"] == {"user": "enduser"}
