@@ -28,12 +28,12 @@ from .map import DEVICE_A_BLOCK_FWID_BLOCK_MAP, DEVICE_A_BLOCK_HWID_MAP
 
 
 def validate_str(value, valid, **kwargs):
-    """Validate a string by checking it against list ofr valid values."""
+    """Validate a string by checking it against list of valid values."""
     error = kwargs.get("error_message", "Invalid value")
 
     if value not in valid:
-        valid = ", ".join(valid)
-        valid_str = f" Valid values: {valid}" if valid else ""
+        valid_list = ", ".join(valid)
+        valid_str = f" Valid values: {valid_list}" if valid_list else ""
         raise InvalidArgument(f"{error} {value}.{valid_str}")
 
 

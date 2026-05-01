@@ -45,6 +45,49 @@ async def test_async_clone_account(client_api_auth, mock_aioresponse):
 
 
 @pytest.mark.asyncio
+async def test_async_clone_account_partial_kwargs(client_api_auth, mock_aioresponse):
+    """Test async_clone_account with company/name but without login.
+
+    Regression test: conditions for company and name previously checked login,
+    so they were silently dropped when login was not provided.
+    """
+    response_json = {
+        "status": "success",
+        "data": {
+            "secret": "20e55c5e-3893-40de-a3fa-00fe7c26d2fe",
+            "source": "admin",
+            "user": "enduser",
+            "company": "Feller AG",
+            "name": "Felix Kunz",
+        },
+    }
+
+    captured = {}
+
+    def mock_callback(callback_url, **kwargs):
+        captured["json"] = kwargs.get("json")
+
+    mock_aioresponse.add(
+        f"{BASE_URL}/account/clone",
+        "post",
+        payload=response_json,
+        callback=mock_callback,
+    )
+
+    await client_api_auth.async_clone_account(
+        "enduser",
+        company="Foobar Electrical Building Tech. Ltd.",
+        name="Felix Kunz",
+    )
+
+    assert captured["json"] == {
+        "user": "enduser",
+        "company": "Foobar Electrical Building Tech. Ltd.",
+        "name": "Felix Kunz",
+    }, f"company and name were dropped from request body: {captured['json']}"
+
+
+@pytest.mark.asyncio
 async def test_async_get_clones(client_api_auth, mock_aioresponse):
     """Test async_get_clones."""
     response_json = {

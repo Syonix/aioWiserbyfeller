@@ -12,7 +12,7 @@ class DaliRgbw(Dim):
         if self.raw_state is None:
             return None
 
-        return dict((k, self.raw_state[k]) for k in ("red", "green", "blue", "white"))  # noqa: C402
+        return {k: self.raw_state[k] for k in ("red", "green", "blue", "white")}
 
     # pylint: disable=too-many-arguments
 
