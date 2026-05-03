@@ -28,6 +28,7 @@ from .const import (
 from .device import Device
 from .enum import BlinkPattern
 from .errors import InvalidLoadType, NoButtonPressed, UnsuccessfulRequest
+from .group_ctrl import GroupCtrl
 from .hvac import HvacGroup
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
@@ -955,9 +956,54 @@ class WiserByFellerAPI:
 
     # -- Group Ctrl ----------------------------------------------------
 
-    # Note: Group Ctrls are documented as app-only and thus are omitted
-    #       for now. This is used for secondary devices (Nebenstellen)
-    #       to control loads.
+    async def async_get_group_ctrls(self) -> list[GroupCtrl]:
+        """Get a list of all group-ctrls."""
+        data = await self.auth.request(HTTP_METHOD_GET, "groupctrls")
+        return [GroupCtrl(item, self.auth) for item in data]
+
+    async def async_create_group_ctrl(self, group_ctrl: GroupCtrl) -> GroupCtrl:
+        """Create a new group-ctrl with given properties and a unique id."""
+        data = await self.auth.request(
+            HTTP_METHOD_POST, "groupctrls", json=group_ctrl.raw_data
+        )
+        return GroupCtrl(data, self.auth)
+
+    async def async_get_group_ctrl(self, group_ctrl_id: int) -> GroupCtrl:
+        """Get one group-ctrl by id with all its properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"groupctrls/{group_ctrl_id}")
+        return GroupCtrl(data, self.auth)
+
+    async def async_update_group_ctrl(self, group_ctrl: GroupCtrl) -> GroupCtrl:
+        """Put new values into an existing group-ctrl.
+
+        Missing properties are removed. A successful response contains the changed group-ctrl.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PUT, f"groupctrls/{group_ctrl.id}", json=group_ctrl.raw_data
+        )
+        return GroupCtrl(data, self.auth)
+
+    async def async_patch_group_ctrl(
+        self, group_ctrl_id: int, group_ctrl: dict
+    ) -> GroupCtrl:
+        """Patch new values into some properties of an existing group-ctrl.
+
+        Values of missing keys are preserved. A successful response contains the changed group.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PATCH, f"groupctrls/{group_ctrl_id}", json=group_ctrl
+        )
+        return GroupCtrl(data, self.auth)
+
+    async def async_delete_group_ctrl(self, group_ctrl_id: int) -> GroupCtrl:
+        """Delete an existing group-ctrl.
+
+        A successful response contains the deleted group-ctrl.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_DELETE, f"groupctrls/{group_ctrl_id}"
+        )
+        return GroupCtrl(data, self.auth)
 
     # -- Scenes --------------------------------------------------------
 

@@ -14,6 +14,7 @@ from .errors import (
     UnsuccessfulRequest,
     WebsocketError,
 )
+from .group_ctrl import GroupCtrl
 from .hvac import HvacGroup
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
@@ -38,6 +39,7 @@ __all__ = [
     "DaliTw",
     "Device",
     "Dim",
+    "GroupCtrl",
     "Hail",
     "Humidity",
     "Hvac",
