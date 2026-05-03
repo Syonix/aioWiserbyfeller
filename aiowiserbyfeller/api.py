@@ -1200,6 +1200,23 @@ class WiserByFellerAPI:
         data = await self.auth.request(HTTP_METHOD_DELETE, f"hvacgroups/{group_id}")
         return HvacGroup(data, self.auth)
 
+    async def async_update_hvac_group(self, group: HvacGroup) -> HvacGroup:
+        """Replace the loads in an existing HVAC-Group.
+
+        A successful response contains the changed HVAC-Group.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PUT, f"hvacgroups/{group.id}", json={"loads": group.loads}
+        )
+        return HvacGroup(data, self.auth)
+
+    async def async_patch_hvac_group(self, group_id: int, data: dict) -> HvacGroup:
+        """Append more loads to the existing loads list."""
+        result = await self.auth.request(
+            HTTP_METHOD_PATCH, f"hvacgroups/{group_id}", json=data
+        )
+        return HvacGroup(result, self.auth)
+
     async def async_get_hvac_group_states(self) -> dict:
         """Get all HVAC group states.
 
@@ -1208,6 +1225,42 @@ class WiserByFellerAPI:
 
         """
         return await self.auth.request(HTTP_METHOD_GET, "hvacgroups/state")
+
+    async def async_get_hvac_group_binding_state(self, group_id: int) -> bool:
+        """Ask for HVAC-Group binding-state."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"hvacgroups/{group_id}/bind")
+        return data.get("running", False) is True
+
+    async def async_stop_hvac_group_binding(self, group_id: int) -> bool:
+        """Stop HVAC-Group binding."""
+        data = await self.auth.request(
+            HTTP_METHOD_PUT, f"hvacgroups/{group_id}/bind", json={"running": False}
+        )
+        return data.get("running") is False
+
+    async def async_bind_hvac_group(self, group_id: int) -> HvacGroup:
+        """Bind an existing HVAC-Group to a thermostat.
+
+        All thermostats start flashing. After pressing the button of the thermostat,
+        the binding between an HVAC-Group and a thermostat is created.
+        """
+        data = await self.auth.request(HTTP_METHOD_PATCH, f"hvacgroups/{group_id}/bind")
+        return HvacGroup(data, self.auth)
+
+    async def async_delete_hvac_group_binding(self, group_id: int) -> HvacGroup:
+        """Delete an existing HVAC-Group binding from a thermostat."""
+        data = await self.auth.request(
+            HTTP_METHOD_DELETE, f"hvacgroups/{group_id}/bind"
+        )
+        return HvacGroup(data, self.auth)
+
+    async def async_set_hvac_group_target_state(
+        self, group_id: int, target_state: dict
+    ) -> dict:
+        """Set target state on HVAC-Group."""
+        return await self.auth.request(
+            HTTP_METHOD_PUT, f"hvacgroups/{group_id}/target_state", json=target_state
+        )
 
     async def async_create_hvac_group_config(self, group_id: int) -> dict:
         """Create a new HVAC group configuration object and set the HVAC group into configuration mode."""

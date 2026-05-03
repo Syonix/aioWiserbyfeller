@@ -603,6 +603,154 @@ async def test_async_discard_hvac_group_config(client_api_auth, mock_aioresponse
     await client_api_auth.async_discard_hvac_group_config(34)
 
 
+@pytest.mark.asyncio
+async def test_async_update_hvac_group(client_api_auth, mock_aioresponse):
+    """Test async_update_hvac_group."""
+    with Path(BASE_DATA_PATH + "/valid/hvac_group_without_thermostat_ref.json").open(  # noqa: ASYNC230
+        "r"
+    ) as f:
+        raw_data = json.load(f)
+
+    request_json = {"loads": [2, 3]}
+    response_json = {"status": "success", "data": {**raw_data, "loads": [2, 3]}}
+
+    group = HvacGroup({**raw_data, "loads": [2, 3]}, client_api_auth.auth)
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/hvacgroups/25",
+        "put",
+        response_json,
+        request_json,
+    )
+
+    actual = await client_api_auth.async_update_hvac_group(group)
+
+    assert isinstance(actual, HvacGroup)
+    assert actual.id == 25
+    assert actual.loads == [2, 3]
+
+
+@pytest.mark.asyncio
+async def test_async_patch_hvac_group(client_api_auth, mock_aioresponse):
+    """Test async_patch_hvac_group."""
+    with Path(BASE_DATA_PATH + "/valid/hvac_group_without_thermostat_ref.json").open(  # noqa: ASYNC230
+        "r"
+    ) as f:
+        raw_data = json.load(f)
+
+    request_json = {"loads": [2, 3]}
+    response_json = {"status": "success", "data": {**raw_data, "loads": [1, 2, 3]}}
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/hvacgroups/25",
+        "patch",
+        response_json,
+        request_json,
+    )
+
+    actual = await client_api_auth.async_patch_hvac_group(25, request_json)
+
+    assert isinstance(actual, HvacGroup)
+    assert actual.id == 25
+    assert 2 in actual.loads
+    assert 3 in actual.loads
+
+
+@pytest.mark.asyncio
+async def test_async_get_hvac_group_binding_state(client_api_auth, mock_aioresponse):
+    """Test async_get_hvac_group_binding_state."""
+    response_json = {"status": "success", "data": {"running": True}}
+
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/hvacgroups/25/bind", "get", response_json
+    )
+
+    actual = await client_api_auth.async_get_hvac_group_binding_state(25)
+    assert actual is True
+
+
+@pytest.mark.asyncio
+async def test_async_stop_hvac_group_binding(client_api_auth, mock_aioresponse):
+    """Test async_stop_hvac_group_binding."""
+    response_json = {"status": "success", "data": {"running": False}}
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/hvacgroups/25/bind",
+        "put",
+        response_json,
+        {"running": False},
+    )
+
+    actual = await client_api_auth.async_stop_hvac_group_binding(25)
+    assert actual is True
+
+
+@pytest.mark.asyncio
+async def test_async_bind_hvac_group(client_api_auth, mock_aioresponse):
+    """Test async_bind_hvac_group."""
+    with Path(BASE_DATA_PATH + "/valid/hvac_group.json").open("r") as f:  # noqa: ASYNC230
+        response_json = {"status": "success", "data": json.load(f)}
+
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/hvacgroups/25/bind", "patch", response_json
+    )
+
+    actual = await client_api_auth.async_bind_hvac_group(25)
+
+    assert isinstance(actual, HvacGroup)
+    assert actual.id == 25
+    assert isinstance(actual.thermostat_ref, ThermostatReference)
+    assert actual.thermostat_ref.address == "0x00037797"
+
+
+@pytest.mark.asyncio
+async def test_async_delete_hvac_group_binding(client_api_auth, mock_aioresponse):
+    """Test async_delete_hvac_group_binding."""
+    with Path(BASE_DATA_PATH + "/valid/hvac_group_without_thermostat_ref.json").open(  # noqa: ASYNC230
+        "r"
+    ) as f:
+        response_json = {"status": "success", "data": json.load(f)}
+
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/hvacgroups/25/bind", "delete", response_json
+    )
+
+    actual = await client_api_auth.async_delete_hvac_group_binding(25)
+
+    assert isinstance(actual, HvacGroup)
+    assert actual.id == 25
+    assert actual.thermostat_ref is None
+
+
+@pytest.mark.asyncio
+async def test_async_set_hvac_group_target_state(client_api_auth, mock_aioresponse):
+    """Test async_set_hvac_group_target_state."""
+    with Path(BASE_DATA_PATH + "/valid/hvac_group_without_thermostat_ref.json").open(  # noqa: ASYNC230
+        "r"
+    ) as f:
+        raw_data = json.load(f)
+
+    request_json = {"target_temperature": 25.5}
+    response_json = {
+        "status": "success",
+        "data": {**raw_data, "target_state": {"target_temperature": 25.5}},
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/hvacgroups/25/target_state",
+        "put",
+        response_json,
+        request_json,
+    )
+
+    actual = await client_api_auth.async_set_hvac_group_target_state(25, request_json)
+    assert actual["target_state"]["target_temperature"] == 25.5
+
+
 def test_thermostat_reference():
     """Test ThermostatReference.unprefixed_address."""
     ref = ThermostatReference(17, 0, "0x00012345")
