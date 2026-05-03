@@ -1117,12 +1117,12 @@ class WiserByFellerAPI:
         """Get all Wiser buttons."""
         return await self.auth.request(HTTP_METHOD_GET, "buttons")
         
-    async def async_set_button_led(
+        async def async_set_button_led(
         self,
         button_id: int,
         led_index: int,
         on: bool,
-        pattern: str = "permanent",
+        pattern: BlinkPattern = BlinkPattern.PERMANENT,
         color: str = "#000000",
     ) -> dict:
         """Set LED override for a Wiser button LED."""
@@ -1131,7 +1131,7 @@ class WiserByFellerAPI:
             f"buttons/{button_id}/leds/{led_index}",
             json={
                 "on": on,
-                "pattern": pattern,
+                "pattern": pattern.value,
                 "color": color,
             },
         )
