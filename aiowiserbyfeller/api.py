@@ -1117,7 +1117,7 @@ class WiserByFellerAPI:
         """Get all Wiser buttons."""
         return await self.auth.request(HTTP_METHOD_GET, "buttons")
         
-        async def async_set_button_led(
+    async def async_set_button_led(
         self,
         button_id: int,
         led_index: int,
