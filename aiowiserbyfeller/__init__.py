@@ -18,7 +18,7 @@ from .hvac import HvacGroup
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
-from .sensor import Brightness, Hail, Rain, Sensor, Temperature, Wind
+from .sensor import Brightness, Co2, Hail, Humidity, Rain, Sensor, Temperature, Wind
 from .smart_button import SmartButton
 from .system import SystemCondition, SystemFlag
 from .time import NtpConfig
@@ -30,12 +30,14 @@ __all__ = [
     "Auth",
     "AuthorizationFailed",
     "Brightness",
+    "Co2",
     "Dali",
     "DaliRgbw",
     "DaliTw",
     "Device",
     "Dim",
     "Hail",
+    "Humidity",
     "Hvac",
     "HvacGroup",
     "InvalidArgument",

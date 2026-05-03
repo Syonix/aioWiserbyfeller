@@ -18,7 +18,9 @@ from .const import (
     LOAD_TYPE_MOTOR,
     LOAD_TYPE_ONOFF,
     SENSOR_TYPE_BRIGHTNESS,
+    SENSOR_TYPE_CO2,
     SENSOR_TYPE_HAIL,
+    SENSOR_TYPE_HUMIDITY,
     SENSOR_TYPE_RAIN,
     SENSOR_TYPE_TEMPERATURE,
     SENSOR_TYPE_WIND,
@@ -30,7 +32,7 @@ from .hvac import HvacGroup
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
-from .sensor import Brightness, Hail, Rain, Sensor, Temperature, Wind
+from .sensor import Brightness, Co2, Hail, Humidity, Rain, Sensor, Temperature, Wind
 from .smart_button import SmartButton
 from .system import SystemCondition, SystemFlag
 from .time import NtpConfig
@@ -530,6 +532,16 @@ class WiserByFellerAPI:
         """Get a new configuration object and set the device into configuration mode."""
         return await self.auth.request(HTTP_METHOD_GET, f"devices/{device_id}/config")
 
+    async def async_get_device_inputs_config(self, device_id: str) -> dict:
+        """Get a configuration object with only inputs and set the device into configuration mode.
+
+        This service responds much faster than reading the complete configuration
+        and can be used if only the LEDs need to be configured.
+        """
+        return await self.auth.request(
+            HTTP_METHOD_GET, f"devices/{device_id}/config/inputs"
+        )
+
     async def async_get_device_input_config(
         self, config_id: str, input_channel: int
     ) -> dict:
@@ -928,6 +940,31 @@ class WiserByFellerAPI:
         raw_data = await self.auth.request(HTTP_METHOD_GET, f"sensors/{sensor_id}")
         return self.resolve_class(raw_data)
 
+    async def async_patch_sensor(self, sensor_id: int, data: dict) -> Sensor:
+        """Patch new values into some properties of an existing sensor."""
+        raw_data = await self.auth.request(
+            HTTP_METHOD_PATCH, f"sensors/{sensor_id}", json=data
+        )
+        return self.resolve_class(raw_data)
+
+    async def async_find_sensors(
+        self, on: bool, time: int, blink_pattern: BlinkPattern, color: str
+    ) -> dict:
+        """Put all sensors into the find me mode.
+
+        If the find me mode is on, all devices with sensors lights up.
+        As soon as a button is pressed on a blinking device, the device stops lighting up
+        and the µGateway sends the following event over the Websocket connection:
+        {"findme": {"sensor": 345}}.
+        """
+        json = {
+            "on": on,
+            "time": time,
+            "blink_pattern": blink_pattern.value,
+            "color": color,
+        }
+        return await self.auth.request(HTTP_METHOD_PUT, "sensors/findme", json=json)
+
     # -- System --------------------------------------------------------
 
     async def async_get_system_health(self) -> dict:
@@ -1177,5 +1214,9 @@ class WiserByFellerAPI:
             return Temperature(data, self.auth)
         if data["type"] == SENSOR_TYPE_WIND:
             return Wind(data, self.auth)
+        if data["type"] == SENSOR_TYPE_HUMIDITY:
+            return Humidity(data, self.auth)
+        if data["type"] == SENSOR_TYPE_CO2:
+            return Co2(data, self.auth)
 
         raise InvalidLoadType("Invalid load type: " + data["type"])
