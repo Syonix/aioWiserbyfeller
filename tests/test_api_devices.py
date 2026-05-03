@@ -383,6 +383,41 @@ async def test_async_get_device_config(client_api_auth, mock_aioresponse):
 
 
 @pytest.mark.asyncio
+async def test_async_get_device_inputs_config(client_api_auth, mock_aioresponse):
+    """Test async_get_device_inputs_config."""
+    response_json = {
+        "status": "success",
+        "data": {
+            "id": 4294976294,
+            "inputs": [
+                {
+                    "type": "toggle",
+                    "color": "#10f220",
+                    "background_bri": 10,
+                    "foreground_bri": 8,
+                }
+            ],
+            "outputs": [],
+            "design": {"color": 0, "name": "edizio_due"},
+        },
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/devices/000006d7/config/inputs",
+        "get",
+        response_json,
+    )
+
+    actual = await client_api_auth.async_get_device_inputs_config("000006d7")
+
+    assert actual == response_json["data"]
+    assert actual["outputs"] == []
+    assert len(actual["inputs"]) == 1
+    assert actual["inputs"][0]["type"] == "toggle"
+
+
+@pytest.mark.asyncio
 async def test_async_get_device_input_config(client_api_auth, mock_aioresponse):
     """Test async_get_device_input_config."""
     response_json = {
