@@ -686,31 +686,96 @@ async def test_async_get_devices_info(client_api_auth, mock_aioresponse):
     assert actual == response_json["data"]
 
 
+DEVICE_RAW_DATA = {
+    "id": "00000679",
+    "last_seen": 25,
+    "a": {
+        "fw_id": "0x0200",
+        "hw_id": "0x1202",
+        "fw_version": "0x00500a28",
+        "address": "0x00004103",
+        "comm_ref": "3406.A",
+    },
+    "c": {
+        "fw_id": "0x8402",
+        "hw_id": "0x8443",
+        "fw_version": "0x00500a28",
+        "cmd_matrix": "0x0002",
+        "comm_ref": "926-3406-4.S4.A.F",
+    },
+}
+
+
+REFRESH_PROPERTIES_RESPONSE = {
+    "status": "success",
+    "data": {
+        "id": "0003a091",
+        "last_seen": 0,
+        "a": {
+            "hw_id": "0x0403",
+            "comm_name": "Thermostat Nebenstelle",
+            "fw_version": "0x20601146",
+            "address": "0x0003a091",
+            "nubes_id": 511445,
+            "serial_nr": "010403_0_000006",
+            "fw_id": "0x0400",
+            "comm_ref": "tbd",
+        },
+        "c": {
+            "hw_id": "0x9214",
+            "comm_name": "",
+            "fw_version": "0x20803020",
+            "cmd_matrix": "0x4201",
+            "nubes_id": 651880,
+            "serial_nr": "019214_B_000090",
+            "fw_id": "0x9200",
+            "comm_ref": "",
+        },
+        "inputs": [
+            {"sub_type": "touch_display", "type": "button"},
+            {"sub_type": "", "sensor": 46, "type": "temperature"},
+            {"sub_type": "", "sensor": 47, "type": "humidity"},
+            {"sub_type": "", "sensor": 48, "type": "CO2"},
+            {"sub_type": "ntc", "type": "temperature"},
+            {"sub_type": "", "type": "window"},
+        ],
+        "outputs": [],
+    },
+}
+
+
+@pytest.mark.asyncio
+async def test_device_async_refresh_properties(client_api_auth, mock_aioresponse):
+    """Test Device::async_refresh_properties."""
+    device = Device(DEVICE_RAW_DATA, client_api_auth.auth)
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/devices/00000679/refresh_properties",
+        "get",
+        REFRESH_PROPERTIES_RESPONSE,
+    )
+    assert await device.async_refresh_properties() is True
+
+
+@pytest.mark.asyncio
+async def test_async_refresh_device_properties(client_api_auth, mock_aioresponse):
+    """Test async_refresh_device_properties."""
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/devices/00000679/refresh_properties",
+        "get",
+        REFRESH_PROPERTIES_RESPONSE,
+    )
+    assert await client_api_auth.async_refresh_device_properties("00000679") is True
+
+
 @pytest.mark.asyncio
 async def test_load_async_ping(client_api_auth, mock_aioresponse):
     """Test Load::async_ping."""
     response_json = {"status": "success", "data": {"ping": "pong"}}
 
-    raw_data = {
-        "id": "00000679",
-        "last_seen": 25,
-        "a": {
-            "fw_id": "0x0200",
-            "hw_id": "0x1202",
-            "fw_version": "0x00500a28",
-            "address": "0x00004103",
-            "comm_ref": "3406.A",
-        },
-        "c": {
-            "fw_id": "0x8402",
-            "hw_id": "0x8443",
-            "fw_version": "0x00500a28",
-            "cmd_matrix": "0x0002",
-            "comm_ref": "926-3406-4.S4.A.F",
-        },
-    }
-
-    device = Device(raw_data, client_api_auth.auth)
+    device = Device(DEVICE_RAW_DATA, client_api_auth.auth)
 
     await prepare_test_authenticated(
         mock_aioresponse,
@@ -751,25 +816,6 @@ async def test_async_status(
     foreground_expected: int,
 ):
     """Test async_status."""
-
-    raw_data = {
-        "id": "00000679",
-        "last_seen": 25,
-        "a": {
-            "fw_id": "0x0200",
-            "hw_id": "0x1202",
-            "fw_version": "0x00500a28",
-            "address": "0x00004103",
-            "comm_ref": "3406.A",
-        },
-        "c": {
-            "fw_id": "0x8402",
-            "hw_id": "0x8443",
-            "fw_version": "0x00500a28",
-            "cmd_matrix": "0x0002",
-            "comm_ref": "926-3406-4.S4.A.F",
-        },
-    }
 
     config_response = {
         "status": "success",
@@ -836,5 +882,5 @@ async def test_async_status(
         mock_aioresponse, f"{BASE_URL}/devices/config/4294976294", "put", apply_response
     )
 
-    device = Device(raw_data, client_api_auth.auth)
+    device = Device(DEVICE_RAW_DATA, client_api_auth.auth)
     await device.async_status(0, "#552030", 100, foreground_param)

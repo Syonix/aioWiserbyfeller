@@ -528,6 +528,15 @@ class WiserByFellerAPI:
         device = Device({"id": device_id}, self.auth)
         return await device.async_ping()
 
+    async def async_refresh_device_properties(self, device_id: str) -> bool:
+        """Refresh device properties.
+
+        This is a recovery step for an edge case, see https://github.com/Feller-AG/wiser-api/issues/43 for details.
+        """
+
+        device = Device({"id": device_id}, self.auth)
+        return await device.async_refresh_properties()
+
     async def async_get_device_config(self, device_id: str) -> dict:
         """Get a new configuration object and set the device into configuration mode."""
         return await self.auth.request(HTTP_METHOD_GET, f"devices/{device_id}/config")
