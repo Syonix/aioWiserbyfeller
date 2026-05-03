@@ -53,7 +53,7 @@ aiowiserbyfeller = ["py.typed"]
 include = ["aiowiserbyfeller*"]
 
 [tool.ruff]
-required-version = ">=0.11.0"
+required-version = "0.15.12"
 
 [tool.ruff.lint]
 select = [
