@@ -715,6 +715,31 @@ class WiserByFellerAPI:
         )
         return SmartButton(data, self.auth)
 
+    async def async_create_smart_button(
+        self, device: str, channel: int, job: int | None = None
+    ) -> list[SmartButton]:
+        """Create a SmartButton directly.
+
+        If you know all the details of the button, such as the device id and button
+        channel, you can use this service to create a SmartButton directly.
+        With this service, any button can become a SmartButton.
+        """
+        data: dict = {"device": device, "channel": channel}
+        if job is not None:
+            data["job"] = job
+        result = await self.auth.request(HTTP_METHOD_POST, "smartbuttons", json=data)
+        return [SmartButton(button_data, self.auth) for button_data in result]
+
+    async def async_delete_smart_button(self, button_id: int) -> SmartButton:
+        """Delete an existing SmartButton.
+
+        A successful response contains the deleted SmartButton.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_DELETE, f"smartbuttons/{button_id}"
+        )
+        return SmartButton(data, self.auth)
+
     async def async_program_smart_buttons(
         self, on: bool, timeout: int, **kwargs
     ) -> dict:
