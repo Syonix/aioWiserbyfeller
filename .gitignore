@@ -1,5 +1,6 @@
 .coverage
 __pycache__
+aiowiserbyfeller.egg-info
 aiowiserbyfeller/aiowiserbyfeller.egg-info
 build
 coverage.xml
