@@ -1135,7 +1135,7 @@ class WiserByFellerAPI:
                 "color": color,
             },
         )
-
+        
     # -- Helpers -------------------------------------------------------
 
     def resolve_class(self, data: dict):
