@@ -32,12 +32,14 @@ from .hvac import HvacGroup
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
+from .scheduler import Scheduler
 from .sensor import Brightness, Co2, Hail, Humidity, Rain, Sensor, Temperature, Wind
 from .smart_button import SmartButton
 from .system import SystemCondition, SystemFlag
 from .time import NtpConfig
 from .timer import Timer
 from .util import validate_str
+from .westgroup import WestGroup
 
 
 class WiserByFellerAPI:
@@ -688,8 +690,52 @@ class WiserByFellerAPI:
 
     # -- Schedulers ----------------------------------------------------
 
-    # Note: Schedulers are documented as app-only and thus are omitted
-    #       for now.
+    async def async_get_schedulers(self) -> list[Scheduler]:
+        """Get a list of all schedulers."""
+        data = await self.auth.request(HTTP_METHOD_GET, "schedulers")
+        return [Scheduler(item, self.auth) for item in data]
+
+    async def async_create_scheduler(self, scheduler: Scheduler) -> Scheduler:
+        """Create a new scheduler with given properties and a unique id."""
+        data = await self.auth.request(
+            HTTP_METHOD_POST, "schedulers", json=scheduler.raw_data
+        )
+        return Scheduler(data, self.auth)
+
+    async def async_get_scheduler(self, scheduler_id: int) -> Scheduler:
+        """Get one scheduler by id with all its properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"schedulers/{scheduler_id}")
+        return Scheduler(data, self.auth)
+
+    async def async_update_scheduler(self, scheduler: Scheduler) -> Scheduler:
+        """Put new properties into an existing scheduler.
+
+        Missing properties are removed. A successful response contains the changed scheduler.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PUT, f"schedulers/{scheduler.id}", json=scheduler.raw_data
+        )
+        return Scheduler(data, self.auth)
+
+    async def async_patch_scheduler(
+        self, scheduler_id: int, scheduler: dict
+    ) -> Scheduler:
+        """Patch new values into some properties of an existing scheduler.
+
+        Values of missing keys are preserved. A successful response contains the changed scheduler.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PATCH, f"schedulers/{scheduler_id}", json=scheduler
+        )
+        return Scheduler(data, self.auth)
+
+    async def async_delete_scheduler(self, scheduler_id: int) -> Scheduler:
+        """Delete an existing scheduler.
+
+        A successful response contains the deleted scheduler.
+        """
+        data = await self.auth.request(HTTP_METHOD_DELETE, f"schedulers/{scheduler_id}")
+        return Scheduler(data, self.auth)
 
     # -- Smart Buttons -------------------------------------------------
 
@@ -735,9 +781,7 @@ class WiserByFellerAPI:
 
         A successful response contains the deleted SmartButton.
         """
-        data = await self.auth.request(
-            HTTP_METHOD_DELETE, f"smartbuttons/{button_id}"
-        )
+        data = await self.auth.request(HTTP_METHOD_DELETE, f"smartbuttons/{button_id}")
         return SmartButton(data, self.auth)
 
     async def async_program_smart_buttons(
@@ -1193,6 +1237,133 @@ class WiserByFellerAPI:
         """Discard and close the HVAC group configuration object."""
         return await self.auth.request(
             HTTP_METHOD_DELETE, f"hvacgroups/configs/{config_id}"
+        )
+
+    # -- WEST Groups ---------------------------------------------------
+
+    async def async_get_westgroups(self) -> list[WestGroup]:
+        """Get a list of all WEST-Groups."""
+        data = await self.auth.request(HTTP_METHOD_GET, "westgroups")
+        return [WestGroup(item, self.auth) for item in data]
+
+    async def async_create_westgroup(self, westgroup: WestGroup) -> WestGroup:
+        """Create a new WEST-Group with given loads list and a unique id."""
+        data = await self.auth.request(
+            HTTP_METHOD_POST, "westgroups", json=westgroup.raw_data
+        )
+        return WestGroup(data, self.auth)
+
+    async def async_get_westgroup(self, westgroup_id: int) -> WestGroup:
+        """Get one WEST-Group by id with all its properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"westgroups/{westgroup_id}")
+        return WestGroup(data, self.auth)
+
+    async def async_update_westgroup(self, westgroup: WestGroup) -> WestGroup:
+        """Replace the loads or WEST-protection in an existing WEST-Group.
+
+        A successful response contains the changed WEST-Group.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PUT, f"westgroups/{westgroup.id}", json=westgroup.raw_data
+        )
+        return WestGroup(data, self.auth)
+
+    async def async_patch_westgroup(
+        self, westgroup_id: int, westgroup: dict
+    ) -> WestGroup:
+        """Append more loads to the existing loads list."""
+        data = await self.auth.request(
+            HTTP_METHOD_PATCH, f"westgroups/{westgroup_id}", json=westgroup
+        )
+        return WestGroup(data, self.auth)
+
+    async def async_delete_westgroup(self, westgroup_id: int) -> WestGroup:
+        """Delete an existing WEST-Group.
+
+        A successful response contains the deleted WEST-Group.
+        """
+        data = await self.auth.request(HTTP_METHOD_DELETE, f"westgroups/{westgroup_id}")
+        return WestGroup(data, self.auth)
+
+    async def async_bind_westgroup(self, westgroup_id: int) -> WestGroup:
+        """Bind an existing WEST-Group to a weather-station.
+
+        All weather-stations start flashing. After pressing the button of the
+        weather-station, the binding between a WEST-Group and a weather-station
+        is created.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PATCH, f"westgroups/{westgroup_id}/bind"
+        )
+        return WestGroup(data, self.auth)
+
+    async def async_delete_westgroup_bind(self, westgroup_id: int) -> WestGroup:
+        """Delete an existing WEST-Group binding from a weather-station."""
+        data = await self.auth.request(
+            HTTP_METHOD_DELETE, f"westgroups/{westgroup_id}/bind"
+        )
+        return WestGroup(data, self.auth)
+
+    async def async_get_westgroup_test(self) -> dict:
+        """Show current WEST-Group weather simulation test."""
+        return await self.auth.request(HTTP_METHOD_GET, "westgroups/test")
+
+    async def async_start_westgroup_test(self, test: dict) -> dict:
+        """Start a WEST-Group weather simulation test."""
+        return await self.auth.request(HTTP_METHOD_PUT, "westgroups/test", json=test)
+
+    async def async_extend_westgroup_test(self) -> dict:
+        """Increase the time of the currently running WEST-Group test."""
+        return await self.auth.request(HTTP_METHOD_PATCH, "westgroups/test")
+
+    async def async_stop_westgroup_test(self) -> dict:
+        """Stop the currently running WEST-Group test."""
+        return await self.auth.request(HTTP_METHOD_DELETE, "westgroups/test")
+
+    # -- Scripts -------------------------------------------------------
+
+    async def async_get_scripts(self) -> list[dict]:
+        """Show all uploaded scripts."""
+        return await self.auth.request(HTTP_METHOD_GET, "scripts")
+
+    async def async_upload_script(self, script_name: str, content: bytes) -> dict:
+        """Upload a script-file and store it with the specified name.
+
+        If a script-file with this name already exists it will be overwritten.
+        """
+        return await self.auth.request(
+            HTTP_METHOD_POST, f"scripts/{script_name}", data=content
+        )
+
+    async def async_delete_script(self, script_name: str) -> dict:
+        """Delete the script-file with the specified name."""
+        return await self.auth.request(HTTP_METHOD_DELETE, f"scripts/{script_name}")
+
+    async def async_start_script(self, script_name: str) -> None:
+        """Start a script by calling its onStart() function."""
+        await self.auth.request(HTTP_METHOD_GET, f"scripts/{script_name}/start")
+
+    async def async_stop_script(self, script_name: str) -> None:
+        """Stop a script by calling its onStop() function."""
+        await self.auth.request(HTTP_METHOD_GET, f"scripts/{script_name}/stop")
+
+    async def async_get_scripts_cron(self) -> list[str]:
+        """Show all scripts that are triggered by a cron-job."""
+        return await self.auth.request(HTTP_METHOD_GET, "scripts/cron")
+
+    async def async_set_script_cron(self, script_name: str, entry: str) -> dict:
+        """Link a script with a cron-job.
+
+        After that, the function onCronEvent() will be called accordingly.
+        """
+        return await self.auth.request(
+            HTTP_METHOD_PATCH, f"scripts/{script_name}/cron", json={"entry": entry}
+        )
+
+    async def async_delete_script_cron(self, script_name: str) -> dict:
+        """Delete a cron-job from a script."""
+        return await self.auth.request(
+            HTTP_METHOD_DELETE, f"scripts/{script_name}/cron"
         )
 
     # -- Buttons for LED override --------------------------------------------------------
