@@ -74,6 +74,97 @@ async def test_async_update_smart_button(client_api_auth, mock_aioresponse):
 
 
 @pytest.mark.asyncio
+async def test_async_create_smart_button(client_api_auth, mock_aioresponse):
+    """Test async_create_smart_button."""
+    response_json = {
+        "status": "success",
+        "data": [
+            {
+                "id": 3,
+                "job": 6,
+                "device": "0001ebed",
+                "device_addr": 125933,
+                "input_channel": 0,
+                "input_type": 1,
+            }
+        ],
+    }
+    request_json = {"device": "0001ebed", "channel": 0, "job": 6}
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/smartbuttons",
+        "post",
+        response_json,
+        request_json,
+    )
+
+    actual = await client_api_auth.async_create_smart_button("0001ebed", 0, job=6)
+
+    assert len(actual) == 1
+    assert isinstance(actual[0], SmartButton)
+    assert actual[0].id == 3
+    assert actual[0].job == 6
+    assert actual[0].device == "0001ebed"
+
+    # Without optional job parameter
+    response_json_no_job = {
+        "status": "success",
+        "data": [
+            {
+                "id": 4,
+                "device": "0001ebed",
+                "device_addr": 125933,
+                "input_channel": 1,
+                "input_type": 1,
+            }
+        ],
+    }
+    request_json_no_job = {"device": "0001ebed", "channel": 1}
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/smartbuttons",
+        "post",
+        response_json_no_job,
+        request_json_no_job,
+    )
+
+    actual = await client_api_auth.async_create_smart_button("0001ebed", 1)
+
+    assert len(actual) == 1
+    assert isinstance(actual[0], SmartButton)
+    assert actual[0].id == 4
+
+
+@pytest.mark.asyncio
+async def test_async_delete_smart_button(client_api_auth, mock_aioresponse):
+    """Test async_delete_smart_button."""
+    response_json = {
+        "status": "success",
+        "data": {
+            "id": 3,
+            "job": 6,
+            "device": "0001ebed",
+            "device_addr": 125933,
+            "input_channel": 0,
+            "input_type": 1,
+        },
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/smartbuttons/3", "delete", response_json
+    )
+
+    actual = await client_api_auth.async_delete_smart_button(3)
+
+    assert isinstance(actual, SmartButton)
+    assert actual.id == 3
+    assert actual.job == 6
+    assert actual.device == "0001ebed"
+
+
+@pytest.mark.asyncio
 async def test_async_program_smart_buttons(client_api_auth, mock_aioresponse):
     """Test async_program_smart_buttons."""
     response_json = {

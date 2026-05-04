@@ -8,6 +8,7 @@ import pytest
 
 from aiowiserbyfeller import Brightness, Hail, Rain, Sensor, Temperature, Wind
 from aiowiserbyfeller.const import SENSOR_TYPE_TEMPERATURE, UNIT_TEMPERATURE_CELSIUS
+from aiowiserbyfeller.enum import BlinkPattern
 
 from .conftest import BASE_URL, prepare_test_authenticated  # noqa: TID251
 
@@ -153,3 +154,47 @@ async def test_async_get_sensor(client_api_auth, mock_aioresponse, data, expecte
     assert actual.name == "Room Sensor (0002bc61_0)"
     assert actual.device == "0002bc61"
     assert actual.unit == expected_unit
+
+
+@pytest.mark.asyncio
+async def test_async_patch_sensor(client_api_auth, mock_aioresponse):
+    """Test async_patch_sensor."""
+    sensor_data = validate_data_valid()[6]  # temperature sensor
+    request_json = {"name": "North facade"}
+    patched_data = {**sensor_data, "name": "North facade"}
+    response_json = {"status": "success", "data": patched_data}
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/sensors/{sensor_data['id']}",
+        "patch",
+        response_json,
+        request_json,
+    )
+
+    actual = await client_api_auth.async_patch_sensor(sensor_data["id"], request_json)
+
+    assert isinstance(actual, Temperature)
+    assert actual.id == sensor_data["id"]
+    assert actual.name == "North facade"
+
+
+@pytest.mark.asyncio
+async def test_async_find_sensors(client_api_auth, mock_aioresponse):
+    """Test async_find_sensors."""
+    request_json = {"on": True, "time": 2, "blink_pattern": "ramp", "color": "#505050"}
+    response_json = {"status": "success", "data": request_json}
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/sensors/findme",
+        "put",
+        response_json,
+        request_json,
+    )
+
+    actual = await client_api_auth.async_find_sensors(
+        True, 2, BlinkPattern.RAMP, "#505050"
+    )
+
+    assert actual == request_json

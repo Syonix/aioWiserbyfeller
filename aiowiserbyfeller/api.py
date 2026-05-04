@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .auth import Auth
+from .button import Button
 from .const import (
     HTTP_METHOD_DELETE,
     HTTP_METHOD_GET,
@@ -18,7 +19,9 @@ from .const import (
     LOAD_TYPE_MOTOR,
     LOAD_TYPE_ONOFF,
     SENSOR_TYPE_BRIGHTNESS,
+    SENSOR_TYPE_CO2,
     SENSOR_TYPE_HAIL,
+    SENSOR_TYPE_HUMIDITY,
     SENSOR_TYPE_RAIN,
     SENSOR_TYPE_TEMPERATURE,
     SENSOR_TYPE_WIND,
@@ -26,16 +29,19 @@ from .const import (
 from .device import Device
 from .enum import BlinkPattern
 from .errors import InvalidLoadType, NoButtonPressed, UnsuccessfulRequest
+from .group_ctrl import GroupCtrl
 from .hvac import HvacGroup
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
-from .sensor import Brightness, Hail, Rain, Sensor, Temperature, Wind
+from .scheduler import Scheduler
+from .sensor import Brightness, Co2, Hail, Humidity, Rain, Sensor, Temperature, Wind
 from .smart_button import SmartButton
 from .system import SystemCondition, SystemFlag
 from .time import NtpConfig
 from .timer import Timer
 from .util import validate_str
+from .westgroup import WestGroup
 
 
 class WiserByFellerAPI:
@@ -526,9 +532,28 @@ class WiserByFellerAPI:
         device = Device({"id": device_id}, self.auth)
         return await device.async_ping()
 
+    async def async_refresh_device_properties(self, device_id: str) -> bool:
+        """Refresh device properties.
+
+        This is a recovery step for an edge case, see https://github.com/Feller-AG/wiser-api/issues/43 for details.
+        """
+
+        device = Device({"id": device_id}, self.auth)
+        return await device.async_refresh_properties()
+
     async def async_get_device_config(self, device_id: str) -> dict:
         """Get a new configuration object and set the device into configuration mode."""
         return await self.auth.request(HTTP_METHOD_GET, f"devices/{device_id}/config")
+
+    async def async_get_device_inputs_config(self, device_id: str) -> dict:
+        """Get a configuration object with only inputs and set the device into configuration mode.
+
+        This service responds much faster than reading the complete configuration
+        and can be used if only the LEDs need to be configured.
+        """
+        return await self.auth.request(
+            HTTP_METHOD_GET, f"devices/{device_id}/config/inputs"
+        )
 
     async def async_get_device_input_config(
         self, config_id: str, input_channel: int
@@ -667,8 +692,52 @@ class WiserByFellerAPI:
 
     # -- Schedulers ----------------------------------------------------
 
-    # Note: Schedulers are documented as app-only and thus are omitted
-    #       for now.
+    async def async_get_schedulers(self) -> list[Scheduler]:
+        """Get a list of all schedulers."""
+        data = await self.auth.request(HTTP_METHOD_GET, "schedulers")
+        return [Scheduler(item, self.auth) for item in data]
+
+    async def async_create_scheduler(self, scheduler: Scheduler) -> Scheduler:
+        """Create a new scheduler with given properties and a unique id."""
+        data = await self.auth.request(
+            HTTP_METHOD_POST, "schedulers", json=scheduler.raw_data
+        )
+        return Scheduler(data, self.auth)
+
+    async def async_get_scheduler(self, scheduler_id: int) -> Scheduler:
+        """Get one scheduler by id with all its properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"schedulers/{scheduler_id}")
+        return Scheduler(data, self.auth)
+
+    async def async_update_scheduler(self, scheduler: Scheduler) -> Scheduler:
+        """Put new properties into an existing scheduler.
+
+        Missing properties are removed. A successful response contains the changed scheduler.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PUT, f"schedulers/{scheduler.id}", json=scheduler.raw_data
+        )
+        return Scheduler(data, self.auth)
+
+    async def async_patch_scheduler(
+        self, scheduler_id: int, scheduler: dict
+    ) -> Scheduler:
+        """Patch new values into some properties of an existing scheduler.
+
+        Values of missing keys are preserved. A successful response contains the changed scheduler.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PATCH, f"schedulers/{scheduler_id}", json=scheduler
+        )
+        return Scheduler(data, self.auth)
+
+    async def async_delete_scheduler(self, scheduler_id: int) -> Scheduler:
+        """Delete an existing scheduler.
+
+        A successful response contains the deleted scheduler.
+        """
+        data = await self.auth.request(HTTP_METHOD_DELETE, f"schedulers/{scheduler_id}")
+        return Scheduler(data, self.auth)
 
     # -- Smart Buttons -------------------------------------------------
 
@@ -692,6 +761,29 @@ class WiserByFellerAPI:
         data = await self.auth.request(
             HTTP_METHOD_PATCH, f"smartbuttons/{button.id}", json=button.raw_data
         )
+        return SmartButton(data, self.auth)
+
+    async def async_create_smart_button(
+        self, device: str, channel: int, job: int | None = None
+    ) -> list[SmartButton]:
+        """Create a SmartButton directly.
+
+        If you know all the details of the button, such as the device id and button
+        channel, you can use this service to create a SmartButton directly.
+        With this service, any button can become a SmartButton.
+        """
+        data: dict = {"device": device, "channel": channel}
+        if job is not None:
+            data["job"] = job
+        result = await self.auth.request(HTTP_METHOD_POST, "smartbuttons", json=data)
+        return [SmartButton(button_data, self.auth) for button_data in result]
+
+    async def async_delete_smart_button(self, button_id: int) -> SmartButton:
+        """Delete an existing SmartButton.
+
+        A successful response contains the deleted SmartButton.
+        """
+        data = await self.auth.request(HTTP_METHOD_DELETE, f"smartbuttons/{button_id}")
         return SmartButton(data, self.auth)
 
     async def async_program_smart_buttons(
@@ -865,9 +957,54 @@ class WiserByFellerAPI:
 
     # -- Group Ctrl ----------------------------------------------------
 
-    # Note: Group Ctrls are documented as app-only and thus are omitted
-    #       for now. This is used for secondary devices (Nebenstellen)
-    #       to control loads.
+    async def async_get_group_ctrls(self) -> list[GroupCtrl]:
+        """Get a list of all group-ctrls."""
+        data = await self.auth.request(HTTP_METHOD_GET, "groupctrls")
+        return [GroupCtrl(item, self.auth) for item in data]
+
+    async def async_create_group_ctrl(self, group_ctrl: GroupCtrl) -> GroupCtrl:
+        """Create a new group-ctrl with given properties and a unique id."""
+        data = await self.auth.request(
+            HTTP_METHOD_POST, "groupctrls", json=group_ctrl.raw_data
+        )
+        return GroupCtrl(data, self.auth)
+
+    async def async_get_group_ctrl(self, group_ctrl_id: int) -> GroupCtrl:
+        """Get one group-ctrl by id with all its properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"groupctrls/{group_ctrl_id}")
+        return GroupCtrl(data, self.auth)
+
+    async def async_update_group_ctrl(self, group_ctrl: GroupCtrl) -> GroupCtrl:
+        """Put new values into an existing group-ctrl.
+
+        Missing properties are removed. A successful response contains the changed group-ctrl.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PUT, f"groupctrls/{group_ctrl.id}", json=group_ctrl.raw_data
+        )
+        return GroupCtrl(data, self.auth)
+
+    async def async_patch_group_ctrl(
+        self, group_ctrl_id: int, group_ctrl: dict
+    ) -> GroupCtrl:
+        """Patch new values into some properties of an existing group-ctrl.
+
+        Values of missing keys are preserved. A successful response contains the changed group.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PATCH, f"groupctrls/{group_ctrl_id}", json=group_ctrl
+        )
+        return GroupCtrl(data, self.auth)
+
+    async def async_delete_group_ctrl(self, group_ctrl_id: int) -> GroupCtrl:
+        """Delete an existing group-ctrl.
+
+        A successful response contains the deleted group-ctrl.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_DELETE, f"groupctrls/{group_ctrl_id}"
+        )
+        return GroupCtrl(data, self.auth)
 
     # -- Scenes --------------------------------------------------------
 
@@ -927,6 +1064,31 @@ class WiserByFellerAPI:
         """Get one sensor by id with all its properties."""
         raw_data = await self.auth.request(HTTP_METHOD_GET, f"sensors/{sensor_id}")
         return self.resolve_class(raw_data)
+
+    async def async_patch_sensor(self, sensor_id: int, data: dict) -> Sensor:
+        """Patch new values into some properties of an existing sensor."""
+        raw_data = await self.auth.request(
+            HTTP_METHOD_PATCH, f"sensors/{sensor_id}", json=data
+        )
+        return self.resolve_class(raw_data)
+
+    async def async_find_sensors(
+        self, on: bool, time: int, blink_pattern: BlinkPattern, color: str
+    ) -> dict:
+        """Put all sensors into the find me mode.
+
+        If the find me mode is on, all devices with sensors lights up.
+        As soon as a button is pressed on a blinking device, the device stops lighting up
+        and the µGateway sends the following event over the Websocket connection:
+        {"findme": {"sensor": 345}}.
+        """
+        json = {
+            "on": on,
+            "time": time,
+            "blink_pattern": blink_pattern.value,
+            "color": color,
+        }
+        return await self.auth.request(HTTP_METHOD_PUT, "sensors/findme", json=json)
 
     # -- System --------------------------------------------------------
 
@@ -1085,6 +1247,23 @@ class WiserByFellerAPI:
         data = await self.auth.request(HTTP_METHOD_DELETE, f"hvacgroups/{group_id}")
         return HvacGroup(data, self.auth)
 
+    async def async_update_hvac_group(self, group: HvacGroup) -> HvacGroup:
+        """Replace the loads in an existing HVAC-Group.
+
+        A successful response contains the changed HVAC-Group.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PUT, f"hvacgroups/{group.id}", json={"loads": group.loads}
+        )
+        return HvacGroup(data, self.auth)
+
+    async def async_patch_hvac_group(self, group_id: int, data: dict) -> HvacGroup:
+        """Append more loads to the existing loads list."""
+        result = await self.auth.request(
+            HTTP_METHOD_PATCH, f"hvacgroups/{group_id}", json=data
+        )
+        return HvacGroup(result, self.auth)
+
     async def async_get_hvac_group_states(self) -> dict:
         """Get all HVAC group states.
 
@@ -1093,6 +1272,42 @@ class WiserByFellerAPI:
 
         """
         return await self.auth.request(HTTP_METHOD_GET, "hvacgroups/state")
+
+    async def async_get_hvac_group_binding_state(self, group_id: int) -> bool:
+        """Ask for HVAC-Group binding-state."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"hvacgroups/{group_id}/bind")
+        return data.get("running", False) is True
+
+    async def async_stop_hvac_group_binding(self, group_id: int) -> bool:
+        """Stop HVAC-Group binding."""
+        data = await self.auth.request(
+            HTTP_METHOD_PUT, f"hvacgroups/{group_id}/bind", json={"running": False}
+        )
+        return data.get("running") is False
+
+    async def async_bind_hvac_group(self, group_id: int) -> HvacGroup:
+        """Bind an existing HVAC-Group to a thermostat.
+
+        All thermostats start flashing. After pressing the button of the thermostat,
+        the binding between an HVAC-Group and a thermostat is created.
+        """
+        data = await self.auth.request(HTTP_METHOD_PATCH, f"hvacgroups/{group_id}/bind")
+        return HvacGroup(data, self.auth)
+
+    async def async_delete_hvac_group_binding(self, group_id: int) -> HvacGroup:
+        """Delete an existing HVAC-Group binding from a thermostat."""
+        data = await self.auth.request(
+            HTTP_METHOD_DELETE, f"hvacgroups/{group_id}/bind"
+        )
+        return HvacGroup(data, self.auth)
+
+    async def async_set_hvac_group_target_state(
+        self, group_id: int, target_state: dict
+    ) -> dict:
+        """Set target state on HVAC-Group."""
+        return await self.auth.request(
+            HTTP_METHOD_PUT, f"hvacgroups/{group_id}/target_state", json=target_state
+        )
 
     async def async_create_hvac_group_config(self, group_id: int) -> dict:
         """Create a new HVAC group configuration object and set the HVAC group into configuration mode."""
@@ -1124,11 +1339,206 @@ class WiserByFellerAPI:
             HTTP_METHOD_DELETE, f"hvacgroups/configs/{config_id}"
         )
 
-    # -- Buttons for LED override --------------------------------------------------------
+    # -- WEST Groups ---------------------------------------------------
 
-    async def async_get_buttons(self) -> list[dict]:
-        """Get all Wiser buttons."""
-        return await self.auth.request(HTTP_METHOD_GET, "buttons")
+    async def async_get_westgroups(self) -> list[WestGroup]:
+        """Get a list of all WEST-Groups."""
+        data = await self.auth.request(HTTP_METHOD_GET, "westgroups")
+        return [WestGroup(item, self.auth) for item in data]
+
+    async def async_create_westgroup(self, westgroup: WestGroup) -> WestGroup:
+        """Create a new WEST-Group with given loads list and a unique id."""
+        data = await self.auth.request(
+            HTTP_METHOD_POST, "westgroups", json=westgroup.raw_data
+        )
+        return WestGroup(data, self.auth)
+
+    async def async_get_westgroup(self, westgroup_id: int) -> WestGroup:
+        """Get one WEST-Group by id with all its properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"westgroups/{westgroup_id}")
+        return WestGroup(data, self.auth)
+
+    async def async_update_westgroup(self, westgroup: WestGroup) -> WestGroup:
+        """Replace the loads or WEST-protection in an existing WEST-Group.
+
+        A successful response contains the changed WEST-Group.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PUT, f"westgroups/{westgroup.id}", json=westgroup.raw_data
+        )
+        return WestGroup(data, self.auth)
+
+    async def async_patch_westgroup(
+        self, westgroup_id: int, westgroup: dict
+    ) -> WestGroup:
+        """Append more loads to the existing loads list."""
+        data = await self.auth.request(
+            HTTP_METHOD_PATCH, f"westgroups/{westgroup_id}", json=westgroup
+        )
+        return WestGroup(data, self.auth)
+
+    async def async_delete_westgroup(self, westgroup_id: int) -> WestGroup:
+        """Delete an existing WEST-Group.
+
+        A successful response contains the deleted WEST-Group.
+        """
+        data = await self.auth.request(HTTP_METHOD_DELETE, f"westgroups/{westgroup_id}")
+        return WestGroup(data, self.auth)
+
+    async def async_bind_westgroup(self, westgroup_id: int) -> WestGroup:
+        """Bind an existing WEST-Group to a weather-station.
+
+        All weather-stations start flashing. After pressing the button of the
+        weather-station, the binding between a WEST-Group and a weather-station
+        is created.
+        """
+        data = await self.auth.request(
+            HTTP_METHOD_PATCH, f"westgroups/{westgroup_id}/bind"
+        )
+        return WestGroup(data, self.auth)
+
+    async def async_delete_westgroup_bind(self, westgroup_id: int) -> WestGroup:
+        """Delete an existing WEST-Group binding from a weather-station."""
+        data = await self.auth.request(
+            HTTP_METHOD_DELETE, f"westgroups/{westgroup_id}/bind"
+        )
+        return WestGroup(data, self.auth)
+
+    async def async_get_westgroup_test(self) -> dict:
+        """Show current WEST-Group weather simulation test."""
+        return await self.auth.request(HTTP_METHOD_GET, "westgroups/test")
+
+    async def async_start_westgroup_test(self, test: dict) -> dict:
+        """Start a WEST-Group weather simulation test."""
+        return await self.auth.request(HTTP_METHOD_PUT, "westgroups/test", json=test)
+
+    async def async_extend_westgroup_test(self) -> dict:
+        """Increase the time of the currently running WEST-Group test."""
+        return await self.auth.request(HTTP_METHOD_PATCH, "westgroups/test")
+
+    async def async_stop_westgroup_test(self) -> dict:
+        """Stop the currently running WEST-Group test."""
+        return await self.auth.request(HTTP_METHOD_DELETE, "westgroups/test")
+
+    # -- Scripts -------------------------------------------------------
+
+    async def async_get_scripts(self) -> list[dict]:
+        """Show all uploaded scripts."""
+        return await self.auth.request(HTTP_METHOD_GET, "scripts")
+
+    async def async_upload_script(self, script_name: str, content: bytes) -> dict:
+        """Upload a script-file and store it with the specified name.
+
+        If a script-file with this name already exists it will be overwritten.
+        """
+        return await self.auth.request(
+            HTTP_METHOD_POST, f"scripts/{script_name}", data=content
+        )
+
+    async def async_delete_script(self, script_name: str) -> dict:
+        """Delete the script-file with the specified name."""
+        return await self.auth.request(HTTP_METHOD_DELETE, f"scripts/{script_name}")
+
+    async def async_start_script(self, script_name: str) -> None:
+        """Start a script by calling its onStart() function."""
+        await self.auth.request(HTTP_METHOD_GET, f"scripts/{script_name}/start")
+
+    async def async_stop_script(self, script_name: str) -> None:
+        """Stop a script by calling its onStop() function."""
+        await self.auth.request(HTTP_METHOD_GET, f"scripts/{script_name}/stop")
+
+    async def async_get_scripts_cron(self) -> list[str]:
+        """Show all scripts that are triggered by a cron-job."""
+        return await self.auth.request(HTTP_METHOD_GET, "scripts/cron")
+
+    async def async_set_script_cron(self, script_name: str, entry: str) -> dict:
+        """Link a script with a cron-job.
+
+        After that, the function onCronEvent() will be called accordingly.
+        """
+        return await self.auth.request(
+            HTTP_METHOD_PATCH, f"scripts/{script_name}/cron", json={"entry": entry}
+        )
+
+    async def async_delete_script_cron(self, script_name: str) -> dict:
+        """Delete a cron-job from a script."""
+        return await self.auth.request(
+            HTTP_METHOD_DELETE, f"scripts/{script_name}/cron"
+        )
+
+    # -- Buttons -------------------------------------------------------
+
+    async def async_get_buttons(self) -> list[Button]:
+        """Get all buttons with all their properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, "buttons")
+        return [Button(item, self.auth) for item in data]
+
+    async def async_create_button(
+        self, device: str, channel: int, **kwargs
+    ) -> list[Button]:
+        """Register a new button.
+
+        Optional keyword arguments:
+          job (int): id of the Job to associate with the button.
+        """
+        json: dict = {"device": device, "channel": channel}
+        if "job" in kwargs:
+            json["job"] = kwargs["job"]
+        data = await self.auth.request(HTTP_METHOD_POST, "buttons", json=json)
+        return [Button(item, self.auth) for item in data]
+
+    async def async_get_button(self, button_id: int) -> Button:
+        """Get one button with all its properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"buttons/{button_id}")
+        return Button(data, self.auth)
+
+    async def async_patch_button(self, button_id: int, data: dict) -> Button:
+        """Update properties of a button."""
+        result = await self.auth.request(
+            HTTP_METHOD_PATCH, f"buttons/{button_id}", json=data
+        )
+        return Button(result, self.auth)
+
+    async def async_delete_button(self, button_id: int) -> Button:
+        """Delete a button from the system."""
+        data = await self.auth.request(HTTP_METHOD_DELETE, f"buttons/{button_id}")
+        return Button(data, self.auth)
+
+    async def async_get_managed_buttons(self) -> list[Button]:
+        """Get only managed buttons with their properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, "buttons/managed")
+        return [Button(item, self.auth) for item in data]
+
+    async def async_find_buttons(
+        self, on: bool, time: int, blink_pattern: BlinkPattern, color: str
+    ) -> dict:
+        """Put all buttons into the find me mode.
+
+        If the find me mode is on, all devices with buttons will light up.
+        As soon as a button is pressed, the device stops blinking and the µGateway
+        sends the following event over the WebSocket connection:
+        {"findme": {"button": 345}} or {"findme": {"button": {"device": "...", "channel": 0}}}
+        """
+        json = {
+            "on": on,
+            "time": time,
+            "blink_pattern": blink_pattern.value,
+            "color": color,
+        }
+        return await self.auth.request(HTTP_METHOD_PUT, "buttons/findme", json=json)
+
+    async def async_ping_button(
+        self, button_id: int, time_ms: int, blink_pattern: BlinkPattern, color: str
+    ) -> dict:
+        """Light up the button LED with custom values."""
+        json = {
+            "time_ms": time_ms,
+            "blink_pattern": blink_pattern.value,
+            "color": color,
+        }
+        return await self.auth.request(
+            HTTP_METHOD_PUT, f"buttons/{button_id}/ping", json=json
+        )
 
     async def async_set_button_led(
         self,
@@ -1139,15 +1549,8 @@ class WiserByFellerAPI:
         color: str = "#000000",
     ) -> dict:
         """Set LED override for a Wiser button LED."""
-        return await self.auth.request(
-            HTTP_METHOD_PUT,
-            f"buttons/{button_id}/leds/{led_index}",
-            json={
-                "on": on,
-                "pattern": pattern.value,
-                "color": color,
-            },
-        )
+        button = Button({"id": button_id}, self.auth)
+        return await button.async_set_led(led_index, on, pattern, color)
 
     # -- Helpers -------------------------------------------------------
 
@@ -1177,5 +1580,9 @@ class WiserByFellerAPI:
             return Temperature(data, self.auth)
         if data["type"] == SENSOR_TYPE_WIND:
             return Wind(data, self.auth)
+        if data["type"] == SENSOR_TYPE_HUMIDITY:
+            return Humidity(data, self.auth)
+        if data["type"] == SENSOR_TYPE_CO2:
+            return Co2(data, self.auth)
 
         raise InvalidLoadType("Invalid load type: " + data["type"])
