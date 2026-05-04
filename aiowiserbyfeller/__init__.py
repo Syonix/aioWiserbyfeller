@@ -2,6 +2,7 @@
 
 from .api import WiserByFellerAPI
 from .auth import Auth
+from .button import Button
 from .device import Device
 from .errors import (
     AiowiserbyfellerException,
@@ -33,6 +34,7 @@ __all__ = [
     "Auth",
     "AuthorizationFailed",
     "Brightness",
+    "Button",
     "Co2",
     "Dali",
     "DaliRgbw",

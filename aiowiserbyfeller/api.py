@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .auth import Auth
+from .button import Button
 from .const import (
     HTTP_METHOD_DELETE,
     HTTP_METHOD_GET,
@@ -1465,11 +1466,79 @@ class WiserByFellerAPI:
             HTTP_METHOD_DELETE, f"scripts/{script_name}/cron"
         )
 
-    # -- Buttons for LED override --------------------------------------------------------
+    # -- Buttons -------------------------------------------------------
 
-    async def async_get_buttons(self) -> list[dict]:
-        """Get all Wiser buttons."""
-        return await self.auth.request(HTTP_METHOD_GET, "buttons")
+    async def async_get_buttons(self) -> list[Button]:
+        """Get all buttons with all their properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, "buttons")
+        return [Button(item, self.auth) for item in data]
+
+    async def async_create_button(
+        self, device: str, channel: int, **kwargs
+    ) -> list[Button]:
+        """Register a new button.
+
+        Optional keyword arguments:
+          job (int): id of the Job to associate with the button.
+        """
+        json: dict = {"device": device, "channel": channel}
+        if "job" in kwargs:
+            json["job"] = kwargs["job"]
+        data = await self.auth.request(HTTP_METHOD_POST, "buttons", json=json)
+        return [Button(item, self.auth) for item in data]
+
+    async def async_get_button(self, button_id: int) -> Button:
+        """Get one button with all its properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, f"buttons/{button_id}")
+        return Button(data, self.auth)
+
+    async def async_patch_button(self, button_id: int, data: dict) -> Button:
+        """Update properties of a button."""
+        result = await self.auth.request(
+            HTTP_METHOD_PATCH, f"buttons/{button_id}", json=data
+        )
+        return Button(result, self.auth)
+
+    async def async_delete_button(self, button_id: int) -> Button:
+        """Delete a button from the system."""
+        data = await self.auth.request(HTTP_METHOD_DELETE, f"buttons/{button_id}")
+        return Button(data, self.auth)
+
+    async def async_get_managed_buttons(self) -> list[Button]:
+        """Get only managed buttons with their properties."""
+        data = await self.auth.request(HTTP_METHOD_GET, "buttons/managed")
+        return [Button(item, self.auth) for item in data]
+
+    async def async_find_buttons(
+        self, on: bool, time: int, blink_pattern: BlinkPattern, color: str
+    ) -> dict:
+        """Put all buttons into the find me mode.
+
+        If the find me mode is on, all devices with buttons will light up.
+        As soon as a button is pressed, the device stops blinking and the µGateway
+        sends the following event over the WebSocket connection:
+        {"findme": {"button": 345}} or {"findme": {"button": {"device": "...", "channel": 0}}}
+        """
+        json = {
+            "on": on,
+            "time": time,
+            "blink_pattern": blink_pattern.value,
+            "color": color,
+        }
+        return await self.auth.request(HTTP_METHOD_PUT, "buttons/findme", json=json)
+
+    async def async_ping_button(
+        self, button_id: int, time_ms: int, blink_pattern: BlinkPattern, color: str
+    ) -> dict:
+        """Light up the button LED with custom values."""
+        json = {
+            "time_ms": time_ms,
+            "blink_pattern": blink_pattern.value,
+            "color": color,
+        }
+        return await self.auth.request(
+            HTTP_METHOD_PUT, f"buttons/{button_id}/ping", json=json
+        )
 
     async def async_set_button_led(
         self,
@@ -1480,15 +1549,8 @@ class WiserByFellerAPI:
         color: str = "#000000",
     ) -> dict:
         """Set LED override for a Wiser button LED."""
-        return await self.auth.request(
-            HTTP_METHOD_PUT,
-            f"buttons/{button_id}/leds/{led_index}",
-            json={
-                "on": on,
-                "pattern": pattern.value,
-                "color": color,
-            },
-        )
+        button = Button({"id": button_id}, self.auth)
+        return await button.async_set_led(led_index, on, pattern, color)
 
     # -- Helpers -------------------------------------------------------
 
