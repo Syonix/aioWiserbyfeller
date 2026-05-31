@@ -15,6 +15,7 @@ from aiowiserbyfeller import (
     Sensor,
     Temperature,
     Wind,
+    Window,
 )
 from aiowiserbyfeller.const import SENSOR_TYPE_TEMPERATURE, UNIT_TEMPERATURE_CELSIUS
 from aiowiserbyfeller.enum import BlinkPattern
@@ -52,6 +53,8 @@ def validate_data_valid() -> list[dict]:
             "temperature_sensor_with_history",
             "wind_sensor",
             "wind_sensor_with_history",
+            "window_sensor",
+            "window_sensor_with_history",
         ],
     )
 
@@ -65,7 +68,7 @@ def validate_data_invalid() -> list[dict]:
 @pytest.mark.parametrize(
     ("data", "expected_length"),
     [
-        (validate_data_valid(), 14),
+        (validate_data_valid(), 16),
     ],
 )
 async def test_async_get_sensors(
@@ -163,6 +166,17 @@ async def test_async_get_sensors(
         "2025-05-18T12:52:02+00:00"
     )
     assert actual[13].history[1].value == 5
+
+    # Window
+    assert isinstance(actual[14], Window)
+    assert actual[14].value_window is False
+
+    # Window with history
+    assert len(actual[15].history) == 3
+    assert actual[15].history[1].time == datetime.fromisoformat(
+        "2025-05-18T12:52:02+00:00"
+    )
+    assert actual[15].history[1].value is True
 
 
 @pytest.mark.asyncio
