@@ -2,6 +2,7 @@
 
 from .api import WiserByFellerAPI
 from .auth import Auth
+from .button import Button
 from .device import Device
 from .errors import (
     AiowiserbyfellerException,
@@ -14,28 +15,35 @@ from .errors import (
     UnsuccessfulRequest,
     WebsocketError,
 )
+from .group_ctrl import GroupCtrl
 from .hvac import HvacGroup
 from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
-from .sensor import Brightness, Hail, Rain, Sensor, Temperature, Wind
+from .scheduler import Scheduler
+from .sensor import Brightness, Co2, Hail, Humidity, Rain, Sensor, Temperature, Wind
 from .smart_button import SmartButton
 from .system import SystemCondition, SystemFlag
 from .time import NtpConfig
 from .timer import Timer
 from .websocket import Websocket, WebsocketWatchdog
+from .westgroup import WestGroup
 
 __all__ = [
     "AiowiserbyfellerException",
     "Auth",
     "AuthorizationFailed",
     "Brightness",
+    "Button",
+    "Co2",
     "Dali",
     "DaliRgbw",
     "DaliTw",
     "Device",
     "Dim",
+    "GroupCtrl",
     "Hail",
+    "Humidity",
     "Hvac",
     "HvacGroup",
     "InvalidArgument",
@@ -48,6 +56,7 @@ __all__ = [
     "OnOff",
     "Rain",
     "Scene",
+    "Scheduler",
     "Sensor",
     "SmartButton",
     "SystemCondition",
@@ -60,6 +69,7 @@ __all__ = [
     "Websocket",
     "WebsocketError",
     "WebsocketWatchdog",
+    "WestGroup",
     "Wind",
     "WiserByFellerAPI",
 ]

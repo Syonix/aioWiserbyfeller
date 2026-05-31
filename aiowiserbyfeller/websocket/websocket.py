@@ -33,7 +33,6 @@ class WebsocketWatchdog:
         """
         self._action = action
         self._logger = logger
-        self._loop = asyncio.get_event_loop()
         self._timeout = timeout_seconds
         self._timer_task: asyncio.TimerHandle | None = None
 
@@ -60,7 +59,7 @@ class WebsocketWatchdog:
         if self._timer_task:
             self._timer_task.cancel()
 
-        self._timer_task = self._loop.call_later(
+        self._timer_task = asyncio.get_running_loop().call_later(
             self._timeout, lambda: asyncio.create_task(self.on_expire())
         )
 

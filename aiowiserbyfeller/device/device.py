@@ -162,3 +162,12 @@ class Device:
         )
 
         await self.auth.request("put", f"devices/config/{config['id']}")
+
+    async def async_refresh_properties(self) -> bool:
+        """Refresh device properties.
+
+        This is a recovery step for an edge case, see https://github.com/Feller-AG/wiser-api/issues/43 for details.
+        """
+        resp = await self.auth.request("get", f"devices/{self.id}/refresh_properties")
+
+        return "id" in resp

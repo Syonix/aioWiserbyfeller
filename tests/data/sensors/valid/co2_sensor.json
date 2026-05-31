@@ -1,0 +1,10 @@
+{
+  "id": 50,
+  "sub_type": "",
+  "name": "CO2 Sensor (0004ab12_0)",
+  "unit": "ppm",
+  "value": 800,
+  "device": "0004ab12",
+  "channel": 0,
+  "type": "CO2"
+}
