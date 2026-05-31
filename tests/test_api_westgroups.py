@@ -32,6 +32,8 @@ async def test_async_get_westgroups(client_api_auth, mock_aioresponse):
     assert actual[0].id == 6
     assert actual[0].loads == [42, 24, 56]
     assert actual[0].wind["action"] == "up"
+    assert actual[0].temperature["action"] == "off"
+    assert actual[0].rain["action"] == "off"
     assert actual[0].hail["action"] == "up and lock"
 
 

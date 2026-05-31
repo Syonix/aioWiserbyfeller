@@ -1,0 +1,10 @@
+{
+  "id": 60,
+  "sub_type": "",
+  "name": "Humidity Sensor (0004cd34_0)",
+  "unit": "%rH",
+  "value": 55.0,
+  "device": "0004cd34",
+  "channel": 0,
+  "type": "humidity"
+}
