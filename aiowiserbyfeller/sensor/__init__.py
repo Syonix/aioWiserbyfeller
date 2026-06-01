@@ -8,6 +8,7 @@ from .rain import Rain
 from .sensor import Sensor
 from .temperature import Temperature
 from .wind import Wind
+from .window import Window
 
 __all__ = [
     "Brightness",
@@ -18,4 +19,5 @@ __all__ = [
     "Sensor",
     "Temperature",
     "Wind",
+    "Window",
 ]

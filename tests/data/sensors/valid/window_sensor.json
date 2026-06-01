@@ -1,0 +1,10 @@
+{
+  "id": 51,
+  "sub_type": "",
+  "name": "Thermostat (0003a091_5)",
+  "unit": "bool",
+  "value": 0,
+  "device": "0003a091",
+  "channel": 5,
+  "type": "window"
+}

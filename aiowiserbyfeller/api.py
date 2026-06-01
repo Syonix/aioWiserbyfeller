@@ -25,6 +25,7 @@ from .const import (
     SENSOR_TYPE_RAIN,
     SENSOR_TYPE_TEMPERATURE,
     SENSOR_TYPE_WIND,
+    SENSOR_TYPE_WINDOW,
 )
 from .device import Device
 from .enum import BlinkPattern
@@ -35,7 +36,17 @@ from .job import Job
 from .load import Dali, DaliRgbw, DaliTw, Dim, Hvac, Load, Motor, OnOff
 from .scene import Scene
 from .scheduler import Scheduler
-from .sensor import Brightness, Co2, Hail, Humidity, Rain, Sensor, Temperature, Wind
+from .sensor import (
+    Brightness,
+    Co2,
+    Hail,
+    Humidity,
+    Rain,
+    Sensor,
+    Temperature,
+    Wind,
+    Window,
+)
 from .smart_button import SmartButton
 from .system import SystemCondition, SystemFlag
 from .time import NtpConfig
@@ -1584,5 +1595,7 @@ class WiserByFellerAPI:
             return Humidity(data, self.auth)
         if data["type"] == SENSOR_TYPE_CO2:
             return Co2(data, self.auth)
+        if data["type"] == SENSOR_TYPE_WINDOW:
+            return Window(data, self.auth)
 
         raise InvalidLoadType("Invalid load type: " + data["type"])
