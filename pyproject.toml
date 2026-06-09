@@ -31,6 +31,7 @@ dependencies = [
 
 [project.optional-dependencies]
 test = [
+    "aiohttp<3.12",
     "aioresponses",
     "flake8",
     "pylint",
@@ -53,7 +54,7 @@ aiowiserbyfeller = ["py.typed"]
 include = ["aiowiserbyfeller*"]
 
 [tool.ruff]
-required-version = "0.15.15"
+required-version = ">=0.15.16"
 
 [tool.ruff.lint]
 select = [

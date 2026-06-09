@@ -29,7 +29,7 @@ from .const import (
 )
 from .device import Device
 from .enum import BlinkPattern
-from .errors import InvalidLoadType, NoButtonPressed, UnsuccessfulRequest
+from .errors import NoButtonPressed, UnsuccessfulRequest
 from .group_ctrl import GroupCtrl
 from .hvac import HvacGroup
 from .job import Job
@@ -1598,4 +1598,4 @@ class WiserByFellerAPI:
         if data["type"] == SENSOR_TYPE_WINDOW:
             return Window(data, self.auth)
 
-        raise InvalidLoadType("Invalid load type: " + data["type"])
+        return Load(data, self.auth)
