@@ -152,6 +152,24 @@ class Websocket:
         self._watchdog.cancel()
         raise exception
 
+    def is_idle(self) -> bool:
+        """Return True if the websocket connection is idle/disconnected."""
+        return self._idle
+
+    def reset_error_count(self) -> None:
+        """Reset the connection error count to zero."""
+        self._errcount = 0
+
+    async def async_close(self) -> None:
+        """Close the websocket connection if it exists."""
+        if self._ws is not None:
+            try:
+                await self._ws.close()
+            except Exception:  # noqa: BLE001
+                self._logger.debug("Error closing WebSocket connection, ignoring")
+            self._ws = None
+        self._watchdog.cancel()
+
     async def on_watchdog_timeout(self):
         """Warn about watchdog timeout.
 

@@ -158,6 +158,63 @@ async def test_on_watchdog_timeout_logs(test_logger):
         assert "Watchdog timeout" in mock_warn.call_args[0][0]
 
 
+def test_is_idle_returns_idle_state():
+    """Test that is_idle() reflects the internal idle state."""
+    ws = Websocket("host", "token")
+    assert ws.is_idle() is True
+    ws._idle = False  # noqa: SLF001
+    assert ws.is_idle() is False
+
+
+def test_reset_error_count_resets_to_zero():
+    """Test that reset_error_count() resets _errcount to zero."""
+    ws = Websocket("host", "token")
+    ws._errcount = 7  # noqa: SLF001
+    ws.reset_error_count()
+    assert ws._errcount == 0  # noqa: SLF001
+
+
+@pytest.mark.asyncio
+async def test_async_close_closes_and_clears_ws():
+    """Test that async_close() closes the connection and cancels the watchdog."""
+    ws = Websocket("host", "token")
+    mock_ws_conn = AsyncMock()
+    ws._ws = mock_ws_conn  # noqa: SLF001
+    ws._watchdog = Mock()  # noqa: SLF001
+
+    await ws.async_close()
+
+    mock_ws_conn.close.assert_awaited_once()
+    assert ws._ws is None  # noqa: SLF001
+    ws._watchdog.cancel.assert_called_once()  # noqa: SLF001
+
+
+@pytest.mark.asyncio
+async def test_async_close_when_already_closed():
+    """Test that async_close() is safe to call when no connection exists."""
+    ws = Websocket("host", "token")
+    ws._watchdog = Mock()  # noqa: SLF001
+
+    await ws.async_close()  # _ws is None — should not raise
+
+    ws._watchdog.cancel.assert_called_once()  # noqa: SLF001
+
+
+@pytest.mark.asyncio
+async def test_async_close_swallows_close_exception():
+    """Test that async_close() ignores exceptions raised by ws.close()."""
+    ws = Websocket("host", "token")
+    mock_ws_conn = AsyncMock()
+    mock_ws_conn.close.side_effect = Exception("boom")
+    ws._ws = mock_ws_conn  # noqa: SLF001
+    ws._watchdog = Mock()  # noqa: SLF001
+
+    await ws.async_close()  # should not raise
+
+    assert ws._ws is None  # noqa: SLF001
+    ws._watchdog.cancel.assert_called_once()  # noqa: SLF001
+
+
 @patch("aiowiserbyfeller.websocket.websocket.asyncio.create_task")
 def test_websocket_init_starts_connection(mock_create_task, test_logger):
     """Test that init() does start a connection."""
