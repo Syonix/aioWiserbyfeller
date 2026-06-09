@@ -31,6 +31,7 @@ dependencies = [
 
 [project.optional-dependencies]
 test = [
+    "aiohttp<3.12",
     "aioresponses",
     "flake8",
     "pylint",

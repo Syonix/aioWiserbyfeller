@@ -17,10 +17,6 @@ class AuthorizationFailed(AiowiserbyfellerException):
     """Claim returned non-success error."""
 
 
-class InvalidLoadType(AiowiserbyfellerException):
-    """Invalid load type."""
-
-
 class InvalidState(AiowiserbyfellerException):
     """Invalid state."""
 
