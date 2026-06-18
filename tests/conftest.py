@@ -1,11 +1,25 @@
 """Prepare for unit tests."""
 
+import inspect
 import logging
+from unittest.mock import Mock
 
 import aiohttp
 from aioresponses import aioresponses
 import pytest
 import pytest_asyncio
+
+# aiohttp 3.14 added stream_writer as a required argument to ClientResponse.__init__,
+# but aioresponses 0.7.8 doesn't pass it yet (https://github.com/pnuckowski/aioresponses/pull/288).
+if "stream_writer" in inspect.signature(aiohttp.ClientResponse).parameters:
+    _orig_client_response_init = aiohttp.ClientResponse.__init__
+
+    def _client_response_init_compat(self, *args, stream_writer=None, **kwargs):
+        if stream_writer is None:
+            stream_writer = Mock(output_size=0)
+        _orig_client_response_init(self, *args, stream_writer=stream_writer, **kwargs)
+
+    aiohttp.ClientResponse.__init__ = _client_response_init_compat
 
 from aiowiserbyfeller import Auth, WiserByFellerAPI
 
