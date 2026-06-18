@@ -888,6 +888,8 @@ async def test_async_status(
         "color": "#552030",
         "background_bri": 100,
         "foreground_bri": foreground_expected,
+        "foreground_color": "#552030",
+        "background_color": "#552030",
     }
 
     update_response = {
@@ -919,3 +921,74 @@ async def test_async_status(
 
     device = Device(DEVICE_RAW_DATA, client_api_auth.auth)
     await device.async_status(0, "#552030", 100, foreground_param)
+
+
+@pytest.mark.asyncio
+async def test_async_status_with_separate_colors(client_api_auth, mock_aioresponse):
+    """Test async_status with explicit foreground_color and background_color."""
+
+    config_response = {
+        "status": "success",
+        "data": {
+            "id": 4294976294,
+            "inputs": [
+                {
+                    "type": "button",
+                    "color": "#1abcf2",
+                    "foreground_color": "#1cf22b",
+                    "background_color": "#f21c1c",
+                    "background_bri": 0,
+                    "foreground_bri": 0,
+                }
+            ],
+            "outputs": [],
+            "design": {"color": 0, "name": "edizio_due"},
+        },
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/devices/00000679/config",
+        "get",
+        config_response,
+    )
+
+    update_request = {
+        "color": "#1abcf2",
+        "background_bri": 50,
+        "foreground_bri": 50,
+        "foreground_color": "#1cf22b",
+        "background_color": "#f21c1c",
+    }
+
+    update_response = {
+        "status": "success",
+        "data": {
+            "type": "button",
+            "color": "#1abcf2",
+            "foreground_color": "#1cf22b",
+            "background_color": "#f21c1c",
+            "background_bri": 50,
+            "foreground_bri": 50,
+        },
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/devices/config/4294976294/inputs/0",
+        "put",
+        update_response,
+        update_request,
+    )
+
+    await prepare_test_authenticated(
+        mock_aioresponse,
+        f"{BASE_URL}/devices/config/4294976294",
+        "put",
+        config_response,
+    )
+
+    device = Device(DEVICE_RAW_DATA, client_api_auth.auth)
+    await device.async_status(
+        0, "#1abcf2", 50, 50, foreground_color="#1cf22b", background_color="#f21c1c"
+    )
