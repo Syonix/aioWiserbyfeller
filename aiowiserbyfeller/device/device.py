@@ -142,7 +142,13 @@ class Device:
         return resp["ping"] == "pong"
 
     async def async_status(
-        self, channel: int, color: str, background_bri: int, foreground_bri: int | None
+        self,
+        channel: int,
+        color: str,
+        background_bri: int,
+        foreground_bri: int | None,
+        foreground_color: str | None = None,
+        background_color: str | None = None,
     ) -> None:
         """Set status light of load."""
 
@@ -153,6 +159,12 @@ class Device:
             "color": color,
             "background_bri": background_bri,
             "foreground_bri": foreground_bri,
+            "foreground_color": foreground_color
+            if foreground_color is not None
+            else color,
+            "background_color": background_color
+            if background_color is not None
+            else color,
         }
 
         config = await self.auth.request("get", f"devices/{self.id}/config")
