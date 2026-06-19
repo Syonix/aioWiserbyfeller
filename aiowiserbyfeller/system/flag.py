@@ -34,9 +34,9 @@ class SystemFlag:
         return self.raw_data["value"]
 
     @property
-    def name(self) -> str:
+    def name(self) -> str | None:
         """Human-readable name for the flag."""
-        return self.raw_data["name"]
+        return self.raw_data.get("name")
 
     async def async_refresh(self):
         """Fetch data from µGateway."""

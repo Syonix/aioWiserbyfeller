@@ -28,6 +28,34 @@ async def test_async_get_system_flags(client_api_auth, mock_aioresponse):
 
 
 @pytest.mark.asyncio
+async def test_async_get_system_flags_without_name(client_api_auth, mock_aioresponse):
+    """Test async_get_system_flags when the gateway omits the name field (older firmware)."""
+    response_json = {
+        "data": [
+            {
+                "id": 16,
+                "value": True,
+                "symbol": "present",
+            }
+        ],
+        "status": "success",
+    }
+
+    await prepare_test_authenticated(
+        mock_aioresponse, f"{BASE_URL}/system/flags", "get", response_json
+    )
+
+    actual = await client_api_auth.async_get_system_flags()
+
+    assert len(actual) == 1
+    assert isinstance(actual[0], SystemFlag)
+    assert actual[0].id == 16
+    assert actual[0].symbol == "present"
+    assert actual[0].value is True
+    assert actual[0].name is None
+
+
+@pytest.mark.asyncio
 async def test_async_create_system_flag(client_api_auth, mock_aioresponse):
     """Test async_create_system_flag."""
     response_json = {
