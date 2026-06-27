@@ -229,6 +229,19 @@ async def test_validate_data_invalid(client_api_auth, data: dict):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("block", ["a", "c"])
+async def test_validate_data_missing_key(client_api_auth, block: str):
+    """A field omitted entirely raises UnexpectedGatewayResponse, not KeyError."""
+
+    data = validate_data_valid()[0]
+    del data[block]["comm_ref"]
+
+    device = Device(data, client_api_auth)
+    with pytest.raises(UnexpectedGatewayResponse):
+        device.validate_data()
+
+
+@pytest.mark.asyncio
 async def test_async_get_device(client_api_auth, mock_aioresponse):
     """Test async_get_device."""
     response_json = {
