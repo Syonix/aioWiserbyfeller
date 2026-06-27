@@ -118,7 +118,7 @@ class Device:
         """
         for key in DEVICE_CHECK_FIELDS:
             for prop in DEVICE_CHECK_FIELDS[key]:
-                if getattr(self, key)[prop] != "":
+                if getattr(self, key).get(prop, "") != "":
                     continue
 
                 if prop in DEVICE_ALLOWED_EMPTY_FIELDS.get(
