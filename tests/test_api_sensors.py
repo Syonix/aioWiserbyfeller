@@ -51,6 +51,7 @@ def validate_data_valid() -> list[dict]:
             "rain_sensor_with_history",
             "temperature_sensor",
             "temperature_sensor_with_history",
+            "temperature_sensor_ntc",
             "wind_sensor",
             "wind_sensor_with_history",
             "window_sensor",
@@ -68,7 +69,7 @@ def validate_data_invalid() -> list[dict]:
 @pytest.mark.parametrize(
     ("data", "expected_length"),
     [
-        (validate_data_valid(), 16),
+        (validate_data_valid(), 17),
     ],
 )
 async def test_async_get_sensors(
@@ -154,29 +155,34 @@ async def test_async_get_sensors(
         "2025-05-18T12:52:02+00:00"
     )
     assert actual[11].unit == UNIT_TEMPERATURE_CELSIUS
-    assert actual[11].sub_type is None
+    assert actual[11].sub_type == ""
+
+    # Temperature with NTC sub type (thermostat input)
+    assert isinstance(actual[12], Temperature)
+    assert actual[12].sub_type == "ntc"
+    assert actual[12].channel == 16
 
     # Wind
-    assert isinstance(actual[12], Wind)
-    assert actual[12].value_wind_speed == 10
+    assert isinstance(actual[13], Wind)
+    assert actual[13].value_wind_speed == 10
 
     # Wind with history
-    assert len(actual[13].history) == 3
-    assert actual[13].history[1].time == datetime.fromisoformat(
+    assert len(actual[14].history) == 3
+    assert actual[14].history[1].time == datetime.fromisoformat(
         "2025-05-18T12:52:02+00:00"
     )
-    assert actual[13].history[1].value == 5
+    assert actual[14].history[1].value == 5
 
     # Window
-    assert isinstance(actual[14], Window)
-    assert actual[14].value_window is False
+    assert isinstance(actual[15], Window)
+    assert actual[15].value_window is False
 
     # Window with history
-    assert len(actual[15].history) == 3
-    assert actual[15].history[1].time == datetime.fromisoformat(
+    assert len(actual[16].history) == 3
+    assert actual[16].history[1].time == datetime.fromisoformat(
         "2025-05-18T12:52:02+00:00"
     )
-    assert actual[15].history[1].value is True
+    assert actual[16].history[1].value is True
 
 
 @pytest.mark.asyncio
